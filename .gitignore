@@ -1,3 +1,69 @@
-node_modules
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
 .DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
 .env
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Web related
+lib/generated_plugin_registrant.dart
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/libs/
+/android/app/src/main/assets/
+/android/app/src/main/jniLibs/
+
+# Android key file, which should not be committed to source control
+/android/key.properties
+
+# Local configuration file (sdk path, etc)
+.flutter_plugins
+.flutter_plugins_dependencies
+*/.flutter_plugins
+*/.flutter_plugins_dependencies
+
+# Exceptions to above rules.
+!/android/app/src/main/assets/public/
+
+# Coverage
+coverage/
+
+# Proguard
+/android/app/proguard-rules.pro
+
+# Generated files
+*.g.dart
+*.freezed.dart
