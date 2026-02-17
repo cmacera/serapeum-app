@@ -4,8 +4,8 @@
 
 ### Security & Privacy
 
-- **No Secrets:** Never commit API Keys, Supabase Service Roles, or Genkit secrets to the client code. Use `flutter_dotenv` or compile-time variables (`--dart-define`).
-- **Data Privacy:** User notes and ratings stored in Isar remain local-first. Do not sync sensitive user data to the cloud without explicit consent.
+- **No Secrets:** Never commit API Keys, Supabase Service Roles, or Genkit secrets to the client code. Use `envied` to securely obfuscate secrets at compile-time.
+- **Data Privacy:** User notes and ratings stored in Realm remain local-first. Do not sync sensitive user data to the cloud without explicit consent.
 
 ### Quality & Standards
 
@@ -20,16 +20,13 @@
 
 ## 2. 🚦 The "When" Rules (Triggers)
 
-> **IF** you modify a Data Model (`@collection` or `@freezed`):
->
+> **IF** you modify a Data Model (`@RealmModel` or `@freezed`):
 > **THEN** you MUST run `dart run build_runner build` immediately.
-
+>
 > **IF** you add a new screen:
->
 > **THEN** you MUST define it in the `AppRouter` and test navigation on both mobile bottom bar and desktop rail.
-
-> **IF** you implement an AI feature:
 >
+> **IF** you implement an AI feature:
 > **THEN** provide a fallback UI in case the model is offline or the API fails.
 
 ## 3. 🚫 IRONCLAD LIMITS (AI Agent Boundaries)

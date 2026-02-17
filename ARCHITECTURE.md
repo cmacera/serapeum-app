@@ -51,7 +51,7 @@ graph LR
 | Decision | Context | Rationale |
 | :--- | :--- | :--- |
 | **Riverpod** | State Management | Better testability, compile-time safety, and independence from Flutter tree compared to Provider. |
-| **Isar** | Local DB | Native C++ bindings make it significantly faster than SQLite for full-text search on thousands of items. |
+| **Realm** | Local DB | Faster than SQLite, reactive architecture (live objects), and officially maintained by Atlas (MongoDB). |
 | **GoRouter** | Navigation | Declarative routing is essential for handling Deep Links and Desktop navigation states. |
 | **Feature-First** | Folder Structure | Scalability. Keeps related code (UI, Logic, Data) together, making it easier to extract modules later. |
 
