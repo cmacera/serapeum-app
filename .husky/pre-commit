@@ -1,0 +1,22 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Running pre-commit checks..."
+
+# 1. Format code
+echo "Running dart format..."
+dart format . --set-exit-if-changed
+if [ $? -ne 0 ]; then
+  echo "❌ dart format failed. Run 'dart format .' to fix."
+  exit 1
+fi
+
+# 2. Analyze code
+echo "Running flutter analyze..."
+flutter analyze
+if [ $? -ne 0 ]; then
+  echo "❌ flutter analyze found issues. Commit aborted."
+  exit 1
+fi
+
+echo "✅ All checks passed!"
