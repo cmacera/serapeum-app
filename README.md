@@ -41,19 +41,29 @@ Detailed guides and specifications:
    ```bash
    flutter pub get
    ```
-3. Generate required code (Realm/Riverpod):
+3. **Wire Husky hooks (Mandatory for first-time setup):**
+   ```bash
+   dart run husky install
+   ```
+4. Generate required code (Realm/Riverpod):
    ```bash
    dart run build_runner build --delete-conflicting-outputs
    ```
-4. Run the application:
+5. Run the application:
    ```bash
    flutter run
    ```
 
 ## 🛡️ Developer Experience
 
-We use **Husky** to ensure code quality. Every commit triggers:
+We use **Husky** to ensure code quality.
+
+### Pre-commit Hooks
+Every commit triggers:
 1. `dart format` (Formatting check)
 2. `flutter analyze` (Linter validation)
 
-Please ensure your code is clean before committing.
+### Troubleshooting Hooks
+If hooks are not running or you are adding them manually:
+- **Add new hooks:** `dart run husky add .husky/pre-commit "command"`
+- **Hook wiring:** If `.husky/_/husky.sh` is missing, ensure you have run `dart run husky install`.

@@ -8,6 +8,9 @@
 # Install dependencies
 flutter pub get
 
+# Wire Husky hooks (required for pre-commit automation)
+dart run husky install
+
 # Generate code (Realm, Riverpod, JSON serialization)
 dart run build_runner build --delete-conflicting-outputs
 ```
@@ -87,6 +90,11 @@ lib/
 - [ ] `flutter analyze` passes with 0 warnings.
 - [ ] `dart run build_runner` has been run and committed (if schemas changed).
 - [ ] UI changes have been verified on both Mobile and macOS layouts.
+
+### Troubleshooting Hooks
+
+- **Missing Scripts:** If you see errors about `husky.sh` not found, run `dart run husky install`.
+- **Bypassing:** Bypassing hooks (`--no-verify`) is strictly regulated; check project guidelines before doing so. 
 
 ### Definition of Done (DoD)
 
