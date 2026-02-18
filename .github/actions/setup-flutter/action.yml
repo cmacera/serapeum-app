@@ -4,7 +4,7 @@ inputs:
   flutter-version:
     description: 'Flutter version to use'
     required: false
-    default: ''
+    default: '3.27.0'
   channel:
     description: 'Flutter channel'
     required: false
@@ -17,7 +17,6 @@ runs:
       uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e # v2.21.0
       with:
         flutter-version: ${{ inputs.flutter-version }}
-        flutter-version-file: ${{ inputs.flutter-version == '' && 'pubspec.yaml' || '' }}
         channel: ${{ inputs.channel }}
         cache: true
 
