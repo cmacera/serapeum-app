@@ -56,12 +56,18 @@ Detailed guides and specifications:
 
 ## 🛡️ Developer Experience
 
-We use **Husky** to ensure code quality.
+We use **Husky** for local checks and **GitHub Actions** for remote CI.
 
-### Pre-commit Hooks
+### Local Quality (Husky)
 Every commit triggers:
 1. `dart format` (Formatting check)
 2. `flutter analyze` (Linter validation)
+
+### Remote Quality (CI)
+Our [GitHub Actions workflow](.github/workflows/ci.yml) runs on every PR:
+- **Analyze:** Linting and formatting validation.
+- **Test:** Unit and widget test execution.
+- **Build Check:** Verifies macOS build success.
 
 ### Troubleshooting Hooks
 If hooks are not running or you are adding them manually:
