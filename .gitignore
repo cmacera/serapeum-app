@@ -72,4 +72,4 @@ coverage/
 .husky/_
 
 # Build tools (binaries, not source)
-tools/*.jar
+tools/**/*.jar

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:serapeum_app/core/constants/api_constants.dart';
 import 'package:serapeum_app/core/network/failure.dart';
 import 'package:serapeum_app/features/discovery/data/models/book_dto.dart';
+import 'package:serapeum_app/features/discovery/data/models/catalog_search_input_dto.dart';
 import 'package:serapeum_app/features/discovery/data/models/game_dto.dart';
 import 'package:serapeum_app/features/discovery/data/models/media_dto.dart';
 import 'package:serapeum_app/features/discovery/data/models/search_all_response_dto.dart';
@@ -26,6 +27,8 @@ class DiscoveryRepository implements IDiscoveryRepository {
       return SearchAllResponseDto.fromJson(response.data!);
     } on DioException catch (e) {
       throw _mapDioError(e);
+    } catch (e) {
+      throw UnknownFailure(e.toString());
     }
   }
 
@@ -41,6 +44,8 @@ class DiscoveryRepository implements IDiscoveryRepository {
           .toList();
     } on DioException catch (e) {
       throw _mapDioError(e);
+    } catch (e) {
+      throw UnknownFailure(e.toString());
     }
   }
 
@@ -56,6 +61,8 @@ class DiscoveryRepository implements IDiscoveryRepository {
           .toList();
     } on DioException catch (e) {
       throw _mapDioError(e);
+    } catch (e) {
+      throw UnknownFailure(e.toString());
     }
   }
 
@@ -71,6 +78,8 @@ class DiscoveryRepository implements IDiscoveryRepository {
           .toList();
     } on DioException catch (e) {
       throw _mapDioError(e);
+    } catch (e) {
+      throw UnknownFailure(e.toString());
     }
   }
 
@@ -78,6 +87,8 @@ class DiscoveryRepository implements IDiscoveryRepository {
     return switch (e.type) {
       DioExceptionType.connectionError ||
       DioExceptionType.connectionTimeout => const NetworkFailure(),
+      DioExceptionType.sendTimeout ||
+      DioExceptionType.receiveTimeout => const TimeoutFailure(),
       DioExceptionType.badResponse => ServerFailure(
         statusCode: e.response?.statusCode ?? 0,
         message: e.response?.statusMessage,

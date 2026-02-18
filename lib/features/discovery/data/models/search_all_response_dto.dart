@@ -5,7 +5,7 @@ import 'package:serapeum_app/features/discovery/data/models/media_dto.dart';
 
 part 'search_all_response_dto.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class SearchAllResponseDto {
   final List<MediaDto> movies;
   final List<BookDto> books;
@@ -36,17 +36,4 @@ class SearchErrorDto {
       _$SearchErrorDtoFromJson(json);
 
   Map<String, dynamic> toJson() => _$SearchErrorDtoToJson(this);
-}
-
-@JsonSerializable()
-class CatalogSearchInputDto {
-  final String query;
-  final String? language;
-
-  const CatalogSearchInputDto({required this.query, this.language});
-
-  factory CatalogSearchInputDto.fromJson(Map<String, dynamic> json) =>
-      _$CatalogSearchInputDtoFromJson(json);
-
-  Map<String, dynamic> toJson() => _$CatalogSearchInputDtoToJson(this);
 }

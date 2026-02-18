@@ -16,7 +16,12 @@ final class ServerFailure extends Failure {
   const ServerFailure({required this.statusCode, this.message});
 }
 
-/// An unexpected error occurred (e.g. JSON parsing, timeout).
+/// A network request timed out (connect, send, or receive).
+final class TimeoutFailure extends Failure {
+  const TimeoutFailure();
+}
+
+/// An unexpected error occurred (e.g. JSON parsing error, unknown Dio error).
 final class UnknownFailure extends Failure {
   final String message;
 

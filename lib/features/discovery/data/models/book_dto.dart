@@ -8,16 +8,13 @@ class BookDto {
   final String title;
   final List<String>? authors;
   final String? publisher;
-  @JsonKey(name: 'publishedDate')
   final String? publishedDate;
   final String? description;
   final String? isbn;
   final num? pageCount;
   final List<String>? categories;
-  @JsonKey(name: 'imageLinks')
   final BookImageLinksDto? imageLinks;
   final String? language;
-  @JsonKey(name: 'previewLink')
   final String? previewLink;
 
   const BookDto({
