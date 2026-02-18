@@ -85,11 +85,19 @@ lib/
 
 ### Step 3: Pull Request (PR) Checklist
 
+When creating a PR, a **template** will be automatically applied. Ensure you:
 - [ ] Title starts with `[SER-<ID>]`.
 - [ ] Description includes `Closes SER-<ID>`.
 - [ ] `flutter analyze` passes with 0 warnings.
 - [ ] `dart run build_runner` has been run and committed (if schemas changed).
 - [ ] UI changes have been verified on both Mobile and macOS layouts.
+
+### Step 4: Continuous Integration (CI)
+
+Our GitHub CI will automatically run analysis, tests, and a build check. Merging is blocked if:
+- Lint errors or warnings are found.
+- Code is not properly formatted.
+- Tests fail.
 
 ### Troubleshooting Hooks
 

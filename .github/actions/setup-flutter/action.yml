@@ -1,0 +1,33 @@
+name: 'Setup Flutter'
+description: 'Combined checkout, flutter setup, pub get, and build_runner'
+inputs:
+  flutter-version:
+    description: 'Flutter version to use'
+    required: false
+    default: '3.41.1'
+  channel:
+    description: 'Flutter channel'
+    required: false
+    default: 'stable'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Flutter
+      uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e # v2.21.0
+      with:
+        flutter-version: ${{ inputs.flutter-version }}
+        channel: ${{ inputs.channel }}
+        cache: true
+
+    - name: Install dependencies
+      shell: bash
+      run: flutter pub get
+
+    - name: Create dummy .env
+      shell: bash
+      run: cp .env.example .env
+
+    - name: Generate code
+      shell: bash
+      run: dart run build_runner build --delete-conflicting-outputs
