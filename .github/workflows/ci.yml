@@ -17,6 +17,10 @@ jobs:
           channel: 'stable'
       - name: Install dependencies
         run: flutter pub get
+      - name: Create dummy .env
+        run: cp .env.example .env
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed .
       - name: Analyze project
@@ -33,6 +37,10 @@ jobs:
           channel: 'stable'
       - name: Install dependencies
         run: flutter pub get
+      - name: Create dummy .env
+        run: cp .env.example .env
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
       - name: Run tests
         run: flutter test
 
@@ -47,5 +55,9 @@ jobs:
           channel: 'stable'
       - name: Install dependencies
         run: flutter pub get
+      - name: Create dummy .env
+        run: cp .env.example .env
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
       - name: Build macOS (check)
         run: flutter build macos --debug --no-pub
