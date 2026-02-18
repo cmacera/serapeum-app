@@ -2,8 +2,16 @@ openapi: 3.1.0
 info:
   title: Serapeum API
   version: 1.0.0
-  description: AI-powered media discovery API. Search for books, movies, TV shows,
+  description: |-
+    AI-powered media discovery API. Search for books, movies, TV shows,
     and video games, or use the orchestrator for natural language queries.
+
+    **Security note:** All endpoints are intentionally public today — no API key or
+    JWT is required. The operation-level `security: []` entries are explicit overrides
+    so any future global security scheme (e.g. Bearer token) does not silently apply
+    to these endpoints. Checkov CKV_OPENAPI_4/5 warnings on those entries are expected
+    false positives. When adding global authentication, remove the `security: []`
+    overrides from any endpoint that should be protected.
 servers:
   - url: http://localhost:3000
     description: Local development
@@ -20,6 +28,7 @@ components:
           type: string
         authors:
           type: array
+          maxItems: 100
           items:
             type: string
         publisher:
@@ -34,6 +43,7 @@ components:
           type: number
         categories:
           type: array
+          maxItems: 100
           items:
             type: string
         imageLinks:
@@ -98,18 +108,22 @@ components:
           type: string
         platforms:
           type: array
+          maxItems: 100
           items:
             type: string
         genres:
           type: array
+          maxItems: 100
           items:
             type: string
         developers:
           type: array
+          maxItems: 100
           items:
             type: string
         publishers:
           type: array
+          maxItems: 100
           items:
             type: string
         game_type:
@@ -354,10 +368,7 @@ paths:
         content:
           application/json:
             schema:
-              type: string
-              minLength: 1
-              description: Natural language query for the AI orchestrator
-              example: Best sci-fi movies of 2024
+              $ref: "#/components/schemas/CatalogSearchInput"
       responses:
         "200":
           description: Orchestrator response (varies by query intent)

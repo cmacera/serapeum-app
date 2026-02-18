@@ -1,10 +1,6 @@
 /// API configuration constants for the Serapeum Orchestrator.
 /// Covers SER-37: centralized API configuration.
 abstract class ApiConstants {
-  // Base URLs
-  static const String devBaseUrl = 'http://localhost:3000';
-  static const String prodBaseUrl = 'https://api.serapeum.app';
-
   // Endpoints
   static const String searchBooks = '/searchBooks';
   static const String searchMedia = '/searchMedia';

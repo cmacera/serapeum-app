@@ -20,10 +20,12 @@ final dioProvider = Provider<Dio>((ref) {
   );
 
   if (kDebugMode) {
+    // Only log headers/URLs/status — not request or response bodies,
+    // to avoid leaking user search queries and API payloads in debug output.
     dio.interceptors.add(
       LogInterceptor(
-        requestBody: true,
-        responseBody: true,
+        requestBody: false,
+        responseBody: false,
         logPrint: (o) => debugPrint(o.toString()),
       ),
     );
