@@ -67,3 +67,6 @@ coverage/
 # Generated files
 *.g.dart
 *.freezed.dart
+
+# Husky
+.husky/_

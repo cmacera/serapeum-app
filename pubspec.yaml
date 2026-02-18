@@ -69,6 +69,7 @@ dev_dependencies:
   json_serializable: ^6.7.1
 
   envied_generator: ^1.1.1
+  husky: ^0.1.7
 
 
 
