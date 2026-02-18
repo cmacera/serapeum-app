@@ -14,7 +14,7 @@ runs:
   using: "composite"
   steps:
     - name: Setup Flutter
-      uses: subosito/flutter-action@fd55f4c21f0054890606a58215905d4fa55f4c # v2.21.0
+      uses: subosito/flutter-action@fd55f4c5af5b953cc57a2be44cb082c8f6635e8e # v2.21.0
       with:
         flutter-version: ${{ inputs.flutter-version }}
         flutter-version-file: ${{ inputs.flutter-version == '' && 'pubspec.yaml' || '' }}
