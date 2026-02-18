@@ -20,7 +20,7 @@
 - Use Cases (if logic is complex).
 
 #### Data (Infrastructure)
-- **Isar:** High-performance local NoSQL database for "My Library".
+- **Realm:** High-performance local NoSQL database for "My Library".
 - **Genkit/API:** HTTP client (Dio/Http) connecting to Serapeum API (Orchestrator).
 - **Supabase:** Auth and optional sync.
 
@@ -38,8 +38,8 @@ graph LR
 ### B. Library (My Vault)
 ```mermaid
 graph LR
-    UIAction[UI Action (Save)] --> IsarRepo[Isar Repository]
-    IsarRepo --> LocalStorage[Local Storage (Disk)]
+    UIAction[UI Action (Save)] --> RealmRepo[Realm Repository]
+    RealmRepo --> LocalStorage[Local Storage (Disk)]
     LocalStorage --> UIUpdate[UI Update (Reactive Watcher)]
 ```
 

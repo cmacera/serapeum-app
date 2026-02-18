@@ -8,7 +8,7 @@
 # Install dependencies
 flutter pub get
 
-# Generate code (Isar, Riverpod, JSON serialization)
+# Generate code (Realm, Riverpod, JSON serialization)
 dart run build_runner build --delete-conflicting-outputs
 ```
 
@@ -52,7 +52,7 @@ lib/
 │   ├── discovery/        # Chat & Search Logic
 │   ├── library/          # Offline/Local Media Management
 │   └── settings/         # Auth, AI Model Management
-│       ├── data/         # Repositories, DTOs, Data Sources (Isar/API)
+│       ├── data/         # Repositories, DTOs, Data Sources (Realm/API)
 │       ├── domain/       # Entities, Failures, Repository Interfaces
 │       └── presentation/ # Widgets, Screens, Riverpod Providers
 └── main.dart             # Entry point
@@ -71,7 +71,7 @@ lib/
 
 1.  **Select Ticket:** Pick or create a ticket from Linear (Project: Serapeum APP).
 2.  **Create Branch:** Must follow format: `SER-<ID>/<short-description>`
-    *   Example: `SER-42/implement-isar-schema`
+    *   Example: `SER-42/implement-realm-schema`
 
 ### Step 2: Coding & Commits
 
