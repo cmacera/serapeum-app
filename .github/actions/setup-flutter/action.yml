@@ -13,9 +13,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout
-      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-    
     - name: Setup Flutter
       uses: subosito/flutter-action@fd55f4c21f0054890606a58215905d4fa55f4c # v2.21.0
       with:
