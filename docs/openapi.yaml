@@ -189,14 +189,17 @@ components:
         - games
     BooksResponse:
       type: array
+      maxItems: 100
       items:
         $ref: "#/components/schemas/Book"
     MediaResponse:
       type: array
+      maxItems: 100
       items:
         $ref: "#/components/schemas/Media"
     GamesResponse:
       type: array
+      maxItems: 100
       items:
         $ref: "#/components/schemas/Game"
     GeneralDiscoveryResponse:
