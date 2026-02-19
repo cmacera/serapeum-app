@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'book_dto.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class BookDto {
   final String id;
   final String title;
@@ -11,7 +11,7 @@ class BookDto {
   final String? publishedDate;
   final String? description;
   final String? isbn;
-  final num? pageCount;
+  final int? pageCount;
   final List<String>? categories;
   final BookImageLinksDto? imageLinks;
   final String? language;

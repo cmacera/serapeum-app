@@ -14,6 +14,21 @@ final class ServerFailure extends Failure {
   final String? message;
 
   const ServerFailure({required this.statusCode, this.message});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ServerFailure &&
+          runtimeType == other.runtimeType &&
+          statusCode == other.statusCode &&
+          message == other.message;
+
+  @override
+  int get hashCode => Object.hash(statusCode, message);
+
+  @override
+  String toString() =>
+      'ServerFailure(statusCode: $statusCode, message: $message)';
 }
 
 /// A network request timed out (connect, send, or receive).
@@ -26,4 +41,17 @@ final class UnknownFailure extends Failure {
   final String message;
 
   const UnknownFailure(this.message);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UnknownFailure &&
+          runtimeType == other.runtimeType &&
+          message == other.message;
+
+  @override
+  int get hashCode => message.hashCode;
+
+  @override
+  String toString() => 'UnknownFailure(message: $message)';
 }
