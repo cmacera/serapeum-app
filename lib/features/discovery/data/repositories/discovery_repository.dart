@@ -86,9 +86,9 @@ class DiscoveryRepository implements IDiscoveryRepository {
   Failure _mapDioError(DioException e) {
     return switch (e.type) {
       DioExceptionType.connectionError ||
-      DioExceptionType.connectionTimeout => const NetworkFailure(),
+      DioExceptionType.connectionTimeout ||
       DioExceptionType.sendTimeout ||
-      DioExceptionType.receiveTimeout => const TimeoutFailure(),
+      DioExceptionType.receiveTimeout => const NetworkFailure(),
       DioExceptionType.badResponse => ServerFailure(
         statusCode: e.response?.statusCode ?? 0,
         message: e.response?.statusMessage,
