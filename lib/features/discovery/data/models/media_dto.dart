@@ -7,7 +7,7 @@ part 'media_dto.g.dart';
 /// TMDB uses [title] for movies and [name] for TV shows.
 /// Both fields can be null simultaneously in edge cases — consumers must guard
 /// against this, e.g. `item.title ?? item.name ?? 'Unknown'`.
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class MediaDto {
   final int id;
 
@@ -17,14 +17,10 @@ class MediaDto {
   /// TV show name. Null for movies — use [title] instead.
   final String? name;
 
-  @JsonKey(name: 'media_type')
   final String mediaType;
-  @JsonKey(name: 'release_date')
   final String? releaseDate;
-  @JsonKey(name: 'poster_path')
   final String? posterPath;
   final String? overview;
-  @JsonKey(name: 'vote_average')
   final num? voteAverage;
   final num? popularity;
 

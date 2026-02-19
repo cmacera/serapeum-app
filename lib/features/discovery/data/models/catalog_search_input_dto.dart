@@ -5,7 +5,7 @@ part 'catalog_search_input_dto.g.dart';
 /// Request body DTO for all search endpoints.
 ///
 /// Serialization-only — use [toJson] to build the POST body.
-@JsonSerializable(createFactory: false)
+@JsonSerializable(createFactory: false, includeIfNull: false)
 class CatalogSearchInputDto {
   final String query;
   final String? language;
