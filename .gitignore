@@ -8,7 +8,7 @@
 .buildlog/
 .history
 .svn/
-.env
+migrate_packages.log
 
 # IntelliJ related
 *.iml
@@ -16,12 +16,11 @@
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# The .vscode/ directory contains settings for Visual Studio Code
+# that should not be committed to the repository.
+.vscode/
 
-# Flutter/Dart/Pub related
+# Flutter/Dart related
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -30,10 +29,8 @@
 .packages
 .pub-cache/
 .pub/
-/build/
-
-# Web related
-lib/generated_plugin_registrant.dart
+__metadata
+build/
 
 # Symbolication related
 app.*.symbols
@@ -41,35 +38,38 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/libs/
-/android/app/src/main/assets/
-/android/app/src/main/jniLibs/
+# Android Studio will regenerate this file for you
+local.properties
 
-# Android key file, which should not be committed to source control
-/android/key.properties
+# iOS/Macos related
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.[mh]
+**/macos/Flutter/ephemeral/
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Runner/GeneratedPluginRegistrant.[mh]
+**/macos/Runner/Configs/AppInfo.xcconfig
 
-# Local configuration file (sdk path, etc)
-.flutter_plugins
-.flutter_plugins_dependencies
-*/.flutter_plugins
-*/.flutter_plugins_dependencies
+# Exceptions to above rules for keeping certain files
+!**/ios/Runner/Info.plist
+!**/ios/Runner/Assets.xcassets/
+!**/ios/Flutter/AppFrameworkInfo.plist
+!**/macos/Runner/Configs/
+!**/macos/Runner/Assets.xcassets/
+!**/macos/Runner/Info.plist
 
-# Exceptions to above rules.
-!/android/app/src/main/assets/public/
+# Git conflict files
+*.orig
+*.rej
 
-# Coverage
+# Environment variables
+.env
+.env.local
+.env.*
+
+# Project specific
 coverage/
-
-# Proguard
-/android/app/proguard-rules.pro
-
-# Generated files
-*.g.dart
-*.freezed.dart
-
-# Husky
-.husky/_
 
 # Build tools (binaries, not source)
 tools/**/*.jar
