@@ -38,27 +38,30 @@ class BookDto {
 
   Map<String, dynamic> toJson() => _$BookDtoToJson(this);
 
-  Book toDomain() => Book(
-    id: id,
-    title: title,
-    authors: authors,
-    publisher: publisher,
-    publishedDate: publishedDate,
-    description: description,
-    isbn: isbn,
-    pageCount: pageCount,
-    categories: categories,
-    imageLinks: imageLinks != null
-        ? {
-            if (imageLinks!.thumbnail != null)
-              'thumbnail': imageLinks!.thumbnail!,
-            if (imageLinks!.smallThumbnail != null)
-              'smallThumbnail': imageLinks!.smallThumbnail!,
-          }
-        : null,
-    language: language,
-    previewLink: previewLink,
-  );
+  Book toDomain() {
+    final Map<String, String> links = {};
+    if (imageLinks?.thumbnail != null) {
+      links['thumbnail'] = imageLinks!.thumbnail!;
+    }
+    if (imageLinks?.smallThumbnail != null) {
+      links['smallThumbnail'] = imageLinks!.smallThumbnail!;
+    }
+
+    return Book(
+      id: id,
+      title: title,
+      authors: authors,
+      publisher: publisher,
+      publishedDate: publishedDate,
+      description: description,
+      isbn: isbn,
+      pageCount: pageCount,
+      categories: categories,
+      imageLinks: links.isNotEmpty ? links : null,
+      language: language,
+      previewLink: previewLink,
+    );
+  }
 }
 
 @JsonSerializable()

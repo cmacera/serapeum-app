@@ -8,8 +8,7 @@ final class NetworkFailure extends Failure {
   const NetworkFailure();
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is NetworkFailure && runtimeType == other.runtimeType;
+      identical(this, other) || other is NetworkFailure;
 
   @override
   int get hashCode => runtimeType.hashCode;
@@ -46,8 +45,7 @@ final class TimeoutFailure extends Failure {
   const TimeoutFailure();
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is TimeoutFailure && runtimeType == other.runtimeType;
+      identical(this, other) || other is TimeoutFailure;
 
   @override
   int get hashCode => runtimeType.hashCode;
