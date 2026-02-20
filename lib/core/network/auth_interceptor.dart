@@ -21,13 +21,12 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
-    // Handle 401 Unauthorized responses if needed
-    if (response.statusCode == 401) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    if (err.type == DioExceptionType.badResponse &&
+        err.response?.statusCode == 401) {
       // Handle unauthorized access - could refresh token or redirect to login
       // For now, we'll just pass through and let the calling code handle it
     }
-
-    super.onResponse(response, handler);
+    super.onError(err, handler);
   }
 }

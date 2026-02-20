@@ -6,6 +6,17 @@ sealed class Failure {
 /// No internet connection or DNS resolution failure.
 final class NetworkFailure extends Failure {
   const NetworkFailure();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NetworkFailure && runtimeType == other.runtimeType;
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() => 'NetworkFailure()';
 }
 
 /// The server returned a non-2xx HTTP status code.
@@ -34,6 +45,17 @@ final class ServerFailure extends Failure {
 /// A network request timed out (connect, send, or receive).
 final class TimeoutFailure extends Failure {
   const TimeoutFailure();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TimeoutFailure && runtimeType == other.runtimeType;
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() => 'TimeoutFailure()';
 }
 
 /// An unexpected error occurred (e.g. JSON parsing error, unknown Dio error).

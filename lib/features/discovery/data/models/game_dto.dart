@@ -1,23 +1,21 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:serapeum_app/features/discovery/domain/entities/game.dart';
 
 part 'game_dto.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class GameDto {
   final int id;
   final String name;
   final String? summary;
   final num? rating;
-  @JsonKey(name: 'aggregated_rating')
   final num? aggregatedRating;
   final String? released;
-  @JsonKey(name: 'cover_url')
   final String? coverUrl;
   final List<String>? platforms;
   final List<String>? genres;
   final List<String>? developers;
   final List<String>? publishers;
-  @JsonKey(name: 'game_type')
   final int? gameType;
 
   const GameDto({
@@ -39,4 +37,19 @@ class GameDto {
       _$GameDtoFromJson(json);
 
   Map<String, dynamic> toJson() => _$GameDtoToJson(this);
+
+  Game toDomain() => Game(
+    id: id,
+    name: name,
+    summary: summary,
+    rating: rating,
+    aggregatedRating: aggregatedRating,
+    released: released,
+    coverUrl: coverUrl,
+    platforms: platforms,
+    genres: genres,
+    developers: developers,
+    publishers: publishers,
+    gameType: gameType,
+  );
 }

@@ -20,6 +20,9 @@ migrate_packages.log
 # that should not be committed to the repository.
 .vscode/
 
+# Claude local configuration
+.claude/
+
 # Flutter/Dart related
 **/doc/api/
 **/ios/Flutter/.last_build_id
@@ -67,12 +70,10 @@ local.properties
 .env
 .env.local
 .env.*
+!.env.example
 
 # Project specific
 coverage/
 
 # Build tools (binaries, not source)
 tools/**/*.jar
-
-# Claude local configuration
-.claude/

@@ -10,5 +10,5 @@ Map<String, dynamic> _$CatalogSearchInputDtoToJson(
   CatalogSearchInputDto instance,
 ) => <String, dynamic>{
   'query': instance.query,
-  if (instance.language != null) 'language': instance.language,
+  if (instance.language case final value?) 'language': value,
 };

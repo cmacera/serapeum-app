@@ -8,7 +8,6 @@ class AuthService {
   AuthService._internal();
 
   /// Checks if there's an existing session, and if not, signs in anonymously.
-  /// Returns the session if successful.
   Future<void> signInAnonymously() async {
     final session = Supabase.instance.client.auth.currentSession;
 

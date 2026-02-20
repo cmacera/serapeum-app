@@ -152,7 +152,7 @@ components:
         source:
           type: string
           enum:
-            - movies
+            - media
             - books
             - games
         message:
@@ -163,7 +163,7 @@ components:
     SearchAllResponse:
       type: object
       properties:
-        movies:
+        media:
           type: array
           maxItems: 100
           items:
@@ -184,7 +184,7 @@ components:
           items:
             $ref: "#/components/schemas/SearchError"
       required:
-        - movies
+        - media
         - books
         - games
     BooksResponse:
@@ -222,6 +222,23 @@ components:
           type: string
       required:
         - error
+    ArrayResponseEnvelope:
+      type: object
+      properties:
+        response_type:
+          type: string
+          enum:
+            - books
+            - media
+            - games
+        results:
+          type: array
+          items:
+            type: object
+            description: Polymorphic items (Books, Media, or Games)
+      required:
+        - response_type
+        - results
     OrchestratorResponse:
       description: |-
         The orchestrator response is polymorphic. Clients must dispatch on the
@@ -231,9 +248,8 @@ components:
            fallback text reply — render it directly.
         2. If the object contains a `text` key and a `data` key, it is a
            `GeneralDiscoveryResponse` (AI summary + structured results).
-        3. If the object is an array, inspect the `media_type` of the first
-           element: `"movie"` / `"tv"` → `MediaResponse`; no `media_type` key
-           → check for `id` type: string → `BooksResponse`, integer → `GamesResponse`.
+        3. If the object contains a `response_type` key, it is an
+           `ArrayResponseEnvelope`.
         4. An object with an `error` key is an `ErrorResponse`.
 
         Note: The `type: string` branch in the anyOf is intentional — the backend
@@ -244,9 +260,7 @@ components:
         - type: string
           description: Plain text response (out-of-scope or fallback)
         - $ref: "#/components/schemas/GeneralDiscoveryResponse"
-        - $ref: "#/components/schemas/BooksResponse"
-        - $ref: "#/components/schemas/MediaResponse"
-        - $ref: "#/components/schemas/GamesResponse"
+        - $ref: "#/components/schemas/ArrayResponseEnvelope"
         - $ref: "#/components/schemas/ErrorResponse"
     CatalogSearchInput:
       type: object
@@ -254,6 +268,7 @@ components:
         query:
           type: string
           minLength: 1
+          maxLength: 500
           description: Search query string
           example: Dune
         language:

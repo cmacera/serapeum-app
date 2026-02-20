@@ -9,7 +9,7 @@ part of 'search_all_response_dto.dart';
 SearchAllResponseDto _$SearchAllResponseDtoFromJson(
   Map<String, dynamic> json,
 ) => SearchAllResponseDto(
-  movies: (json['movies'] as List<dynamic>)
+  media: (json['media'] as List<dynamic>)
       .map((e) => MediaDto.fromJson(e as Map<String, dynamic>))
       .toList(),
   books: (json['books'] as List<dynamic>)
@@ -26,7 +26,7 @@ SearchAllResponseDto _$SearchAllResponseDtoFromJson(
 Map<String, dynamic> _$SearchAllResponseDtoToJson(
   SearchAllResponseDto instance,
 ) => <String, dynamic>{
-  'movies': instance.movies.map((e) => e.toJson()).toList(),
+  'media': instance.media.map((e) => e.toJson()).toList(),
   'books': instance.books.map((e) => e.toJson()).toList(),
   'games': instance.games.map((e) => e.toJson()).toList(),
   'errors': instance.errors?.map((e) => e.toJson()).toList(),

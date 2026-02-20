@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:serapeum_app/features/discovery/domain/entities/book.dart';
 
 part 'book_dto.g.dart';
 
@@ -36,6 +37,28 @@ class BookDto {
       _$BookDtoFromJson(json);
 
   Map<String, dynamic> toJson() => _$BookDtoToJson(this);
+
+  Book toDomain() => Book(
+    id: id,
+    title: title,
+    authors: authors,
+    publisher: publisher,
+    publishedDate: publishedDate,
+    description: description,
+    isbn: isbn,
+    pageCount: pageCount,
+    categories: categories,
+    imageLinks: imageLinks != null
+        ? {
+            if (imageLinks!.thumbnail != null)
+              'thumbnail': imageLinks!.thumbnail!,
+            if (imageLinks!.smallThumbnail != null)
+              'smallThumbnail': imageLinks!.smallThumbnail!,
+          }
+        : null,
+    language: language,
+    previewLink: previewLink,
+  );
 }
 
 @JsonSerializable()

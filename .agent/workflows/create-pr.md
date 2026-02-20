@@ -25,7 +25,6 @@ This workflow outlines the mandatory steps to prepare and submit a Pull Request 
 
 Before opening a PR, run the following commands locally:
 
-// turbo
 ```bash
 # 1. Update generated code (if models or providers changed)
 dart run build_runner build --delete-conflicting-outputs
