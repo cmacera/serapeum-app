@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
 
 part 'media_dto.g.dart';
 
@@ -40,4 +41,16 @@ class MediaDto {
       _$MediaDtoFromJson(json);
 
   Map<String, dynamic> toJson() => _$MediaDtoToJson(this);
+
+  Media toDomain() => Media(
+    id: id,
+    title: title,
+    name: name,
+    mediaType: mediaType,
+    releaseDate: releaseDate,
+    posterPath: posterPath,
+    overview: overview,
+    voteAverage: voteAverage,
+    popularity: popularity,
+  );
 }

@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:serapeum_app/core/auth/auth_provider.dart';
 import 'package:serapeum_app/core/constants/api_constants.dart';
 import 'package:serapeum_app/core/env/env.dart';
+import 'package:serapeum_app/core/network/auth_interceptor.dart';
 
 /// Riverpod provider for the configured [Dio] singleton.
 ///
@@ -18,6 +20,8 @@ final dioProvider = Provider<Dio>((ref) {
       contentType: ApiConstants.contentTypeJson,
     ),
   );
+
+  dio.interceptors.add(AuthInterceptor(ref.watch(authServiceProvider)));
 
   if (kDebugMode) {
     // Only log headers/URLs/status — not request or response bodies,

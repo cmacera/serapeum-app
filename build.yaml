@@ -4,4 +4,4 @@ targets:
       realm_generator:
         enabled: false
       realm|realm_generator:
-        enabled: true
+        enabled: false

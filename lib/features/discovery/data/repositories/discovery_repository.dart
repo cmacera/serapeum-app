@@ -6,6 +6,10 @@ import 'package:serapeum_app/features/discovery/data/models/catalog_search_input
 import 'package:serapeum_app/features/discovery/data/models/game_dto.dart';
 import 'package:serapeum_app/features/discovery/data/models/media_dto.dart';
 import 'package:serapeum_app/features/discovery/data/models/search_all_response_dto.dart';
+import 'package:serapeum_app/features/discovery/domain/entities/book.dart';
+import 'package:serapeum_app/features/discovery/domain/entities/game.dart';
+import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
+import 'package:serapeum_app/features/discovery/domain/entities/search_all_response.dart';
 import 'package:serapeum_app/features/discovery/domain/repositories/i_discovery_repository.dart';
 
 /// Concrete implementation of [IDiscoveryRepository] using Dio.
@@ -14,81 +18,79 @@ class DiscoveryRepository implements IDiscoveryRepository {
 
   const DiscoveryRepository(this._dio);
 
-  @override
-  Future<SearchAllResponseDto> searchAll(
-    String query, {
+  Future<T> _post<T>(
+    String path,
+    String query,
     String? language,
-  }) async {
+    T Function(dynamic data) converter,
+  ) async {
     try {
-      final response = await _dio.post<Map<String, dynamic>>(
+      final response = await _dio.post<dynamic>(
+        path,
+        data: CatalogSearchInputDto(query: query, language: language).toJson(),
+      );
+      if (response.data == null) {
+        throw const UnknownFailure('Empty or null response from server');
+      }
+      return converter(response.data!);
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    } catch (e) {
+      if (e is Failure) rethrow;
+      throw UnknownFailure(e.toString());
+    }
+  }
+
+  @override
+  Future<SearchAllResponse> searchAll(String query, {String? language}) =>
+      _post<SearchAllResponse>(
         ApiConstants.searchAll,
-        data: CatalogSearchInputDto(query: query, language: language).toJson(),
+        query,
+        language,
+        (data) => SearchAllResponseDto.fromJson(
+          data as Map<String, dynamic>,
+        ).toDomain(),
       );
-      return SearchAllResponseDto.fromJson(response.data!);
-    } on DioException catch (e) {
-      throw _mapDioError(e);
-    } catch (e) {
-      throw UnknownFailure(e.toString());
-    }
-  }
 
   @override
-  Future<List<BookDto>> searchBooks(String query, {String? language}) async {
-    try {
-      final response = await _dio.post<List<dynamic>>(
+  Future<List<Book>> searchBooks(String query, {String? language}) =>
+      _post<List<Book>>(
         ApiConstants.searchBooks,
-        data: CatalogSearchInputDto(query: query, language: language).toJson(),
+        query,
+        language,
+        (data) => (data as List<dynamic>)
+            .map((e) => BookDto.fromJson(e as Map<String, dynamic>).toDomain())
+            .toList(),
       );
-      return response.data!
-          .map((e) => BookDto.fromJson(e as Map<String, dynamic>))
-          .toList();
-    } on DioException catch (e) {
-      throw _mapDioError(e);
-    } catch (e) {
-      throw UnknownFailure(e.toString());
-    }
-  }
 
   @override
-  Future<List<MediaDto>> searchMedia(String query, {String? language}) async {
-    try {
-      final response = await _dio.post<List<dynamic>>(
+  Future<List<Media>> searchMedia(String query, {String? language}) =>
+      _post<List<Media>>(
         ApiConstants.searchMedia,
-        data: CatalogSearchInputDto(query: query, language: language).toJson(),
+        query,
+        language,
+        (data) => (data as List<dynamic>)
+            .map((e) => MediaDto.fromJson(e as Map<String, dynamic>).toDomain())
+            .toList(),
       );
-      return response.data!
-          .map((e) => MediaDto.fromJson(e as Map<String, dynamic>))
-          .toList();
-    } on DioException catch (e) {
-      throw _mapDioError(e);
-    } catch (e) {
-      throw UnknownFailure(e.toString());
-    }
-  }
 
   @override
-  Future<List<GameDto>> searchGames(String query, {String? language}) async {
-    try {
-      final response = await _dio.post<List<dynamic>>(
+  Future<List<Game>> searchGames(String query, {String? language}) =>
+      _post<List<Game>>(
         ApiConstants.searchGames,
-        data: CatalogSearchInputDto(query: query, language: language).toJson(),
+        query,
+        language,
+        (data) => (data as List<dynamic>)
+            .map((e) => GameDto.fromJson(e as Map<String, dynamic>).toDomain())
+            .toList(),
       );
-      return response.data!
-          .map((e) => GameDto.fromJson(e as Map<String, dynamic>))
-          .toList();
-    } on DioException catch (e) {
-      throw _mapDioError(e);
-    } catch (e) {
-      throw UnknownFailure(e.toString());
-    }
-  }
 
   Failure _mapDioError(DioException e) {
     return switch (e.type) {
-      DioExceptionType.connectionError ||
+      DioExceptionType.connectionError => const NetworkFailure(),
       DioExceptionType.connectionTimeout ||
       DioExceptionType.sendTimeout ||
-      DioExceptionType.receiveTimeout => const NetworkFailure(),
+      DioExceptionType.receiveTimeout => const TimeoutFailure(),
       DioExceptionType.badResponse => ServerFailure(
         statusCode: e.response?.statusCode ?? 0,
         message: e.response?.statusMessage,

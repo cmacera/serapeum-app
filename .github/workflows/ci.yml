@@ -31,7 +31,7 @@ jobs:
         run: flutter test
 
   build-check:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
     runs-on: macos-latest
     needs: test
     steps:

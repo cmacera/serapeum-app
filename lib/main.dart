@@ -1,7 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:serapeum_app/core/auth/splash_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+
+  assert(
+    supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty,
+    'SUPABASE_URL and SUPABASE_ANON_KEY must be defined via --dart-define',
+  );
+
+  // Initialize Supabase
+  await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+
+  // Initialize authentication
+  await SplashService.initialize();
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
