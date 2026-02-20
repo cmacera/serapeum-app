@@ -73,3 +73,6 @@ coverage/
 
 # Build tools (binaries, not source)
 tools/**/*.jar
+
+# Claude local configuration
+.claude/
