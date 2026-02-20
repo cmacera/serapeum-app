@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:serapeum_app/core/auth/splash_service.dart';
+import 'features/discovery/presentation/screens/discover_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,10 +31,17 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Serapeum App',
-      theme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.blue),
-      home: const Scaffold(
-        body: Center(child: Text('Serapeum App Initialized')),
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.deepPurple,
+        // Match Stitch customColor
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF930DF2),
+          brightness: Brightness.dark,
+        ),
+        fontFamily: 'Space Grotesk', // The font from the Stitch project
       ),
+      home: const DiscoverScreen(),
     );
   }
 }
