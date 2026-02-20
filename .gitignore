@@ -75,5 +75,15 @@ local.properties
 # Project specific
 coverage/
 
+# Proguard
+/android/app/proguard-rules.pro
+
+# Generated files
+*.g.dart
+*.freezed.dart
+
+# Husky
+.husky/_
+
 # Build tools (binaries, not source)
 tools/**/*.jar

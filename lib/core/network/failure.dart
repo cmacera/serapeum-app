@@ -6,7 +6,6 @@ sealed class Failure {
 /// No internet connection or DNS resolution failure.
 final class NetworkFailure extends Failure {
   const NetworkFailure();
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -45,7 +44,6 @@ final class ServerFailure extends Failure {
 /// A network request timed out (connect, send, or receive).
 final class TimeoutFailure extends Failure {
   const TimeoutFailure();
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

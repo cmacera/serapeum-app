@@ -16,6 +16,7 @@ class GameDto {
   final List<String>? genres;
   final List<String>? developers;
   final List<String>? publishers;
+
   final int? gameType;
 
   const GameDto({
