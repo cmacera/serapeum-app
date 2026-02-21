@@ -233,6 +233,7 @@ components:
             - games
         results:
           type: array
+          maxItems: 100
           items:
             type: object
             description: Polymorphic items (Books, Media, or Games)
