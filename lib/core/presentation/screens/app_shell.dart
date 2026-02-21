@@ -103,9 +103,7 @@ class AppShell extends StatelessWidget {
                     );
                   },
                   labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-                  indicatorColor: const Color(
-                    0xFF930DF2,
-                  ).withValues(alpha: 0.2),
+                  indicatorColor: Colors.transparent, // Removed overlay
                   destinations: const [
                     NavigationDestination(
                       icon: Icon(Icons.library_books_outlined),
@@ -116,9 +114,9 @@ class AppShell extends StatelessWidget {
                       label: 'Library',
                     ),
                     NavigationDestination(
-                      icon: Icon(Icons.explore_outlined),
+                      icon: Icon(Icons.auto_awesome_outlined),
                       selectedIcon: Icon(
-                        Icons.explore,
+                        Icons.auto_awesome,
                         color: Color(0xFF930DF2),
                       ),
                       label: 'Discover',

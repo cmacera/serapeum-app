@@ -43,28 +43,90 @@ class DiscoverScreen extends ConsumerWidget {
                     itemCount: history.length,
                     itemBuilder: (context, index) {
                       final item = history[index];
-                      return ListTile(
-                        leading: const Icon(Icons.history),
-                        title: Text(item.query),
-                        onTap: () {
-                          // Allow re-running a previous query
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            useRootNavigator: true,
-                            useSafeArea: true,
-                            backgroundColor: Theme.of(
-                              context,
-                            ).scaffoldBackgroundColor,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(24.0),
+                      final timeString =
+                          '${item.timestamp.hour.toString().padLeft(2, '0')}:${item.timestamp.minute.toString().padLeft(2, '0')}';
+                      final dateString =
+                          '${item.timestamp.day}/${item.timestamp.month}/${item.timestamp.year}';
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            // Allow re-running a previous query
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              useRootNavigator: true,
+                              useSafeArea: true,
+                              backgroundColor: Theme.of(
+                                context,
+                              ).scaffoldBackgroundColor,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(24.0),
+                                ),
+                              ),
+                              builder: (context) =>
+                                  DiscoverResultScreen(query: item.query),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: const Color(
+                                  0xFF930DF2,
+                                ).withValues(alpha: 0.3),
+                                width: 1,
                               ),
                             ),
-                            builder: (context) =>
-                                DiscoverResultScreen(query: item.query),
-                          );
-                        },
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.query,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          height: 1.3,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        '$dateString • $timeString',
+                                        style: TextStyle(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.5,
+                                          ),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 2.0, left: 8.0),
+                                  child: Icon(
+                                    Icons.chevron_right,
+                                    color: Colors.grey,
+                                    size: 20,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -127,7 +189,7 @@ class DiscoverScreen extends ConsumerWidget {
                       ),
                       child: IconButton(
                         icon: const Icon(
-                          Icons.auto_awesome,
+                          Icons.arrow_upward_rounded, // Sleek send action
                           color: Colors.white,
                           size: 20,
                         ),
