@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/ui_constants.dart';
 import 'package:serapeum_app/core/presentation/widgets/particle_background.dart';
 
 class AppShell extends StatelessWidget {
@@ -15,13 +16,13 @@ class AppShell extends StatelessWidget {
     String subtitle = '';
     switch (navigationShell.currentIndex) {
       case 0:
-        subtitle = 'Library';
+        subtitle = UiConstants.myLibraryTitle;
         break;
       case 1:
-        subtitle = 'Discover';
+        subtitle = UiConstants.discoverTitle;
         break;
       case 2:
-        subtitle = 'Control Center';
+        subtitle = UiConstants.controlCenterTitle;
         break;
     }
 
@@ -46,7 +47,7 @@ class AppShell extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'SERAPEUM',
+                UiConstants.appName,
                 style: GoogleFonts.cinzel(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -110,7 +111,7 @@ class AppShell extends StatelessWidget {
                       icon: Icon(Icons.library_books_outlined),
                       selectedIcon: Icon(
                         Icons.library_books,
-                        color: Color(0xFF930DF2),
+                        color: AppColors.accent,
                       ),
                       label: 'Library',
                     ),
@@ -118,7 +119,7 @@ class AppShell extends StatelessWidget {
                       icon: Icon(Icons.auto_awesome_outlined),
                       selectedIcon: Icon(
                         Icons.auto_awesome,
-                        color: Color(0xFF930DF2),
+                        color: AppColors.accent,
                       ),
                       label: 'Discover',
                     ),
@@ -126,7 +127,7 @@ class AppShell extends StatelessWidget {
                       icon: Icon(Icons.settings_outlined),
                       selectedIcon: Icon(
                         Icons.settings,
-                        color: Color(0xFF930DF2),
+                        color: AppColors.accent,
                       ),
                       label: 'Control Center',
                     ),

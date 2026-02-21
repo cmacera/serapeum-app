@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'discover_result_screen.dart';
 import '../providers/discover_history_provider.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/ui_constants.dart';
 
 class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({super.key});
@@ -26,6 +28,20 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     super.dispose();
   }
 
+  void _openResultSheet(String query) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      useSafeArea: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
+      ),
+      builder: (context) => DiscoverResultScreen(query: query),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final history = ref.watch(discoverHistoryProvider);
@@ -38,17 +54,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       _textController.clear();
 
       // Navigate to result screen as a modal bottom sheet
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        useRootNavigator: true,
-        useSafeArea: true,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
-        ),
-        builder: (context) => DiscoverResultScreen(query: query.trim()),
-      );
+      _openResultSheet(query.trim());
     }
 
     return Scaffold(
@@ -62,10 +68,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                     itemCount: history.length,
                     itemBuilder: (context, index) {
                       final item = history[index];
-                      final timeString =
-                          '${item.timestamp.hour.toString().padLeft(2, '0')}:${item.timestamp.minute.toString().padLeft(2, '0')}';
-                      final dateString =
-                          '${item.timestamp.day}/${item.timestamp.month}/${item.timestamp.year}';
+                      final formattedDate = DateFormat(
+                        'd/M/y • HH:mm',
+                      ).format(item.timestamp);
 
                       return Padding(
                         padding: const EdgeInsets.symmetric(
@@ -75,22 +80,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                         child: InkWell(
                           onTap: () {
                             // Allow re-running a previous query
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              useRootNavigator: true,
-                              useSafeArea: true,
-                              backgroundColor: Theme.of(
-                                context,
-                              ).scaffoldBackgroundColor,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(24.0),
-                                ),
-                              ),
-                              builder: (context) =>
-                                  DiscoverResultScreen(query: item.query),
-                            );
+                            _openResultSheet(item.query);
                           },
                           borderRadius: BorderRadius.circular(16),
                           child: Ink(
@@ -121,7 +111,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                                       ),
                                       const SizedBox(height: 6),
                                       Text(
-                                        '$dateString • $timeString',
+                                        formattedDate,
                                         style: TextStyle(
                                           color: Colors.white.withValues(
                                             alpha: 0.5,
@@ -155,7 +145,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 left: 16.0,
                 right: 16.0,
                 top: 16.0,
-                bottom: 16.0 + 80.0 + MediaQuery.of(context).padding.bottom,
+                bottom:
+                    16.0 +
+                    UiConstants.navBarClearance +
+                    MediaQuery.of(context).padding.bottom,
               ),
               child: Container(
                 decoration: BoxDecoration(
@@ -185,7 +178,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                           fontSize: 16,
                         ),
                         decoration: const InputDecoration(
-                          hintText: 'Ask the Oracle anything...',
+                          hintText: UiConstants.askOracleHint,
                           hintStyle: TextStyle(
                             color: Colors.grey,
                             fontSize: 16,
@@ -215,7 +208,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                           size: 20,
                         ),
                         onPressed: () => submitSearch(_textController.text),
-                        tooltip: 'Ask Oracle',
+                        tooltip: UiConstants.askOracleTooltip,
                       ),
                     ),
                   ],

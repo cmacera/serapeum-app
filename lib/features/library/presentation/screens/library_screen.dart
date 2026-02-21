@@ -11,7 +11,9 @@ class LibraryScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).padding.bottom + 80.0,
+          bottom:
+              MediaQuery.of(context).padding.bottom +
+              UiConstants.navBarClearance,
         ),
         child: Center(
           child: Text(

@@ -17,5 +17,5 @@ abstract class ApiConstants {
   static const String contentTypeJson = 'application/json';
 
   // Images
-  static const String kTmdbImageBaseUrl = 'https://image.tmdb.org/t/p/w500';
+  static const String tmdbImageBaseUrl = 'https://image.tmdb.org/t/p/w500';
 }

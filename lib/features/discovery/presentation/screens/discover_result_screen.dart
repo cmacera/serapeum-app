@@ -90,7 +90,7 @@ class DiscoverResultScreen extends ConsumerWidget {
                               .toUpperCase(), // basic formatting
                           description: media.overview,
                           imageUrl: media.posterPath != null
-                              ? '${ApiConstants.kTmdbImageBaseUrl}${media.posterPath}'
+                              ? '${ApiConstants.tmdbImageBaseUrl}${media.posterPath}'
                               : null,
                         ),
                       ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:serapeum_app/core/auth/splash_service.dart';
 import 'core/router/app_router.dart';
+import 'core/constants/app_colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +39,7 @@ class MyApp extends ConsumerWidget {
         brightness: Brightness.dark,
         // Match Stitch customColor
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF930DF2),
+          seedColor: AppColors.accent,
           brightness: Brightness.dark,
         ),
         fontFamily: 'Space Grotesk', // The font from the Stitch project
