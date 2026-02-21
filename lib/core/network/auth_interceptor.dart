@@ -9,12 +9,17 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // Only add authorization header for requests to the API base URL
-    // This is a simplified approach - in a real implementation, we'd need to
-    // make this async or have a way to get the token synchronously
-    final token = _authService.getAccessToken();
-    if (token != null) {
-      options.headers['Authorization'] = 'Bearer $token';
+    // Determine if request targets our backend
+    final isSerapeumApi =
+        options.uri.host.contains('serapeum.app') ||
+        options.uri.host.contains('localhost') ||
+        options.uri.host.contains('10.0.2.2');
+
+    if (isSerapeumApi) {
+      final token = _authService.getAccessToken();
+      if (token != null) {
+        options.headers['Authorization'] = 'Bearer $token';
+      }
     }
 
     super.onRequest(options, handler);

@@ -10,10 +10,11 @@ void main() async {
   const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
   const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
-  assert(
-    supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty,
-    'SUPABASE_URL and SUPABASE_ANON_KEY must be defined via --dart-define',
-  );
+  if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
+    throw StateError(
+      'SUPABASE_URL and SUPABASE_ANON_KEY must be defined via --dart-define and cannot be empty.',
+    );
+  }
 
   // Initialize Supabase
   await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
@@ -35,7 +36,6 @@ class MyApp extends ConsumerWidget {
       title: 'Serapeum App',
       theme: ThemeData(
         brightness: Brightness.dark,
-        primarySwatch: Colors.deepPurple,
         // Match Stitch customColor
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF930DF2),

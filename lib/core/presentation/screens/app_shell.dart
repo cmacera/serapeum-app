@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/constants/app_colors.dart';
 import 'package:serapeum_app/core/presentation/widgets/particle_background.dart';
 
 class AppShell extends StatelessWidget {
@@ -56,7 +57,7 @@ class AppShell extends StatelessWidget {
               Text(
                 subtitle,
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF930DF2),
+                  color: AppColors.accent,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),

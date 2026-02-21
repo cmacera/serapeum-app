@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/discover_query_provider.dart';
 import '../widgets/chat_message_bubble.dart';
 import '../widgets/media_result_card.dart';
+import '../../../../core/constants/api_constants.dart';
 
 class DiscoverResultScreen extends ConsumerWidget {
   final String query;
@@ -89,7 +90,7 @@ class DiscoverResultScreen extends ConsumerWidget {
                               .toUpperCase(), // basic formatting
                           description: media.overview,
                           imageUrl: media.posterPath != null
-                              ? 'https://image.tmdb.org/t/p/w500${media.posterPath}'
+                              ? '${ApiConstants.kTmdbImageBaseUrl}${media.posterPath}'
                               : null,
                         ),
                       ),

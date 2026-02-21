@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/ui_constants.dart';
+
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -7,10 +9,15 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Center(
-        child: Text(
-          'Control Center',
-          style: TextStyle(color: Colors.grey.shade400, fontSize: 18),
+      body: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom + 80.0,
+        ),
+        child: Center(
+          child: Text(
+            UiConstants.controlCenterTitle,
+            style: TextStyle(color: Colors.grey.shade400, fontSize: 18),
+          ),
         ),
       ),
     );

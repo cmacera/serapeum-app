@@ -25,22 +25,22 @@ class MediaResultCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Thumbnail
-            Container(
-              width: 80,
-              height: 120,
-              decoration: BoxDecoration(
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                width: 80,
+                height: 120,
                 color: Colors.grey.shade800,
-                borderRadius: BorderRadius.circular(8),
-                image: imageUrl != null && imageUrl!.isNotEmpty
-                    ? DecorationImage(
-                        image: NetworkImage(imageUrl!),
+                child: imageUrl != null && imageUrl!.isNotEmpty
+                    ? Image.network(
+                        imageUrl!,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.image, color: Colors.grey);
+                        },
                       )
-                    : null,
+                    : const Icon(Icons.image, color: Colors.grey),
               ),
-              child: imageUrl == null || imageUrl!.isEmpty
-                  ? const Icon(Icons.image, color: Colors.grey)
-                  : null,
             ),
             const SizedBox(width: 16),
             // Details

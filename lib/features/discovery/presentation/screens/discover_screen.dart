@@ -2,21 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'discover_result_screen.dart';
 import '../providers/discover_history_provider.dart';
+import '../../../../core/constants/app_colors.dart';
 
-class DiscoverScreen extends ConsumerWidget {
+class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DiscoverScreen> createState() => _DiscoverScreenState();
+}
+
+class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
+  late final TextEditingController _textController;
+
+  @override
+  void initState() {
+    super.initState();
+    _textController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final history = ref.watch(discoverHistoryProvider);
-    final textController = TextEditingController();
 
     void submitSearch(String query) {
       if (query.trim().isEmpty) return;
 
       // Save query to history
       ref.read(discoverHistoryProvider.notifier).addQuery(query.trim());
-      textController.clear();
+      _textController.clear();
 
       // Navigate to result screen as a modal bottom sheet
       showModalBottomSheet(
@@ -79,9 +98,7 @@ class DiscoverScreen extends ConsumerWidget {
                               color: Colors.white.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: const Color(
-                                  0xFF930DF2,
-                                ).withValues(alpha: 0.3),
+                                color: AppColors.accent.withValues(alpha: 0.3),
                                 width: 1,
                               ),
                             ),
@@ -132,8 +149,14 @@ class DiscoverScreen extends ConsumerWidget {
                   ),
           ),
           SafeArea(
+            bottom: false,
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
+                top: 16.0,
+                bottom: 16.0 + 80.0 + MediaQuery.of(context).padding.bottom,
+              ),
               child: Container(
                 decoration: BoxDecoration(
                   color: const Color(
@@ -154,7 +177,7 @@ class DiscoverScreen extends ConsumerWidget {
                     const SizedBox(width: 16),
                     Expanded(
                       child: TextField(
-                        controller: textController,
+                        controller: _textController,
                         textInputAction: TextInputAction.send,
                         onSubmitted: submitSearch,
                         style: const TextStyle(
@@ -176,12 +199,10 @@ class DiscoverScreen extends ConsumerWidget {
                     Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFF930DF2),
+                        color: AppColors.accent,
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(
-                              0xFF930DF2,
-                            ).withValues(alpha: 0.5),
+                            color: AppColors.accent.withValues(alpha: 0.5),
                             blurRadius: 10,
                             spreadRadius: 2,
                           ),
@@ -193,7 +214,7 @@ class DiscoverScreen extends ConsumerWidget {
                           color: Colors.white,
                           size: 20,
                         ),
-                        onPressed: () => submitSearch(textController.text),
+                        onPressed: () => submitSearch(_textController.text),
                         tooltip: 'Ask Oracle',
                       ),
                     ),

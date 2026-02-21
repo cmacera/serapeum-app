@@ -11,7 +11,7 @@ class DiscoverHistoryItem {
   DiscoverHistoryItem({required this.query, required this.timestamp});
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class DiscoverHistory extends _$DiscoverHistory {
   @override
   List<DiscoverHistoryItem> build() {
