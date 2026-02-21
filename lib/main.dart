@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:serapeum_app/core/auth/splash_service.dart';
-import 'features/discovery/presentation/screens/discover_screen.dart';
+import 'core/router/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +29,9 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(
+    final router = ref.watch(appRouterProvider);
+
+    return MaterialApp.router(
       title: 'Serapeum App',
       theme: ThemeData(
         brightness: Brightness.dark,
@@ -41,7 +43,7 @@ class MyApp extends ConsumerWidget {
         ),
         fontFamily: 'Space Grotesk', // The font from the Stitch project
       ),
-      home: const DiscoverScreen(),
+      routerConfig: router,
     );
   }
 }

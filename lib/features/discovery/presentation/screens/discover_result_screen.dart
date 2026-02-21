@@ -14,9 +14,35 @@ class DiscoverResultScreen extends ConsumerWidget {
     final responseAsync = ref.watch(discoverQueryProvider(query));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Result'), centerTitle: true),
+      backgroundColor: Colors.transparent,
       body: Column(
         children: [
+          // Sheet Header (Drag Handle & Close Button)
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(width: 48), // Balance for centering
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+          ),
+
           // User's Query Bubble
           ChatMessageBubble(text: query, isUser: true),
 

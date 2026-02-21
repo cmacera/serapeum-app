@@ -18,45 +18,27 @@ class DiscoverScreen extends ConsumerWidget {
       ref.read(discoverHistoryProvider.notifier).addQuery(query.trim());
       textController.clear();
 
-      // Navigate to result screen
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => DiscoverResultScreen(query: query.trim()),
+      // Navigate to result screen as a modal bottom sheet
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        useRootNavigator: true,
+        useSafeArea: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
         ),
+        builder: (context) => DiscoverResultScreen(query: query.trim()),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'SERAPEUM',
-              style: TextStyle(
-                fontSize: 12,
-                letterSpacing: 2.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              'The Oracle',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.normal),
-            ),
-          ],
-        ),
-        centerTitle: false,
-      ),
+      backgroundColor: Colors.transparent,
       body: Column(
         children: [
           Expanded(
             child: history.isEmpty
-                ? const Center(
-                    child: Text(
-                      'Ask The Oracle to discover new media.',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  )
+                ? const SizedBox.shrink()
                 : ListView.builder(
                     itemCount: history.length,
                     itemBuilder: (context, index) {
@@ -66,11 +48,21 @@ class DiscoverScreen extends ConsumerWidget {
                         title: Text(item.query),
                         onTap: () {
                           // Allow re-running a previous query
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  DiscoverResultScreen(query: item.query),
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            useRootNavigator: true,
+                            useSafeArea: true,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).scaffoldBackgroundColor,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(24.0),
+                              ),
                             ),
+                            builder: (context) =>
+                                DiscoverResultScreen(query: item.query),
                           );
                         },
                       );
@@ -82,41 +74,72 @@ class DiscoverScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(16.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(24.0),
-                ),
-                child: TextField(
-                  controller: textController,
-                  textInputAction: TextInputAction.search,
-                  onSubmitted: submitSearch,
-                  decoration: InputDecoration(
-                    hintText: 'Search or ask...',
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                      vertical: 14.0,
-                    ),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.send),
-                      onPressed: () => submitSearch(textController.text),
-                    ),
+                  color: const Color(
+                    0xFF1E1E1E,
+                  ).withValues(alpha: 0.8), // Dark highlighted capsule
+                  borderRadius: BorderRadius.circular(32.0),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    width: 1,
                   ),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 4.0,
+                ),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: TextField(
+                        controller: textController,
+                        textInputAction: TextInputAction.send,
+                        onSubmitted: submitSearch,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                        decoration: const InputDecoration(
+                          hintText: 'Ask the Oracle anything...',
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16,
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xFF930DF2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(
+                              0xFF930DF2,
+                            ).withValues(alpha: 0.5),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.auto_awesome,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        onPressed: () => submitSearch(textController.text),
+                        tooltip: 'Ask Oracle',
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-        ],
-      ),
-      // Use a consistent app-level nav bar later, but scaffolded here based on Stitch design
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1, // Focus on 'explore'
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_books),
-            label: 'Library',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Discover'),
-          BottomNavigationBarItem(icon: Icon(Icons.widgets), label: 'Widgets'),
         ],
       ),
     );
