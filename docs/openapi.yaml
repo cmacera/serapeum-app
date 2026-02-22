@@ -243,6 +243,7 @@ components:
         - response_type
         - results
       if:
+        required: [response_type]
         properties:
           response_type:
             const: books
@@ -253,6 +254,7 @@ components:
               $ref: "#/components/schemas/Book"
       else:
         if:
+          required: [response_type]
           properties:
             response_type:
               const: media
@@ -263,6 +265,7 @@ components:
                 $ref: "#/components/schemas/Media"
         else:
           if:
+            required: [response_type]
             properties:
               response_type:
                 const: games
@@ -290,7 +293,6 @@ components:
         falling back to treating the response as a plain string.
       anyOf:
         - type: string
-          description: Plain text response (out-of-scope or fallback)
         - $ref: "#/components/schemas/GeneralDiscoveryResponse"
         - $ref: "#/components/schemas/ArrayResponseEnvelope"
         - $ref: "#/components/schemas/ErrorResponse"

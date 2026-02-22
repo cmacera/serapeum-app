@@ -20,6 +20,7 @@ class _OrchestratorResponseKeys {
   static const String books = 'books';
   static const String games = 'games';
   static const String errors = 'errors';
+  static const String error = 'error';
 }
 
 /// Concrete implementation of [IDiscoveryRepository] using Dio.
@@ -38,11 +39,20 @@ class DiscoveryRepository implements IDiscoveryRepository {
         path,
         data: {_OrchestratorResponseKeys.data: dataPayload},
       );
-      if (response.data == null ||
-          response.data![_OrchestratorResponseKeys.result] == null) {
-        throw const UnknownFailure('Empty or null response from server');
+
+      final responseData = response.data;
+      if (responseData is! Map<String, dynamic>) {
+        throw UnknownFailure(
+          'Unexpected response format: expected Map, got ${responseData.runtimeType}',
+        );
       }
-      return converter(response.data![_OrchestratorResponseKeys.result]);
+
+      final result = responseData[_OrchestratorResponseKeys.result];
+      if (result == null) {
+        throw const UnknownFailure('Empty or null results from server');
+      }
+
+      return converter(result);
     } on DioException catch (e) {
       throw _mapDioError(e);
     } catch (e) {
@@ -63,9 +73,12 @@ class DiscoveryRepository implements IDiscoveryRepository {
         throw UnknownFailure(data);
       }
       if (data is Map<String, dynamic>) {
-        if (data.containsKey('error')) {
+        if (data.containsKey(_OrchestratorResponseKeys.error)) {
           // Safely convert to string and throw
-          throw UnknownFailure(data['error']?.toString() ?? 'Unknown AI Error');
+          throw UnknownFailure(
+            data[_OrchestratorResponseKeys.error]?.toString() ??
+                'Unknown AI Error',
+          );
         }
 
         // Extract the actual results mapping (handle GeneralDiscoveryResponse vs direct results)

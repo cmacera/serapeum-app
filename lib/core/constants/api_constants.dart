@@ -1,19 +1,20 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl =
-      'http://localhost:3000'; // Default, adjusted by env
+  static const String baseUrl = ''; // Set via environment or manual override
 
   // Timeouts
   static const Duration connectTimeout = Duration(seconds: 15);
-  static const Duration receiveTimeout = Duration(seconds: 90);
+  static const Duration receiveTimeout = Duration(seconds: 60);
   static const Duration sendTimeout = Duration(seconds: 30);
 
   // Formatting
   static const String contentTypeJson = 'application/json';
 
   // TMDB
-  static const String tmdbImageBaseUrl = 'https://image.tmdb.org/t/p/w500';
+  static const String tmdbImageBaseUrl = 'https://image.tmdb.org/t/p';
+  static const String tmdbImageTierW500 = '/w500';
+  static const String tmdbImageTierOriginal = '/original';
 
   // Hosts for AuthInterceptor
   static const String productionHost = 'serapeum.app';
