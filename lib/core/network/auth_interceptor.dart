@@ -10,10 +10,12 @@ class AuthInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     // Determine if request targets our backend
+    final host = options.uri.host;
     final isSerapeumApi =
-        options.uri.host.contains('serapeum.app') ||
-        options.uri.host.contains('localhost') ||
-        options.uri.host.contains('10.0.2.2');
+        host == 'serapeum.app' ||
+        host.endsWith('.serapeum.app') ||
+        host == 'localhost' ||
+        host == '10.0.2.2';
 
     if (isSerapeumApi) {
       final token = _authService.getAccessToken();

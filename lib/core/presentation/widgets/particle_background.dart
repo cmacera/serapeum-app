@@ -45,16 +45,16 @@ class _ParticleBackgroundState extends State<ParticleBackground>
     )..repeat();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initParticles(MediaQuery.of(context).size);
+      if (mounted) {
+        _initParticles(MediaQuery.of(context).size);
+      }
     });
 
     _accelerometerSubscription = accelerometerEventStream().listen(
       (AccelerometerEvent event) {
         if (mounted) {
-          setState(() {
-            _accelX = event.x;
-            _accelY = event.y;
-          });
+          _accelX = event.x;
+          _accelY = event.y;
         }
       },
       onError: (error) {

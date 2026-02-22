@@ -113,7 +113,7 @@ class AppShell extends StatelessWidget {
                         Icons.library_books,
                         color: AppColors.accent,
                       ),
-                      label: 'Library',
+                      label: UiConstants.myLibraryTitle,
                     ),
                     NavigationDestination(
                       icon: Icon(Icons.auto_awesome_outlined),
@@ -121,7 +121,7 @@ class AppShell extends StatelessWidget {
                         Icons.auto_awesome,
                         color: AppColors.accent,
                       ),
-                      label: 'Discover',
+                      label: UiConstants.discoverTitle,
                     ),
                     NavigationDestination(
                       icon: Icon(Icons.settings_outlined),
@@ -129,7 +129,7 @@ class AppShell extends StatelessWidget {
                         Icons.settings,
                         color: AppColors.accent,
                       ),
-                      label: 'Control Center',
+                      label: UiConstants.controlCenterTitle,
                     ),
                   ],
                 ),

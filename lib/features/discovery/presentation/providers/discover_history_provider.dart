@@ -20,10 +20,19 @@ class DiscoverHistory extends _$DiscoverHistory {
   }
 
   void addQuery(String query) {
-    state = [
-      DiscoverHistoryItem(query: query, timestamp: DateTime.now()),
-      ...state,
+    if (query.trim().isEmpty) return;
+
+    final normalizedQuery = query.trim();
+    final filteredHistory = state
+        .where((item) => item.query != normalizedQuery)
+        .toList();
+
+    final newHistory = [
+      DiscoverHistoryItem(query: normalizedQuery, timestamp: DateTime.now()),
+      ...filteredHistory,
     ];
+
+    state = newHistory.take(20).toList();
   }
 
   void clearHistory() {

@@ -235,8 +235,10 @@ components:
           type: array
           maxItems: 100
           items:
-            type: object
-            description: Polymorphic items (Books, Media, or Games)
+            anyOf:
+              - $ref: "#/components/schemas/Book"
+              - $ref: "#/components/schemas/Media"
+              - $ref: "#/components/schemas/Game"
       required:
         - response_type
         - results

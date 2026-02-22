@@ -46,7 +46,7 @@ class DiscoveryRepository implements IDiscoveryRepository {
     String? language,
   }) => _post<SearchAllResponse>(
     ApiConstants.orchestratorFlow,
-    query, // orchestratorFlow just takes the raw string query
+    CatalogSearchInputDto(query: query, language: language).toJson(),
     (data) {
       if (data is String) {
         throw UnknownFailure(data);

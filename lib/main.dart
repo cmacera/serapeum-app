@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:serapeum_app/core/auth/splash_service.dart';
 import 'core/router/app_router.dart';
 import 'core/constants/app_colors.dart';
+import 'core/constants/ui_constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +35,7 @@ class MyApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
-      title: 'Serapeum App',
+      title: UiConstants.appTitle,
       theme: ThemeData(
         brightness: Brightness.dark,
         // Match Stitch customColor
@@ -42,7 +43,7 @@ class MyApp extends ConsumerWidget {
           seedColor: AppColors.accent,
           brightness: Brightness.dark,
         ),
-        fontFamily: 'Space Grotesk', // The font from the Stitch project
+        fontFamily: UiConstants.fontFamily, // The font from the Stitch project
       ),
       routerConfig: router,
     );

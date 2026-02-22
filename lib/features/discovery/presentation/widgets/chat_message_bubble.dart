@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/constants/app_colors.dart';
 
 class ChatMessageBubble extends StatelessWidget {
   final String text;
@@ -21,7 +22,7 @@ class ChatMessageBubble extends StatelessWidget {
         children: [
           if (!isUser) ...[
             const CircleAvatar(
-              backgroundColor: Color(0xFF930DF2),
+              backgroundColor: AppColors.accent,
               child: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
             ),
             const SizedBox(width: 8),

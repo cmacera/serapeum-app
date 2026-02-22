@@ -5,6 +5,7 @@ import 'discover_result_screen.dart';
 import '../providers/discover_history_provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/ui_constants.dart';
+import '../../../../core/constants/layout_constants.dart';
 
 class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({super.key});
@@ -42,20 +43,20 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     );
   }
 
+  void submitSearch(String query) {
+    if (query.trim().isEmpty) return;
+
+    // Save query to history
+    ref.read(discoverHistoryProvider.notifier).addQuery(query.trim());
+    _textController.clear();
+
+    // Navigate to result screen as a modal bottom sheet
+    _openResultSheet(query.trim());
+  }
+
   @override
   Widget build(BuildContext context) {
     final history = ref.watch(discoverHistoryProvider);
-
-    void submitSearch(String query) {
-      if (query.trim().isEmpty) return;
-
-      // Save query to history
-      ref.read(discoverHistoryProvider.notifier).addQuery(query.trim());
-      _textController.clear();
-
-      // Navigate to result screen as a modal bottom sheet
-      _openResultSheet(query.trim());
-    }
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -147,14 +148,14 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 top: 16.0,
                 bottom:
                     16.0 +
-                    UiConstants.navBarClearance +
+                    LayoutConstants.navBarClearance +
                     MediaQuery.of(context).padding.bottom,
               ),
               child: Container(
                 decoration: BoxDecoration(
-                  color: const Color(
-                    0xFF1E1E1E,
-                  ).withValues(alpha: 0.8), // Dark highlighted capsule
+                  color: AppColors.inputSurface.withValues(
+                    alpha: 0.8,
+                  ), // Dark highlighted capsule
                   borderRadius: BorderRadius.circular(32.0),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.1),

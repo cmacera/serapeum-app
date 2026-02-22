@@ -7,5 +7,6 @@ class UiConstants {
   static const String controlCenterTitle = 'Control Center';
   static const String askOracleHint = 'Ask the Oracle anything...';
   static const String askOracleTooltip = 'Ask Oracle';
-  static const double navBarClearance = 80.0;
+  static const String appTitle = 'Serapeum App';
+  static const String fontFamily = 'Space Grotesk';
 }
