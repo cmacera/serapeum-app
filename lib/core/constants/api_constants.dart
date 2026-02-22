@@ -8,11 +8,14 @@ abstract class ApiConstants {
   static const String searchAll = '/searchAll';
   static const String orchestratorFlow = '/orchestratorFlow';
 
-  // Timeouts
-  static const Duration connectTimeout = Duration(seconds: 10);
-  static const Duration receiveTimeout = Duration(seconds: 30);
-  static const Duration sendTimeout = Duration(seconds: 10);
+  // Timeouts (Increased for slow orchestrator AI requests)
+  static const Duration connectTimeout = Duration(seconds: 30);
+  static const Duration receiveTimeout = Duration(seconds: 90);
+  static const Duration sendTimeout = Duration(seconds: 30);
 
   // Headers
   static const String contentTypeJson = 'application/json';
+
+  // Images
+  static const String tmdbImageBaseUrl = 'https://image.tmdb.org/t/p/w500';
 }

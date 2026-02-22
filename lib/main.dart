@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:serapeum_app/core/auth/splash_service.dart';
+import 'core/router/app_router.dart';
+import 'core/constants/app_colors.dart';
+import 'core/constants/ui_constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,10 +12,11 @@ void main() async {
   const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
   const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
-  assert(
-    supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty,
-    'SUPABASE_URL and SUPABASE_ANON_KEY must be defined via --dart-define',
-  );
+  if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
+    throw StateError(
+      'SUPABASE_URL and SUPABASE_ANON_KEY must be defined via --dart-define and cannot be empty.',
+    );
+  }
 
   // Initialize Supabase
   await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
@@ -28,12 +32,20 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(
-      title: 'Serapeum App',
-      theme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.blue),
-      home: const Scaffold(
-        body: Center(child: Text('Serapeum App Initialized')),
+    final router = ref.watch(appRouterProvider);
+
+    return MaterialApp.router(
+      title: UiConstants.appTitle,
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        // Match Stitch customColor
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.accent,
+          brightness: Brightness.dark,
+        ),
+        fontFamily: UiConstants.fontFamily, // The font from the Stitch project
       ),
+      routerConfig: router,
     );
   }
 }
