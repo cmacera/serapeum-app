@@ -242,6 +242,35 @@ components:
       required:
         - response_type
         - results
+      if:
+        properties:
+          response_type:
+            const: books
+      then:
+        properties:
+          results:
+            items:
+              $ref: "#/components/schemas/Book"
+      else:
+        if:
+          properties:
+            response_type:
+              const: media
+        then:
+          properties:
+            results:
+              items:
+                $ref: "#/components/schemas/Media"
+        else:
+          if:
+            properties:
+              response_type:
+                const: games
+          then:
+            properties:
+              results:
+                items:
+                  $ref: "#/components/schemas/Game"
     OrchestratorResponse:
       description: |-
         The orchestrator response is polymorphic. Clients must dispatch on the

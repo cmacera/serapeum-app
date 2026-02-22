@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/constants/app_colors.dart';
 
 class MediaResultCard extends StatelessWidget {
   final String title;
@@ -30,28 +32,24 @@ class MediaResultCard extends StatelessWidget {
               child: Container(
                 width: 80,
                 height: 120,
-                color: Colors.grey.shade800,
+                color: AppColors.thumbnailBackground,
                 child: imageUrl != null && imageUrl!.isNotEmpty
-                    ? Image.network(
-                        imageUrl!,
+                    ? CachedNetworkImage(
+                        imageUrl: imageUrl!,
                         fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                  : null,
-                              strokeWidth: 2,
-                            ),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.image, color: Colors.grey);
-                        },
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        errorWidget: (context, url, error) => const Center(
+                          child: Icon(
+                            Icons.image,
+                            color: AppColors.iconFallback,
+                          ),
+                        ),
                       )
-                    : const Icon(Icons.image, color: Colors.grey),
+                    : const Center(
+                        child: Icon(Icons.image, color: AppColors.iconFallback),
+                      ),
               ),
             ),
             const SizedBox(width: 16),
@@ -72,7 +70,7 @@ class MediaResultCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade400),
+                    style: TextStyle(fontSize: 14, color: AppColors.subtitle),
                   ),
                   if (description != null) ...[
                     const SizedBox(height: 8),

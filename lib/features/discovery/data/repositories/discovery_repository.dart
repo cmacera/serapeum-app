@@ -12,6 +12,16 @@ import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/search_all_response.dart';
 import 'package:serapeum_app/features/discovery/domain/repositories/i_discovery_repository.dart';
 
+class _OrchestratorResponseKeys {
+  static const String data = 'data';
+  static const String result = 'result';
+  static const String movies = 'movies';
+  static const String media = 'media';
+  static const String books = 'books';
+  static const String games = 'games';
+  static const String errors = 'errors';
+}
+
 /// Concrete implementation of [IDiscoveryRepository] using Dio.
 class DiscoveryRepository implements IDiscoveryRepository {
   final Dio _dio;
@@ -20,18 +30,19 @@ class DiscoveryRepository implements IDiscoveryRepository {
 
   Future<T> _post<T>(
     String path,
-    dynamic dataPayload,
+    Map<String, dynamic> dataPayload,
     T Function(dynamic data) converter,
   ) async {
     try {
       final response = await _dio.post<dynamic>(
         path,
-        data: {'data': dataPayload},
+        data: {_OrchestratorResponseKeys.data: dataPayload},
       );
-      if (response.data == null || response.data!['result'] == null) {
+      if (response.data == null ||
+          response.data![_OrchestratorResponseKeys.result] == null) {
         throw const UnknownFailure('Empty or null response from server');
       }
-      return converter(response.data!['result']);
+      return converter(response.data![_OrchestratorResponseKeys.result]);
     } on DioException catch (e) {
       throw _mapDioError(e);
     } catch (e) {
@@ -53,21 +64,27 @@ class DiscoveryRepository implements IDiscoveryRepository {
       }
       if (data is Map<String, dynamic>) {
         if (data.containsKey('error')) {
-          throw UnknownFailure(data['error'] as String? ?? 'Unknown AI Error');
+          // Safely convert to string and throw
+          throw UnknownFailure(data['error']?.toString() ?? 'Unknown AI Error');
         }
 
         // Extract the actual results mapping (handle GeneralDiscoveryResponse vs direct results)
         Map<String, dynamic> resultsMap = data;
-        if (data.containsKey('data') && data['data'] is Map<String, dynamic>) {
-          resultsMap = data['data'] as Map<String, dynamic>;
+        if (data.containsKey(_OrchestratorResponseKeys.data) &&
+            data[_OrchestratorResponseKeys.data] is Map<String, dynamic>) {
+          resultsMap =
+              data[_OrchestratorResponseKeys.data] as Map<String, dynamic>;
         }
 
-        // Map Genkit's 'movies' key into the expected 'media' key for our DTO
+        // Map Genkit's 'movies' or 'media' key into the expected 'media' key for our DTO
         final safeJson = {
-          'media': resultsMap['movies'] ?? [],
-          'books': resultsMap['books'] ?? [],
-          'games': resultsMap['games'] ?? [],
-          'errors': resultsMap['errors'],
+          'media':
+              resultsMap[_OrchestratorResponseKeys.movies] ??
+              resultsMap[_OrchestratorResponseKeys.media] ??
+              [],
+          'books': resultsMap[_OrchestratorResponseKeys.books] ?? [],
+          'games': resultsMap[_OrchestratorResponseKeys.games] ?? [],
+          'errors': resultsMap[_OrchestratorResponseKeys.errors],
         };
 
         return SearchAllResponseDto.fromJson(safeJson).toDomain();

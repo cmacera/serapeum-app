@@ -13,7 +13,7 @@ class PlaceholderScreen extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.only(
           bottom:
-              MediaQuery.of(context).padding.bottom +
+              MediaQuery.paddingOf(context).bottom +
               LayoutConstants.navBarClearance,
         ),
         child: Center(
