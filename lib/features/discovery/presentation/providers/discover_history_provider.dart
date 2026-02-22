@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,7 +42,7 @@ class DiscoverHistoryItem extends Equatable {
 class DiscoverHistory extends _$DiscoverHistory {
   @override
   List<DiscoverHistoryItem> build() {
-    // Start async loading but return empty list immediately to match Notifier signature
+    // Start async loading and return empty list immediately
     _loadHistory();
     return [];
   }
@@ -51,15 +52,15 @@ class DiscoverHistory extends _$DiscoverHistory {
       final prefs = await SharedPreferences.getInstance();
       final historyJson = prefs.getStringList(_kHistoryPrefsKey);
 
-      if (historyJson != null) {
-        final loadedHistory = historyJson
-            .map((item) => DiscoverHistoryItem.fromJson(jsonDecode(item)))
-            .toList();
-        state = loadedHistory;
-      }
-    } catch (_) {
-      // Fallback to empty if load fails
-      state = [];
+      if (historyJson == null) return;
+
+      final loadedHistory = historyJson
+          .map((item) => DiscoverHistoryItem.fromJson(jsonDecode(item)))
+          .toList();
+      state = loadedHistory;
+    } catch (e, s) {
+      debugPrint('Error loading search history: $e\n$s');
+      // Fallback stays as empty list
     }
   }
 
@@ -69,7 +70,7 @@ class DiscoverHistory extends _$DiscoverHistory {
     final normalizedQuery = query.trim();
     final lowerQuery = normalizedQuery.toLowerCase();
 
-    // Deduplicate and limit
+    // In sync Notifier, state is the list itself
     final filteredHistory = state
         .where((item) => item.query.toLowerCase() != lowerQuery)
         .toList();
@@ -98,8 +99,8 @@ class DiscoverHistory extends _$DiscoverHistory {
           .map((item) => jsonEncode(item.toJson()))
           .toList();
       await prefs.setStringList(_kHistoryPrefsKey, historyJson);
-    } catch (_) {
-      // Ignore persistence errors for now
+    } catch (e, s) {
+      debugPrint('Error persisting search history: $e\n$s');
     }
   }
 }

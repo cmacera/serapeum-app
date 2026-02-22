@@ -6,6 +6,27 @@ info:
     AI-powered media discovery API. Search for books, movies, TV shows,
     and video games, or use the orchestrator for natural language queries.
 
+    **Genkit HTTP Transport:**
+    All endpoints using the Serapeum orchestrator/catalog flows expect the request
+    body wrapped in a `data` object:
+    ```json
+    {
+      "data": {
+        "query": "Dune",
+        "language": "en"
+      }
+    }
+    ```
+    The successful response will similarly wrap the result in `data.result`:
+    ```json
+    {
+      "data": {
+        "result": { ... }
+      }
+    }
+    ```
+    Clients should extract the response from `data.result`.
+
     **Security note:** All endpoints are intentionally public today — no API key or
     JWT is required. The operation-level `security: []` entries are explicit overrides
     so any future global security scheme (e.g. Bearer token) does not silently apply
@@ -183,6 +204,9 @@ components:
           maxItems: 100
           items:
             $ref: "#/components/schemas/SearchError"
+        textMessage:
+          type: string
+          description: Optional conversational response from the AI
       required:
         - media
         - books
@@ -243,7 +267,6 @@ components:
         - response_type
         - results
       if:
-        required: [response_type]
         properties:
           response_type:
             const: books
@@ -254,7 +277,6 @@ components:
               $ref: "#/components/schemas/Book"
       else:
         if:
-          required: [response_type]
           properties:
             response_type:
               const: media
@@ -265,7 +287,6 @@ components:
                 $ref: "#/components/schemas/Media"
         else:
           if:
-            required: [response_type]
             properties:
               response_type:
                 const: games

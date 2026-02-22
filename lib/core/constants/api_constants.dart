@@ -1,7 +1,12 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl = ''; // Set via environment or manual override
+  /// The base URL for the Serapeum API.
+  /// Initialized via --dart-define=BASE_URL=... at build time.
+  static final String baseUrl = const String.fromEnvironment(
+    'BASE_URL',
+    defaultValue: '',
+  );
 
   // Timeouts
   static const Duration connectTimeout = Duration(seconds: 15);

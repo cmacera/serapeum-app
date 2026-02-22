@@ -21,6 +21,7 @@ class _OrchestratorResponseKeys {
   static const String games = 'games';
   static const String errors = 'errors';
   static const String error = 'error';
+  static const String textMessage = 'textMessage';
 }
 
 /// Concrete implementation of [IDiscoveryRepository] using Dio.
@@ -70,7 +71,13 @@ class DiscoveryRepository implements IDiscoveryRepository {
     CatalogSearchInputDto(query: query, language: language).toJson(),
     (data) {
       if (data is String) {
-        throw UnknownFailure(data);
+        // Treat as a conversational response
+        return SearchAllResponse(
+          media: const [],
+          books: const [],
+          games: const [],
+          textMessage: data,
+        );
       }
       if (data is Map<String, dynamic>) {
         if (data.containsKey(_OrchestratorResponseKeys.error)) {
@@ -91,13 +98,19 @@ class DiscoveryRepository implements IDiscoveryRepository {
 
         // Map Genkit's 'movies' or 'media' key into the expected 'media' key for our DTO
         final safeJson = {
-          'media':
+          _OrchestratorResponseKeys.media:
               resultsMap[_OrchestratorResponseKeys.movies] ??
               resultsMap[_OrchestratorResponseKeys.media] ??
               [],
-          'books': resultsMap[_OrchestratorResponseKeys.books] ?? [],
-          'games': resultsMap[_OrchestratorResponseKeys.games] ?? [],
-          'errors': resultsMap[_OrchestratorResponseKeys.errors],
+          _OrchestratorResponseKeys.books:
+              resultsMap[_OrchestratorResponseKeys.books] ?? [],
+          _OrchestratorResponseKeys.games:
+              resultsMap[_OrchestratorResponseKeys.games] ?? [],
+          _OrchestratorResponseKeys.errors:
+              resultsMap[_OrchestratorResponseKeys.errors],
+          _OrchestratorResponseKeys.textMessage:
+              resultsMap[_OrchestratorResponseKeys.textMessage] ??
+              data['text'], // Fallback for GeneralDiscoveryResponse 'text' field
         };
 
         return SearchAllResponseDto.fromJson(safeJson).toDomain();
