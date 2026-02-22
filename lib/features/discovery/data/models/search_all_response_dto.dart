@@ -15,12 +15,14 @@ class SearchAllResponseDto {
   final List<BookDto> books;
   final List<GameDto> games;
   final List<SearchErrorDto>? errors;
+  final String? textMessage;
 
   const SearchAllResponseDto({
     required this.media,
     required this.books,
     required this.games,
     this.errors,
+    this.textMessage,
   });
 
   factory SearchAllResponseDto.fromJson(Map<String, dynamic> json) =>
@@ -33,6 +35,7 @@ class SearchAllResponseDto {
     books: books.map((e) => e.toDomain()).toList(),
     games: games.map((e) => e.toDomain()).toList(),
     errors: errors?.map((e) => e.toDomain()).toList(),
+    textMessage: textMessage,
   );
 }
 

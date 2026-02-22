@@ -12,6 +12,18 @@ import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/search_all_response.dart';
 import 'package:serapeum_app/features/discovery/domain/repositories/i_discovery_repository.dart';
 
+class _OrchestratorResponseKeys {
+  static const String data = 'data';
+  static const String result = 'result';
+  static const String movies = 'movies';
+  static const String media = 'media';
+  static const String books = 'books';
+  static const String games = 'games';
+  static const String errors = 'errors';
+  static const String error = 'error';
+  static const String textMessage = 'textMessage';
+}
+
 /// Concrete implementation of [IDiscoveryRepository] using Dio.
 class DiscoveryRepository implements IDiscoveryRepository {
   final Dio _dio;
@@ -20,19 +32,28 @@ class DiscoveryRepository implements IDiscoveryRepository {
 
   Future<T> _post<T>(
     String path,
-    String query,
-    String? language,
+    Map<String, dynamic> dataPayload,
     T Function(dynamic data) converter,
   ) async {
     try {
       final response = await _dio.post<dynamic>(
         path,
-        data: CatalogSearchInputDto(query: query, language: language).toJson(),
+        data: {_OrchestratorResponseKeys.data: dataPayload},
       );
-      if (response.data == null) {
-        throw const UnknownFailure('Empty or null response from server');
+
+      final responseData = response.data;
+      if (responseData is! Map<String, dynamic>) {
+        throw UnknownFailure(
+          'Unexpected response format: expected Map, got ${responseData.runtimeType}',
+        );
       }
-      return converter(response.data!);
+
+      final result = responseData[_OrchestratorResponseKeys.result];
+      if (result == null) {
+        throw const UnknownFailure('Empty or null results from server');
+      }
+
+      return converter(result);
     } on DioException catch (e) {
       throw _mapDioError(e);
     } catch (e) {
@@ -42,22 +63,67 @@ class DiscoveryRepository implements IDiscoveryRepository {
   }
 
   @override
-  Future<SearchAllResponse> searchAll(String query, {String? language}) =>
-      _post<SearchAllResponse>(
-        ApiConstants.searchAll,
-        query,
-        language,
-        (data) => SearchAllResponseDto.fromJson(
-          data as Map<String, dynamic>,
-        ).toDomain(),
-      );
+  Future<SearchAllResponse> searchAll(
+    String query, {
+    String? language,
+  }) => _post<SearchAllResponse>(
+    ApiConstants.orchestratorFlow,
+    CatalogSearchInputDto(query: query, language: language).toJson(),
+    (data) {
+      if (data is String) {
+        // Treat as a conversational response
+        return SearchAllResponse(
+          media: const [],
+          books: const [],
+          games: const [],
+          textMessage: data,
+        );
+      }
+      if (data is Map<String, dynamic>) {
+        if (data.containsKey(_OrchestratorResponseKeys.error)) {
+          // Safely convert to string and throw
+          throw UnknownFailure(
+            data[_OrchestratorResponseKeys.error]?.toString() ??
+                'Unknown AI Error',
+          );
+        }
+
+        // Extract the actual results mapping (handle GeneralDiscoveryResponse vs direct results)
+        Map<String, dynamic> resultsMap = data;
+        if (data.containsKey(_OrchestratorResponseKeys.data) &&
+            data[_OrchestratorResponseKeys.data] is Map<String, dynamic>) {
+          resultsMap =
+              data[_OrchestratorResponseKeys.data] as Map<String, dynamic>;
+        }
+
+        // Map Genkit's 'movies' or 'media' key into the expected 'media' key for our DTO
+        final safeJson = {
+          _OrchestratorResponseKeys.media:
+              resultsMap[_OrchestratorResponseKeys.movies] ??
+              resultsMap[_OrchestratorResponseKeys.media] ??
+              [],
+          _OrchestratorResponseKeys.books:
+              resultsMap[_OrchestratorResponseKeys.books] ?? [],
+          _OrchestratorResponseKeys.games:
+              resultsMap[_OrchestratorResponseKeys.games] ?? [],
+          _OrchestratorResponseKeys.errors:
+              resultsMap[_OrchestratorResponseKeys.errors],
+          _OrchestratorResponseKeys.textMessage:
+              resultsMap[_OrchestratorResponseKeys.textMessage] ??
+              data['text'], // Fallback for GeneralDiscoveryResponse 'text' field
+        };
+
+        return SearchAllResponseDto.fromJson(safeJson).toDomain();
+      }
+      throw const UnknownFailure('Unexpected backend response type');
+    },
+  );
 
   @override
   Future<List<Book>> searchBooks(String query, {String? language}) =>
       _post<List<Book>>(
         ApiConstants.searchBooks,
-        query,
-        language,
+        CatalogSearchInputDto(query: query, language: language).toJson(),
         (data) => (data as List<dynamic>)
             .map((e) => BookDto.fromJson(e as Map<String, dynamic>).toDomain())
             .toList(),
@@ -67,8 +133,7 @@ class DiscoveryRepository implements IDiscoveryRepository {
   Future<List<Media>> searchMedia(String query, {String? language}) =>
       _post<List<Media>>(
         ApiConstants.searchMedia,
-        query,
-        language,
+        CatalogSearchInputDto(query: query, language: language).toJson(),
         (data) => (data as List<dynamic>)
             .map((e) => MediaDto.fromJson(e as Map<String, dynamic>).toDomain())
             .toList(),
@@ -78,8 +143,7 @@ class DiscoveryRepository implements IDiscoveryRepository {
   Future<List<Game>> searchGames(String query, {String? language}) =>
       _post<List<Game>>(
         ApiConstants.searchGames,
-        query,
-        language,
+        CatalogSearchInputDto(query: query, language: language).toJson(),
         (data) => (data as List<dynamic>)
             .map((e) => GameDto.fromJson(e as Map<String, dynamic>).toDomain())
             .toList(),

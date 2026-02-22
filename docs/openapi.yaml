@@ -6,6 +6,27 @@ info:
     AI-powered media discovery API. Search for books, movies, TV shows,
     and video games, or use the orchestrator for natural language queries.
 
+    **Genkit HTTP Transport:**
+    All endpoints using the Serapeum orchestrator/catalog flows expect the request
+    body wrapped in a `data` object:
+    ```json
+    {
+      "data": {
+        "query": "Dune",
+        "language": "en"
+      }
+    }
+    ```
+    The successful response will similarly wrap the result in `data.result`:
+    ```json
+    {
+      "data": {
+        "result": { ... }
+      }
+    }
+    ```
+    Clients should extract the response from `data.result`.
+
     **Security note:** All endpoints are intentionally public today — no API key or
     JWT is required. The operation-level `security: []` entries are explicit overrides
     so any future global security scheme (e.g. Bearer token) does not silently apply
@@ -183,6 +204,9 @@ components:
           maxItems: 100
           items:
             $ref: "#/components/schemas/SearchError"
+        textMessage:
+          type: string
+          description: Optional conversational response from the AI
       required:
         - media
         - books
@@ -233,12 +257,44 @@ components:
             - games
         results:
           type: array
+          maxItems: 100
           items:
-            type: object
-            description: Polymorphic items (Books, Media, or Games)
+            anyOf:
+              - $ref: "#/components/schemas/Book"
+              - $ref: "#/components/schemas/Media"
+              - $ref: "#/components/schemas/Game"
       required:
         - response_type
         - results
+      if:
+        properties:
+          response_type:
+            const: books
+      then:
+        properties:
+          results:
+            items:
+              $ref: "#/components/schemas/Book"
+      else:
+        if:
+          properties:
+            response_type:
+              const: media
+        then:
+          properties:
+            results:
+              items:
+                $ref: "#/components/schemas/Media"
+        else:
+          if:
+            properties:
+              response_type:
+                const: games
+          then:
+            properties:
+              results:
+                items:
+                  $ref: "#/components/schemas/Game"
     OrchestratorResponse:
       description: |-
         The orchestrator response is polymorphic. Clients must dispatch on the
@@ -258,7 +314,6 @@ components:
         falling back to treating the response as a plain string.
       anyOf:
         - type: string
-          description: Plain text response (out-of-scope or fallback)
         - $ref: "#/components/schemas/GeneralDiscoveryResponse"
         - $ref: "#/components/schemas/ArrayResponseEnvelope"
         - $ref: "#/components/schemas/ErrorResponse"
