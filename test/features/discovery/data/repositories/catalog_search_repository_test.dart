@@ -44,7 +44,9 @@ void main() {
       verify(
         () => mockDio.post<dynamic>(
           ApiConstants.searchAll,
-          data: {'data': containsPair('query', 'query')},
+          data: {
+            'data': {'query': 'query'},
+          },
         ),
       ).called(1);
       expect(result.books.first.title, 'Direct Book');

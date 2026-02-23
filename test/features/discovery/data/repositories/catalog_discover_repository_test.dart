@@ -54,6 +54,38 @@ void main() {
       },
     );
 
+    test('should propagate language parameter to backend', () async {
+      // arrange
+      const query = 'hello';
+      const language = 'es';
+      final mockResponse = {
+        'result': {'kind': 'refusal', 'message': 'response'},
+      };
+
+      when(
+        () => mockDio.post<dynamic>(any(), data: any(named: 'data')),
+      ).thenAnswer(
+        (_) async => Response(
+          data: mockResponse,
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+        ),
+      );
+
+      // act
+      await repository.orchestrate(query, language: language);
+
+      // assert
+      verify(
+        () => mockDio.post<dynamic>(
+          ApiConstants.orchestratorFlow,
+          data: {
+            'data': {'query': query, 'language': language},
+          },
+        ),
+      ).called(1);
+    });
+
     test(
       'should throw UnknownFailure when response "result" is missing',
       () async {

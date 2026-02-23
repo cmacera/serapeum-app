@@ -93,7 +93,8 @@ class DiscoverResultScreen extends ConsumerWidget {
                       children: [
                         ChatMessageBubble(
                           text:
-                              'The Oracle encountered an error: $error\n$details',
+                              'The Oracle encountered an error: $error'
+                              '${(details != null && details.isNotEmpty) ? '\n$details' : ''}',
                           isUser: false,
                         ),
                       ],

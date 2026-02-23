@@ -71,16 +71,13 @@ void main() {
       // (assuming current system locale during test is 'en' or handled by platform)
       // For deterministic testing, we use 'en' here.
       when(
-        () => mockRepository.orchestrate(
-          testQuery,
-          language: any(named: 'language'),
-        ),
+        () => mockRepository.orchestrate(testQuery, language: 'en'),
       ).thenAnswer((_) async => testResponse);
 
       final container = createContainer(
         overrides: [
           catalogDiscoverRepositoryProvider.overrideWithValue(mockRepository),
-          // We don't override localeProvider here to see it working with "real" logic
+          localeProvider.overrideWithValue('en'),
         ],
       );
 
@@ -89,10 +86,7 @@ void main() {
 
       // assert
       verify(
-        () => mockRepository.orchestrate(
-          testQuery,
-          language: any(named: 'language'),
-        ),
+        () => mockRepository.orchestrate(testQuery, language: 'en'),
       ).called(1);
     });
   });

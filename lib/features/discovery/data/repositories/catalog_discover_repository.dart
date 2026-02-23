@@ -20,6 +20,13 @@ class _OrchestratorResponseKeys {
   static const String message = 'message';
 }
 
+class _OrchestratorKind {
+  static const String refusal = 'refusal';
+  static const String searchResults = 'search_results';
+  static const String discovery = 'discovery';
+  static const String error = 'error';
+}
+
 /// Concrete implementation of [ICatalogDiscoverRepository] using Dio.
 class CatalogDiscoverRepository implements ICatalogDiscoverRepository {
   final Dio _dio;
@@ -39,11 +46,16 @@ class CatalogDiscoverRepository implements ICatalogDiscoverRepository {
 
       final responseData = response.data;
 
-      if (responseData == null) {
-        throw const UnknownFailure('Empty or null results from server');
+      if (responseData is! Map<String, dynamic> ||
+          !responseData.containsKey('result')) {
+        throw const UnknownFailure('Invalid or missing result from server');
       }
 
       final result = responseData['result'];
+      if (result == null) {
+        throw const UnknownFailure('Empty result from server');
+      }
+
       return converter(result);
     } on DioException catch (e) {
       throw _mapDioError(e);
@@ -71,13 +83,13 @@ class CatalogDiscoverRepository implements ICatalogDiscoverRepository {
         final kind = data[_OrchestratorResponseKeys.kind] as String?;
 
         switch (kind) {
-          case 'refusal':
+          case _OrchestratorKind.refusal:
             return OrchestratorMessage(
               data[_OrchestratorResponseKeys.message] as String? ?? '',
             );
 
-          case 'search_results':
-          case 'discovery':
+          case _OrchestratorKind.searchResults:
+          case _OrchestratorKind.discovery:
             final text =
                 data[_OrchestratorResponseKeys.message] as String? ?? '';
             final resultsMap =
@@ -89,7 +101,7 @@ class CatalogDiscoverRepository implements ICatalogDiscoverRepository {
 
             return OrchestratorGeneral(text: text, data: searchAllResponse);
 
-          case 'error':
+          case _OrchestratorKind.error:
             return OrchestratorError(
               error:
                   data[_OrchestratorResponseKeys.error]?.toString() ??

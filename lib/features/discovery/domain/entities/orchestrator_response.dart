@@ -1,21 +1,31 @@
+import 'package:equatable/equatable.dart';
 import 'book.dart';
 import 'game.dart';
 import 'media.dart';
 import 'search_all_response.dart';
 
-sealed class OrchestratorResponse {
+sealed class OrchestratorResponse extends Equatable {
   const OrchestratorResponse();
+
+  @override
+  List<Object?> get props => [];
 }
 
 class OrchestratorMessage extends OrchestratorResponse {
   final String text;
   const OrchestratorMessage(this.text);
+
+  @override
+  List<Object?> get props => [text];
 }
 
 class OrchestratorGeneral extends OrchestratorResponse {
   final String text;
   final SearchAllResponse data;
   const OrchestratorGeneral({required this.text, required this.data});
+
+  @override
+  List<Object?> get props => [text, data];
 }
 
 class OrchestratorSelection extends OrchestratorResponse {
@@ -24,10 +34,16 @@ class OrchestratorSelection extends OrchestratorResponse {
   final List<Game>? games;
 
   const OrchestratorSelection({this.books, this.media, this.games});
+
+  @override
+  List<Object?> get props => [books, media, games];
 }
 
 class OrchestratorError extends OrchestratorResponse {
   final String error;
   final String? details;
   const OrchestratorError({required this.error, this.details});
+
+  @override
+  List<Object?> get props => [error, details];
 }

@@ -31,11 +31,16 @@ class CatalogSearchRepository implements ICatalogSearchRepository {
 
       final responseData = response.data;
 
-      if (responseData == null) {
-        throw const UnknownFailure('Empty or null results from server');
+      if (responseData is! Map<String, dynamic> ||
+          !responseData.containsKey('result')) {
+        throw const UnknownFailure('Invalid or missing result from server');
       }
 
       final result = responseData['result'];
+      if (result == null) {
+        throw const UnknownFailure('Empty result from server');
+      }
+
       return converter(result);
     } on DioException catch (e) {
       throw _mapDioError(e);
@@ -63,9 +68,16 @@ class CatalogSearchRepository implements ICatalogSearchRepository {
       _post<List<Book>>(
         ApiConstants.searchBooks,
         CatalogSearchInputDto(query: query, language: language).toJson(),
-        (data) => (data as List<dynamic>)
-            .map((e) => BookDto.fromJson(e as Map<String, dynamic>).toDomain())
-            .toList(),
+        (data) {
+          if (data is List) {
+            return data
+                .map(
+                  (e) => BookDto.fromJson(e as Map<String, dynamic>).toDomain(),
+                )
+                .toList();
+          }
+          throw const UnknownFailure('Expected List for searchBooks response');
+        },
       );
 
   @override
@@ -73,9 +85,17 @@ class CatalogSearchRepository implements ICatalogSearchRepository {
       _post<List<Media>>(
         ApiConstants.searchMedia,
         CatalogSearchInputDto(query: query, language: language).toJson(),
-        (data) => (data as List<dynamic>)
-            .map((e) => MediaDto.fromJson(e as Map<String, dynamic>).toDomain())
-            .toList(),
+        (data) {
+          if (data is List) {
+            return data
+                .map(
+                  (e) =>
+                      MediaDto.fromJson(e as Map<String, dynamic>).toDomain(),
+                )
+                .toList();
+          }
+          throw const UnknownFailure('Expected List for searchMedia response');
+        },
       );
 
   @override
@@ -83,9 +103,16 @@ class CatalogSearchRepository implements ICatalogSearchRepository {
       _post<List<Game>>(
         ApiConstants.searchGames,
         CatalogSearchInputDto(query: query, language: language).toJson(),
-        (data) => (data as List<dynamic>)
-            .map((e) => GameDto.fromJson(e as Map<String, dynamic>).toDomain())
-            .toList(),
+        (data) {
+          if (data is List) {
+            return data
+                .map(
+                  (e) => GameDto.fromJson(e as Map<String, dynamic>).toDomain(),
+                )
+                .toList();
+          }
+          throw const UnknownFailure('Expected List for searchGames response');
+        },
       );
 
   Failure _mapDioError(DioException e) {
