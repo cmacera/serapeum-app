@@ -113,7 +113,9 @@ class CatalogDiscoverRepository implements ICatalogDiscoverRepository {
             // Fallback for unexpected or missing 'kind'
             if (data.containsKey(_OrchestratorResponseKeys.error)) {
               return OrchestratorError(
-                error: data[_OrchestratorResponseKeys.error].toString(),
+                error:
+                    data[_OrchestratorResponseKeys.error]?.toString() ??
+                    'Unknown error',
                 details: data[_OrchestratorResponseKeys.details]?.toString(),
               );
             }
