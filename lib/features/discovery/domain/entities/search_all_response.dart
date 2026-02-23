@@ -8,13 +8,11 @@ class SearchAllResponse {
   final List<Book> books;
   final List<Game> games;
   final List<SearchError>? errors;
-  final String? textMessage;
 
   const SearchAllResponse({
     required this.media,
     required this.books,
     required this.games,
     this.errors,
-    this.textMessage,
   });
 }

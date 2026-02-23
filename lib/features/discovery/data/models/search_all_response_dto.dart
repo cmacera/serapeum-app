@@ -9,20 +9,19 @@ part 'search_all_response_dto.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class SearchAllResponseDto {
-  /// Contains both movies and TV shows.
-  /// Disambiguate by checking [MediaDto.mediaType] (either 'movie' or 'tv').
+  @JsonKey(defaultValue: [])
   final List<MediaDto> media;
+  @JsonKey(defaultValue: [])
   final List<BookDto> books;
+  @JsonKey(defaultValue: [])
   final List<GameDto> games;
   final List<SearchErrorDto>? errors;
-  final String? textMessage;
 
   const SearchAllResponseDto({
-    required this.media,
-    required this.books,
-    required this.games,
+    this.media = const [],
+    this.books = const [],
+    this.games = const [],
     this.errors,
-    this.textMessage,
   });
 
   factory SearchAllResponseDto.fromJson(Map<String, dynamic> json) =>
@@ -35,7 +34,6 @@ class SearchAllResponseDto {
     books: books.map((e) => e.toDomain()).toList(),
     games: games.map((e) => e.toDomain()).toList(),
     errors: errors?.map((e) => e.toDomain()).toList(),
-    textMessage: textMessage,
   );
 }
 
