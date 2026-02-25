@@ -6,6 +6,12 @@ import 'package:serapeum_app/core/constants/api_constants.dart';
 /// Key used in [RequestOptions.extra] to prevent infinite retry loops.
 const _kRetryKey = 'auth_retry';
 
+/// Header name for authorization.
+const _kAuthHeader = 'Authorization';
+
+/// Prefix for Bearer token.
+const _kBearerPrefix = 'Bearer ';
+
 /// Dio interceptor that:
 /// - Attaches a Bearer token to every request targeting the Serapeum API.
 /// - On 401, attempts a session refresh and retries the request once.
@@ -21,7 +27,7 @@ class AuthInterceptor extends Interceptor {
     if (_isSerapeumApi(options.uri)) {
       final token = _authService.getAccessToken();
       if (token != null) {
-        options.headers['Authorization'] = 'Bearer $token';
+        options.headers[_kAuthHeader] = '$_kBearerPrefix$token';
       }
     }
     super.onRequest(options, handler);
@@ -55,7 +61,7 @@ class AuthInterceptor extends Interceptor {
 
         final retryOptions = err.requestOptions
           ..extra[_kRetryKey] = true
-          ..headers['Authorization'] = 'Bearer $newToken';
+          ..headers[_kAuthHeader] = '$_kBearerPrefix$newToken';
 
         try {
           final response = await _dio.fetch(retryOptions);
