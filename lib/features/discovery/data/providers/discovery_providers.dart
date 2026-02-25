@@ -5,7 +5,6 @@ import 'package:serapeum_app/features/discovery/data/repositories/catalog_search
 import 'package:serapeum_app/features/discovery/domain/repositories/i_catalog_discover_repository.dart';
 import 'package:serapeum_app/features/discovery/domain/repositories/i_catalog_search_repository.dart';
 
-/// Provides the [ICatalogSearchRepository] implementation.
 final catalogSearchRepositoryProvider = Provider<ICatalogSearchRepository>((
   ref,
 ) {
