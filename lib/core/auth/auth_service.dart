@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -7,20 +9,20 @@ class AuthService {
   factory AuthService() => _instance;
   AuthService._internal();
 
+  /// Guards against concurrent refresh calls.
+  /// If a refresh is already in flight all callers await the same result.
+  Completer<bool>? _refreshCompleter;
+
   /// Checks if there's an existing session, and if not, signs in anonymously.
   Future<void> signInAnonymously() async {
     final session = Supabase.instance.client.auth.currentSession;
 
     if (session == null) {
-      // No existing session, sign in anonymously
       try {
         await Supabase.instance.client.auth.signInAnonymously();
-        // The response object structure might be different in this version
-        // We'll just ensure the call succeeded
         debugPrint('Anonymous sign in successful');
       } catch (e) {
         debugPrint('Failed to sign in anonymously: $e');
-        // Re-throw the error so it can be handled by the caller
         rethrow;
       }
     } else {
@@ -33,5 +35,37 @@ class AuthService {
   String? getAccessToken() {
     final session = Supabase.instance.client.auth.currentSession;
     return session?.accessToken;
+  }
+
+  /// Attempts to refresh the current Supabase session.
+  ///
+  /// Returns `true` if the refresh succeeded (a new access token is available),
+  /// or `false` if it failed (session is gone or network error).
+  ///
+  /// If called concurrently, all callers share the same in-flight refresh
+  /// rather than triggering multiple Supabase calls.
+  Future<bool> refreshSession() async {
+    if (_refreshCompleter != null) {
+      return _refreshCompleter!.future;
+    }
+
+    _refreshCompleter = Completer<bool>();
+    try {
+      final response = await Supabase.instance.client.auth.refreshSession();
+      final refreshed = response.session != null;
+      if (refreshed) {
+        debugPrint('Session refreshed successfully');
+      } else {
+        debugPrint('Session refresh returned no session');
+      }
+      _refreshCompleter!.complete(refreshed);
+      return refreshed;
+    } catch (e) {
+      debugPrint('Failed to refresh session: $e');
+      _refreshCompleter!.complete(false);
+      return false;
+    } finally {
+      _refreshCompleter = null;
+    }
   }
 }

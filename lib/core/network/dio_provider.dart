@@ -21,7 +21,7 @@ final dioProvider = Provider<Dio>((ref) {
     ),
   );
 
-  dio.interceptors.add(AuthInterceptor(ref.watch(authServiceProvider)));
+  dio.interceptors.add(AuthInterceptor(ref.watch(authServiceProvider), dio));
 
   if (kDebugMode) {
     // Only log headers/URLs/status — not request or response bodies,
