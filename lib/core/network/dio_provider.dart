@@ -12,7 +12,7 @@ part 'dio_provider.g.dart';
 ///
 /// Base URL is loaded from [Env.apiUrl] (via envied).
 /// Timeouts are defined in [ApiConstants].
-@riverpod
+@Riverpod(keepAlive: true)
 Dio dio(DioRef ref) {
   final dio = Dio(
     BaseOptions(

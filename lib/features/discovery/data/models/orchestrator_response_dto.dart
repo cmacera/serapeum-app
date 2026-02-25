@@ -16,6 +16,9 @@ class OrchestratorResponseDto {
   static const String _kindDiscovery = 'discovery';
   static const String _kindError = 'error';
 
+  static const String _kUnknownError = 'Unknown error';
+  static const String _kUnexpectedType = 'Unexpected backend response type';
+
   /// Maps the raw [data] from the backend to a domain [OrchestratorResponse].
   static OrchestratorResponse mapToDomain(dynamic data) {
     // 1. Handle plain string fallback
@@ -34,7 +37,13 @@ class OrchestratorResponseDto {
         case _kindSearchResults:
         case _kindDiscovery:
           final text = data[_kMessage] as String? ?? '';
-          final resultsMap = data[_kData] as Map<String, dynamic>? ?? {};
+
+          // Safe check for the nested 'data' payload
+          final rawResults = data[_kData];
+          final resultsMap = rawResults is Map<String, dynamic>
+              ? rawResults
+              : <String, dynamic>{};
+
           final searchAllResponse = SearchAllResponseDto.fromJson(
             resultsMap,
           ).toDomain();
@@ -43,7 +52,7 @@ class OrchestratorResponseDto {
 
         case _kindError:
           return OrchestratorError(
-            error: data[_kError]?.toString() ?? 'Unknown error',
+            error: data[_kError]?.toString() ?? _kUnknownError,
             details: data[_kDetails]?.toString(),
           );
 
@@ -51,7 +60,7 @@ class OrchestratorResponseDto {
           // Fallback for unexpected or missing 'kind'
           if (data.containsKey(_kError)) {
             return OrchestratorError(
-              error: data[_kError]?.toString() ?? 'Unknown error',
+              error: data[_kError]?.toString() ?? _kUnknownError,
               details: data[_kDetails]?.toString(),
             );
           }
@@ -59,6 +68,6 @@ class OrchestratorResponseDto {
       }
     }
 
-    return const OrchestratorMessage('Unexpected backend response type');
+    return const OrchestratorMessage(_kUnexpectedType);
   }
 }
