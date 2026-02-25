@@ -1,0 +1,9 @@
+{
+  "@@locale": "es",
+  "appName": "SERAPEUM",
+  "myLibraryTitle": "Mi Biblioteca",
+  "discoverTitle": "Descubrir",
+  "controlCenterTitle": "Centro de Control",
+  "askOracleHint": "Pregúntale al Oráculo...",
+  "askOracleTooltip": "Preguntar al Oráculo"
+}

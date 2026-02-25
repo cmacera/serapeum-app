@@ -1,9 +1,11 @@
 import 'dart:ui';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'locale_provider.g.dart';
 
+/// Returns the device's primary language code (e.g. 'en', 'es').
+/// Re-evaluates automatically when the system locale changes.
 @riverpod
 String locale(Ref ref) {
   // Save the previous handler to restore it later
@@ -12,11 +14,9 @@ String locale(Ref ref) {
   // Subscribe to locale changes to refresh the provider automatically
   PlatformDispatcher.instance.onLocaleChanged = () {
     ref.invalidateSelf();
-    // Also call the original handler if it existed
     oldHandler?.call();
   };
 
-  // Ensure we clean up by restoring the previous handler
   ref.onDispose(() {
     if (PlatformDispatcher.instance.onLocaleChanged != null) {
       PlatformDispatcher.instance.onLocaleChanged = oldHandler;

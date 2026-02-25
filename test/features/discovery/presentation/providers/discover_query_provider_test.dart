@@ -67,9 +67,6 @@ void main() {
       const testQuery = 'test';
       final testResponse = OrchestratorMessage('Response');
 
-      // We expect 'en' as default if we don't override the localeProvider
-      // (assuming current system locale during test is 'en' or handled by platform)
-      // For deterministic testing, we use 'en' here.
       when(
         () => mockRepository.orchestrate(testQuery, language: 'en'),
       ).thenAnswer((_) async => testResponse);
