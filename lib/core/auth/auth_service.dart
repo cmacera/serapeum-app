@@ -15,12 +15,9 @@ class AuthService {
       // No existing session, sign in anonymously
       try {
         await Supabase.instance.client.auth.signInAnonymously();
-        // The response object structure might be different in this version
-        // We'll just ensure the call succeeded
         debugPrint('Anonymous sign in successful');
       } catch (e) {
         debugPrint('Failed to sign in anonymously: $e');
-        // Re-throw the error so it can be handled by the caller
         rethrow;
       }
     } else {
@@ -33,5 +30,25 @@ class AuthService {
   String? getAccessToken() {
     final session = Supabase.instance.client.auth.currentSession;
     return session?.accessToken;
+  }
+
+  /// Attempts to refresh the current Supabase session.
+  ///
+  /// Returns `true` if the refresh succeeded (a new access token is available),
+  /// or `false` if it failed (session is gone or network error).
+  Future<bool> refreshSession() async {
+    try {
+      final response = await Supabase.instance.client.auth.refreshSession();
+      final refreshed = response.session != null;
+      if (refreshed) {
+        debugPrint('Session refreshed successfully');
+      } else {
+        debugPrint('Session refresh returned no session');
+      }
+      return refreshed;
+    } catch (e) {
+      debugPrint('Failed to refresh session: $e');
+      return false;
+    }
   }
 }
