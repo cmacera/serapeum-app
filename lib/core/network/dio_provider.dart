@@ -1,16 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:serapeum_app/core/auth/auth_provider.dart';
 import 'package:serapeum_app/core/constants/api_constants.dart';
 import 'package:serapeum_app/core/env/env.dart';
 import 'package:serapeum_app/core/network/auth_interceptor.dart';
 
+part 'dio_provider.g.dart';
+
 /// Riverpod provider for the configured [Dio] singleton.
 ///
 /// Base URL is loaded from [Env.apiUrl] (via envied).
 /// Timeouts are defined in [ApiConstants].
-final dioProvider = Provider<Dio>((ref) {
+@riverpod
+Dio dio(DioRef ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: Env.apiUrl,
@@ -36,4 +39,4 @@ final dioProvider = Provider<Dio>((ref) {
   }
 
   return dio;
-});
+}
