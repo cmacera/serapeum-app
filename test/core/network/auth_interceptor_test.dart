@@ -18,10 +18,13 @@ class FakeRequestOptions extends Fake implements RequestOptions {}
 
 class FakeDioException extends Fake implements DioException {}
 
+class FakeResponse extends Fake implements Response<dynamic> {}
+
 void main() {
   setUpAll(() {
     registerFallbackValue(FakeRequestOptions());
     registerFallbackValue(FakeDioException());
+    registerFallbackValue(FakeResponse());
   });
 
   late MockAuthService mockAuthService;
@@ -99,38 +102,57 @@ void main() {
   // onError — 401 handling
   // ---------------------------------------------------------------------------
   group('onError — 401', () {
-    test('refreshes session and retries on 401', () async {
-      when(
-        () => mockAuthService.refreshSession(),
-      ).thenAnswer((_) async => true);
-      when(() => mockAuthService.getAccessToken()).thenReturn('new-token');
+    test(
+      'refreshes session and retries with new token and retry flag',
+      () async {
+        when(
+          () => mockAuthService.refreshSession(),
+        ).thenAnswer((_) async => true);
+        when(() => mockAuthService.getAccessToken()).thenReturn('new-token');
 
-      final retryRequestOptions = RequestOptions(path: '/api/test');
-      final retryResponse = Response(
-        requestOptions: retryRequestOptions,
-        statusCode: 200,
-      );
-      when(
-        () => mockDio.fetch<dynamic>(any()),
-      ).thenAnswer((_) async => retryResponse);
+        final retryRequestOptions = RequestOptions(path: '/api/test');
+        final retryResponse = Response(
+          requestOptions: retryRequestOptions,
+          statusCode: 200,
+        );
 
-      final handler = MockErrorInterceptorHandler();
-      final requestOptions = RequestOptions(
-        path: '/api/test',
-        baseUrl: 'https://serapeum.app',
-      );
-      final err = DioException(
-        requestOptions: requestOptions,
-        response: Response(requestOptions: requestOptions, statusCode: 401),
-        type: DioExceptionType.badResponse,
-      );
+        // Capture the RequestOptions passed to dio.fetch so we can assert
+        // it has the new token header and the retry sentinel set.
+        RequestOptions? capturedOptions;
+        when(() => mockDio.fetch<dynamic>(any())).thenAnswer((
+          invocation,
+        ) async {
+          capturedOptions =
+              invocation.positionalArguments.first as RequestOptions;
+          return retryResponse;
+        });
 
-      await interceptor.onError(err, handler);
+        final handler = MockErrorInterceptorHandler();
+        final requestOptions = RequestOptions(
+          path: '/api/test',
+          baseUrl: 'https://serapeum.app',
+        );
+        final err = DioException(
+          requestOptions: requestOptions,
+          response: Response(requestOptions: requestOptions, statusCode: 401),
+          type: DioExceptionType.badResponse,
+        );
 
-      verify(() => mockAuthService.refreshSession()).called(1);
-      verify(() => handler.resolve(retryResponse)).called(1);
-      verifyNever(() => handler.next(any()));
-    });
+        await interceptor.onError(err, handler);
+
+        verify(() => mockAuthService.refreshSession()).called(1);
+        verify(() => handler.resolve(retryResponse)).called(1);
+        verifyNever(() => handler.next(any()));
+
+        // Assert the retry request was wired with the new token and retry marker
+        expect(capturedOptions, isNotNull);
+        expect(
+          capturedOptions!.headers['Authorization'],
+          equals('Bearer new-token'),
+        );
+        expect(capturedOptions!.extra['auth_retry'], isTrue);
+      },
+    );
 
     test('propagates error when refresh fails on 401', () async {
       when(
@@ -153,6 +175,61 @@ void main() {
       verify(() => mockAuthService.refreshSession()).called(1);
       verify(() => handler.next(err)).called(1);
       verifyNever(() => mockDio.fetch<dynamic>(any()));
+    });
+
+    test('propagates error when refresh succeeds but token is null', () async {
+      when(
+        () => mockAuthService.refreshSession(),
+      ).thenAnswer((_) async => true);
+      when(() => mockAuthService.getAccessToken()).thenReturn(null);
+
+      final handler = MockErrorInterceptorHandler();
+      final requestOptions = RequestOptions(
+        path: '/api/test',
+        baseUrl: 'https://serapeum.app',
+      );
+      final err = DioException(
+        requestOptions: requestOptions,
+        response: Response(requestOptions: requestOptions, statusCode: 401),
+        type: DioExceptionType.badResponse,
+      );
+
+      await interceptor.onError(err, handler);
+
+      verify(() => mockAuthService.refreshSession()).called(1);
+      verify(() => handler.next(err)).called(1);
+      verifyNever(() => mockDio.fetch<dynamic>(any()));
+    });
+
+    test('propagates DioException thrown during retry fetch', () async {
+      when(
+        () => mockAuthService.refreshSession(),
+      ).thenAnswer((_) async => true);
+      when(() => mockAuthService.getAccessToken()).thenReturn('new-token');
+
+      final retryRequestOptions = RequestOptions(path: '/api/test');
+      final retryError = DioException(
+        requestOptions: retryRequestOptions,
+        type: DioExceptionType.connectionError,
+      );
+      when(() => mockDio.fetch<dynamic>(any())).thenThrow(retryError);
+
+      final handler = MockErrorInterceptorHandler();
+      final requestOptions = RequestOptions(
+        path: '/api/test',
+        baseUrl: 'https://serapeum.app',
+      );
+      final err = DioException(
+        requestOptions: requestOptions,
+        response: Response(requestOptions: requestOptions, statusCode: 401),
+        type: DioExceptionType.badResponse,
+      );
+
+      await interceptor.onError(err, handler);
+
+      verify(() => mockDio.fetch<dynamic>(any())).called(1);
+      verify(() => handler.reject(retryError)).called(1);
+      verifyNever(() => handler.next(any()));
     });
 
     test(

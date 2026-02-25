@@ -44,8 +44,14 @@ class AuthInterceptor extends Interceptor {
       final refreshed = await _authService.refreshSession();
 
       if (refreshed) {
-        // Retry the original request with the new token
+        // Guard: if the session was refreshed but no token is available,
+        // propagate the original error rather than sending 'Bearer null'.
         final newToken = _authService.getAccessToken();
+        if (newToken == null) {
+          handler.next(err);
+          return;
+        }
+
         final retryOptions = err.requestOptions
           ..extra[_kRetryKey] = true
           ..headers['Authorization'] = 'Bearer $newToken';
