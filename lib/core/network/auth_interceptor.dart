@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:serapeum_app/core/auth/auth_service.dart';
 import 'package:serapeum_app/core/constants/api_constants.dart';
 
@@ -62,6 +63,19 @@ class AuthInterceptor extends Interceptor {
           return;
         } on DioException catch (retryError) {
           handler.reject(retryError);
+          return;
+        } catch (e, st) {
+          // Non-Dio errors (e.g. TypeError) — wrap and reject so the handler
+          // always completes and the original future is never left hanging.
+          debugPrint('Unexpected error during auth retry: $e\n$st');
+          handler.reject(
+            DioException(
+              requestOptions: retryOptions,
+              error: e,
+              stackTrace: st,
+              type: DioExceptionType.unknown,
+            ),
+          );
           return;
         }
       }
