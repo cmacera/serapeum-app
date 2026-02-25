@@ -1,0 +1,27 @@
+{
+  "@@locale": "en",
+  "appName": "SERAPEUM",
+  "@appName": {
+    "description": "The name of the application"
+  },
+  "myLibraryTitle": "My Library",
+  "@myLibraryTitle": {
+    "description": "Title for the My Library screen (bottom nav tab)"
+  },
+  "discoverTitle": "Discover",
+  "@discoverTitle": {
+    "description": "Title for the Discover / Oracle screen (bottom nav tab)"
+  },
+  "controlCenterTitle": "Control Center",
+  "@controlCenterTitle": {
+    "description": "Title for the Control Center / Settings screen (bottom nav tab)"
+  },
+  "askOracleHint": "Ask the Oracle anything...",
+  "@askOracleHint": {
+    "description": "Placeholder hint text inside the Oracle search input field"
+  },
+  "askOracleTooltip": "Ask Oracle",
+  "@askOracleTooltip": {
+    "description": "Tooltip for the Oracle send button"
+  }
+}

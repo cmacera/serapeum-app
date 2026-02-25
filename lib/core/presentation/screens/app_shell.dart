@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/ui_constants.dart';
 import 'package:serapeum_app/core/presentation/widgets/particle_background.dart';
 
 class AppShell extends StatelessWidget {
@@ -13,18 +13,14 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String subtitle = '';
-    switch (navigationShell.currentIndex) {
-      case 0:
-        subtitle = UiConstants.myLibraryTitle;
-        break;
-      case 1:
-        subtitle = UiConstants.discoverTitle;
-        break;
-      case 2:
-        subtitle = UiConstants.controlCenterTitle;
-        break;
-    }
+    final l10n = AppLocalizations.of(context)!;
+
+    final String subtitle = switch (navigationShell.currentIndex) {
+      0 => l10n.myLibraryTitle,
+      1 => l10n.discoverTitle,
+      2 => l10n.controlCenterTitle,
+      _ => '',
+    };
 
     return Container(
       decoration: const BoxDecoration(
@@ -47,7 +43,7 @@ class AppShell extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                UiConstants.appName,
+                l10n.appName,
                 style: GoogleFonts.cinzel(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -106,30 +102,30 @@ class AppShell extends StatelessWidget {
                   },
                   labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
                   indicatorColor: Colors.transparent, // Removed overlay
-                  destinations: const [
+                  destinations: [
                     NavigationDestination(
-                      icon: Icon(Icons.library_books_outlined),
-                      selectedIcon: Icon(
+                      icon: const Icon(Icons.library_books_outlined),
+                      selectedIcon: const Icon(
                         Icons.library_books,
                         color: AppColors.accent,
                       ),
-                      label: UiConstants.myLibraryTitle,
+                      label: l10n.myLibraryTitle,
                     ),
                     NavigationDestination(
-                      icon: Icon(Icons.auto_awesome_outlined),
-                      selectedIcon: Icon(
+                      icon: const Icon(Icons.auto_awesome_outlined),
+                      selectedIcon: const Icon(
                         Icons.auto_awesome,
                         color: AppColors.accent,
                       ),
-                      label: UiConstants.discoverTitle,
+                      label: l10n.discoverTitle,
                     ),
                     NavigationDestination(
-                      icon: Icon(Icons.settings_outlined),
-                      selectedIcon: Icon(
+                      icon: const Icon(Icons.settings_outlined),
+                      selectedIcon: const Icon(
                         Icons.settings,
                         color: AppColors.accent,
                       ),
-                      label: UiConstants.controlCenterTitle,
+                      label: l10n.controlCenterTitle,
                     ),
                   ],
                 ),

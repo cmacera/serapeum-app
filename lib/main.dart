@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:serapeum_app/l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:serapeum_app/core/auth/splash_service.dart';
 import 'core/router/app_router.dart';
 import 'core/constants/app_colors.dart';
 import 'core/constants/ui_constants.dart';
+import 'core/localization/locale_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,9 +35,13 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
+    final languageCode = ref.watch(localeProvider);
 
     return MaterialApp.router(
       title: UiConstants.appTitle,
+      locale: Locale(languageCode),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
         brightness: Brightness.dark,
         // Match Stitch customColor

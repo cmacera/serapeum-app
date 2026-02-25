@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:serapeum_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'discover_result_screen.dart';
 import '../providers/discover_history_provider.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/ui_constants.dart';
-import '../../../../core/constants/layout_constants.dart';
 
 class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({super.key});
@@ -146,10 +145,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 left: 16.0,
                 right: 16.0,
                 top: 16.0,
-                bottom:
-                    16.0 +
-                    LayoutConstants.navBarClearance +
-                    MediaQuery.of(context).padding.bottom,
+                bottom: 16.0 + MediaQuery.of(context).padding.bottom,
               ),
               child: Container(
                 decoration: BoxDecoration(
@@ -178,9 +174,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                           color: Colors.white,
                           fontSize: 16,
                         ),
-                        decoration: const InputDecoration(
-                          hintText: UiConstants.askOracleHint,
-                          hintStyle: TextStyle(
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.askOracleHint,
+                          hintStyle: const TextStyle(
                             color: Colors.grey,
                             fontSize: 16,
                           ),
@@ -209,7 +205,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                           size: 20,
                         ),
                         onPressed: () => submitSearch(_textController.text),
-                        tooltip: UiConstants.askOracleTooltip,
+                        tooltip: AppLocalizations.of(context)!.askOracleTooltip,
                       ),
                     ),
                   ],
