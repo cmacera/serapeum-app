@@ -12,28 +12,25 @@ class PlaceholderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom:
-                MediaQuery.paddingOf(context).bottom +
-                LayoutConstants.navBarClearance,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: AppColors.subtitle,
-                  fontSize: LayoutConstants.placeholderFontSize,
-                ),
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom:
+              MediaQuery.paddingOf(context).bottom +
+              LayoutConstants.navBarClearance,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                color: AppColors.subtitle,
+                fontSize: LayoutConstants.placeholderFontSize,
               ),
-              if (child != null) ...[const SizedBox(height: 24), child!],
-            ],
-          ),
+            ),
+            if (child != null) ...[const SizedBox(height: 24), child!],
+          ],
         ),
       ),
     );

@@ -25,4 +25,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get askOracleTooltip => 'Ask Oracle';
+
+  @override
+  String get discoveryHistoryTitle => 'History';
+
+  @override
+  String get clearHistory => 'Clear History';
+
+  @override
+  String get newConversation => 'New Conversation';
+
+  @override
+  String get noHistory => 'No history yet';
+
+  @override
+  String get clearHistoryConfirmation =>
+      'Are you sure you want to clear all search history?';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get noResponseFromOracle => 'No response from the Oracle.';
+
+  @override
+  String get resultIntro =>
+      'Here is what I found specifically for your request:';
+
+  @override
+  String oracleErrorTemplate(String error, String details) {
+    return 'The Oracle encountered an error: $error$details';
+  }
+
+  @override
+  String get noMatches => 'No matching items found in the catalogs.';
+
+  @override
+  String queryError(String error) {
+    return 'Error querying the Oracle: $error';
+  }
+
+  @override
+  String get unknownMedia => 'Unknown Media';
+
+  @override
+  String bookSubtitle(String date) {
+    return 'BOOK · $date';
+  }
+
+  @override
+  String get unknownYear => 'Unknown Year';
+
+  @override
+  String get gameSubtitle => 'GAME';
+
+  @override
+  String get queryFailed =>
+      'I\'m sorry, I couldn\'t process your request right now. Please try again later.';
 }

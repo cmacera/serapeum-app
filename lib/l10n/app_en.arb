@@ -23,5 +23,49 @@
   "askOracleTooltip": "Ask Oracle",
   "@askOracleTooltip": {
     "description": "Tooltip for the Oracle send button"
-  }
+  },
+  "discoveryHistoryTitle": "History",
+  "@discoveryHistoryTitle": {
+    "description": "Title for the discovery history screen"
+  },
+  "clearHistory": "Clear History",
+  "@clearHistory": {
+    "description": "Button text to clear search history"
+  },
+  "newConversation": "New Conversation",
+  "@newConversation": {
+    "description": "Tooltip for starting a new conversation"
+  },
+  "noHistory": "No history yet",
+  "@noHistory": {
+    "description": "Text shown when history is empty"
+  },
+  "clearHistoryConfirmation": "Are you sure you want to clear all search history?",
+  "cancel": "Cancel",
+  "noResponseFromOracle": "No response from the Oracle.",
+  "resultIntro": "Here is what I found specifically for your request:",
+  "oracleErrorTemplate": "The Oracle encountered an error: {error}{details}",
+  "@oracleErrorTemplate": {
+    "placeholders": {
+      "error": { "type": "String" },
+      "details": { "type": "String" }
+    }
+  },
+  "noMatches": "No matching items found in the catalogs.",
+  "queryError": "Error querying the Oracle: {error}",
+  "@queryError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "unknownMedia": "Unknown Media",
+  "bookSubtitle": "BOOK · {date}",
+  "@bookSubtitle": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "unknownYear": "Unknown Year",
+  "gameSubtitle": "GAME",
+  "queryFailed": "I'm sorry, I couldn't process your request right now. Please try again later."
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
-import 'package:intl/intl.dart';
-import 'discover_result_screen.dart';
 import '../providers/discover_history_provider.dart';
+import '../providers/discovery_provider.dart';
+import '../widgets/discover_result_view.dart';
 import '../../../../core/constants/app_colors.dart';
 
 class DiscoverScreen extends ConsumerStatefulWidget {
@@ -28,192 +28,129 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     super.dispose();
   }
 
-  void _openResultSheet(String query) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useRootNavigator: true,
-      useSafeArea: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
-      ),
-      builder: (context) => DiscoverResultScreen(query: query),
-    );
-  }
-
-  void submitSearch(String query) {
-    if (query.trim().isEmpty) return;
+  void _executeSearch(String query) {
+    final trimmedQuery = query.trim();
+    if (trimmedQuery.isEmpty) return;
 
     // Save query to history
-    ref.read(discoverHistoryProvider.notifier).addQuery(query.trim());
-    _textController.clear();
+    ref.read(discoverHistoryProvider.notifier).addQuery(trimmedQuery);
 
-    // Navigate to result screen as a modal bottom sheet
-    _openResultSheet(query.trim());
+    // Update global discovery state
+    ref.read(discoveryProvider.notifier).executeSearch(trimmedQuery);
+
+    setState(() {
+      _textController.clear();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final history = ref.watch(discoverHistoryProvider);
+    final l10n = AppLocalizations.of(context)!;
+    final discoveryState = ref.watch(discoveryProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Column(
-        children: [
-          Expanded(
-            child: history.isEmpty
-                ? const SizedBox.shrink()
-                : ListView.builder(
-                    itemCount: history.length,
-                    itemBuilder: (context, index) {
-                      final item = history[index];
-                      final formattedDate = DateFormat(
-                        'd/M/y • HH:mm',
-                      ).format(item.timestamp);
+    // Listen for state changes to clear the controller when reset
+    ref.listen(discoveryProvider, (previous, next) {
+      if (next.state == DiscoverState.initial &&
+          _textController.text.isNotEmpty) {
+        _textController.clear();
+      }
+    });
 
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 8.0,
+    return Column(
+      children: [
+        Expanded(
+          child: discoveryState.state == DiscoverState.initial
+              ? const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Placeholder for "waiting for your query" animation
+                      SizedBox(height: 100),
+                      Opacity(
+                        opacity: 0.5,
+                        child: Icon(
+                          Icons.auto_awesome,
+                          size: 64,
+                          color: Colors.white,
                         ),
-                        child: InkWell(
-                          onTap: () {
-                            // Allow re-running a previous query
-                            _openResultSheet(item.query);
-                          },
-                          borderRadius: BorderRadius.circular(16),
-                          child: Ink(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.05),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: AppColors.accent.withValues(alpha: 0.3),
-                                width: 1,
-                              ),
-                            ),
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item.query,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          height: 1.3,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        formattedDate,
-                                        style: TextStyle(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.5,
-                                          ),
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 2.0, left: 8.0),
-                                  child: Icon(
-                                    Icons.chevron_right,
-                                    color: Colors.grey,
-                                    size: 20,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                      ),
+                    ],
                   ),
+                )
+              : DiscoverResultView(query: discoveryState.currentQuery!),
+        ),
+        if (discoveryState.state == DiscoverState.initial)
+          _buildInputBar(context, l10n),
+      ],
+    );
+  }
+
+  Widget _buildInputBar(BuildContext context, AppLocalizations l10n) {
+    return SafeArea(
+      bottom: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 16.0,
+          right: 16.0,
+          top: 16.0,
+          bottom: 16.0 + MediaQuery.of(context).padding.bottom,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.inputSurface.withValues(alpha: 0.8),
+            borderRadius: BorderRadius.circular(32.0),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.1),
+              width: 1,
+            ),
           ),
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 16.0,
-                right: 16.0,
-                top: 16.0,
-                bottom: 16.0 + MediaQuery.of(context).padding.bottom,
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.inputSurface.withValues(
-                    alpha: 0.8,
-                  ), // Dark highlighted capsule
-                  borderRadius: BorderRadius.circular(32.0),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    width: 1,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          child: Row(
+            children: [
+              const SizedBox(width: 16),
+              Expanded(
+                child: TextField(
+                  controller: _textController,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: _executeSearch,
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  decoration: InputDecoration(
+                    hintText: l10n.askOracleHint,
+                    hintStyle: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16,
+                    ),
+                    border: InputBorder.none,
+                    isDense: true,
                   ),
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 4.0,
-                ),
-                child: Row(
-                  children: [
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: TextField(
-                        controller: _textController,
-                        textInputAction: TextInputAction.send,
-                        onSubmitted: submitSearch,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: AppLocalizations.of(context)!.askOracleHint,
-                          hintStyle: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                          ),
-                          border: InputBorder.none,
-                          isDense: true,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.accent,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.accent.withValues(alpha: 0.5),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.arrow_upward_rounded, // Sleek send action
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                        onPressed: () => submitSearch(_textController.text),
-                        tooltip: AppLocalizations.of(context)!.askOracleTooltip,
-                      ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.accent,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.accent.withValues(alpha: 0.5),
+                      blurRadius: 10,
+                      spreadRadius: 2,
                     ),
                   ],
                 ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_upward_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  onPressed: () => _executeSearch(_textController.text),
+                  tooltip: l10n.askOracleTooltip,
+                ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -5,5 +5,21 @@
   "discoverTitle": "Descubrir",
   "controlCenterTitle": "Centro de Control",
   "askOracleHint": "Pregúntale al Oráculo...",
-  "askOracleTooltip": "Preguntar al Oráculo"
+  "askOracleTooltip": "Preguntar al Oráculo",
+  "discoveryHistoryTitle": "Historial",
+  "clearHistory": "Limpiar Historial",
+  "newConversation": "Nueva Conversación",
+  "noHistory": "No hay historial aún",
+  "clearHistoryConfirmation": "¿Estás seguro de que quieres borrar todo el historial de búsqueda?",
+  "cancel": "Cancelar",
+  "noResponseFromOracle": "No hay respuesta del Oráculo.",
+  "resultIntro": "Esto es lo que he encontrado específicamente para tu petición:",
+  "oracleErrorTemplate": "El Oráculo encontró un error: {error}{details}",
+  "noMatches": "No se encontraron elementos coincidentes en los catálogos.",
+  "queryError": "Error al consultar al Oráculo: {error}",
+  "unknownMedia": "Medio desconocido",
+  "bookSubtitle": "LIBRO · {date}",
+  "unknownYear": "Año desconocido",
+  "gameSubtitle": "JUEGO",
+  "queryFailed": "Lo siento, no he podido procesar tu solicitud en este momento. Por favor, inténtalo de nuevo más tarde."
 }
