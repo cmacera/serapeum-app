@@ -25,4 +25,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get askOracleTooltip => 'Preguntar al Oráculo';
+
+  @override
+  String get discoveryHistoryTitle => 'Historial';
+
+  @override
+  String get clearHistory => 'Limpiar Historial';
+
+  @override
+  String get newConversation => 'Nueva Conversación';
+
+  @override
+  String get noHistory => 'No hay historial aún';
 }

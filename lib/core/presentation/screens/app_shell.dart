@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../core/constants/app_colors.dart';
 import 'package:serapeum_app/core/presentation/widgets/particle_background.dart';
 
-class AppShell extends StatelessWidget {
+import 'package:serapeum_app/features/discovery/presentation/providers/discovery_provider.dart';
+import 'package:serapeum_app/features/discovery/presentation/screens/discovery_history_screen.dart';
+
+class AppShell extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
   const AppShell({super.key, required this.navigationShell});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
     final String subtitle = switch (navigationShell.currentIndex) {
@@ -64,6 +68,35 @@ class AppShell extends StatelessWidget {
           backgroundColor: Colors.transparent, // Let gradient shine through
           elevation: 0,
           surfaceTintColor: Colors.transparent,
+          actions: [
+            if (navigationShell.currentIndex == 1) ...[
+              IconButton(
+                icon: const Icon(Icons.add, color: Colors.white),
+                onPressed: () {
+                  ref.read(discoveryProvider.notifier).startNewConversation();
+                },
+                tooltip: l10n.newConversation,
+              ),
+              IconButton(
+                icon: const Icon(Icons.history, color: Colors.white),
+                onPressed: () async {
+                  final query = await showModalBottomSheet<String>(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    useRootNavigator: true,
+                    builder: (context) => const DiscoveryHistoryScreen(),
+                  );
+
+                  if (query != null && context.mounted) {
+                    ref.read(discoveryProvider.notifier).executeSearch(query);
+                  }
+                },
+                tooltip: l10n.discoveryHistoryTitle,
+              ),
+              const SizedBox(width: 8),
+            ],
+          ],
         ),
         body: Stack(
           children: [

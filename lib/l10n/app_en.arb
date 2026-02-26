@@ -23,5 +23,21 @@
   "askOracleTooltip": "Ask Oracle",
   "@askOracleTooltip": {
     "description": "Tooltip for the Oracle send button"
+  },
+  "discoveryHistoryTitle": "History",
+  "@discoveryHistoryTitle": {
+    "description": "Title for the discovery history screen"
+  },
+  "clearHistory": "Clear History",
+  "@clearHistory": {
+    "description": "Button text to clear search history"
+  },
+  "newConversation": "New Conversation",
+  "@newConversation": {
+    "description": "Tooltip for starting a new conversation"
+  },
+  "noHistory": "No history yet",
+  "@noHistory": {
+    "description": "Text shown when history is empty"
   }
 }

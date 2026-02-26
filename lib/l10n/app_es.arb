@@ -5,5 +5,9 @@
   "discoverTitle": "Descubrir",
   "controlCenterTitle": "Centro de Control",
   "askOracleHint": "Pregúntale al Oráculo...",
-  "askOracleTooltip": "Preguntar al Oráculo"
+  "askOracleTooltip": "Preguntar al Oráculo",
+  "discoveryHistoryTitle": "Historial",
+  "clearHistory": "Limpiar Historial",
+  "newConversation": "Nueva Conversación",
+  "noHistory": "No hay historial aún"
 }

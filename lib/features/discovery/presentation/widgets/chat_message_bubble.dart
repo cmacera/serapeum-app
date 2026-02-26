@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
 
 class ChatMessageBubble extends StatelessWidget {
   final String text;
@@ -20,22 +19,13 @@ class ChatMessageBubble extends StatelessWidget {
             ? MainAxisAlignment.end
             : MainAxisAlignment.start,
         children: [
-          if (!isUser) ...[
-            const CircleAvatar(
-              backgroundColor: AppColors.accent,
-              child: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
-            ),
-            const SizedBox(width: 8),
-          ],
           Flexible(
             child: Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 color: isUser
-                    ? Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.2)
-                    : Theme.of(context).cardColor,
+                    ? Theme.of(context).cardColor
+                    : const Color(0xFF930DF2).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16.0),
                   topRight: const Radius.circular(16.0),
@@ -49,13 +39,6 @@ class ChatMessageBubble extends StatelessWidget {
               ),
             ),
           ),
-          if (isUser) ...[
-            const SizedBox(width: 8),
-            const CircleAvatar(
-              backgroundColor: Colors.grey,
-              child: Icon(Icons.person, color: Colors.white, size: 20),
-            ),
-          ],
         ],
       ),
     );

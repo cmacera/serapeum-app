@@ -133,6 +133,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ask Oracle'**
   String get askOracleTooltip;
+
+  /// Title for the discovery history screen
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get discoveryHistoryTitle;
+
+  /// Button text to clear search history
+  ///
+  /// In en, this message translates to:
+  /// **'Clear History'**
+  String get clearHistory;
+
+  /// Tooltip for starting a new conversation
+  ///
+  /// In en, this message translates to:
+  /// **'New Conversation'**
+  String get newConversation;
+
+  /// Text shown when history is empty
+  ///
+  /// In en, this message translates to:
+  /// **'No history yet'**
+  String get noHistory;
 }
 
 class _AppLocalizationsDelegate

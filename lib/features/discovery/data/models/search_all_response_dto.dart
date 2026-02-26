@@ -16,16 +16,26 @@ class SearchAllResponseDto {
   @JsonKey(defaultValue: [])
   final List<GameDto> games;
   final List<SearchErrorDto>? errors;
+  final String? text;
 
   const SearchAllResponseDto({
     this.media = const [],
     this.books = const [],
     this.games = const [],
     this.errors,
+    this.text,
   });
 
-  factory SearchAllResponseDto.fromJson(Map<String, dynamic> json) =>
-      _$SearchAllResponseDtoFromJson(json);
+  factory SearchAllResponseDto.fromJson(Map<String, dynamic> json) {
+    final dto = _$SearchAllResponseDtoFromJson(json);
+    return SearchAllResponseDto(
+      media: dto.media,
+      books: dto.books,
+      games: dto.games,
+      errors: dto.errors,
+      text: json['text'] as String?,
+    );
+  }
 
   Map<String, dynamic> toJson() => _$SearchAllResponseDtoToJson(this);
 
@@ -34,6 +44,7 @@ class SearchAllResponseDto {
     books: books.map((e) => e.toDomain()).toList(),
     games: games.map((e) => e.toDomain()).toList(),
     errors: errors?.map((e) => e.toDomain()).toList(),
+    text: text,
   );
 }
 
