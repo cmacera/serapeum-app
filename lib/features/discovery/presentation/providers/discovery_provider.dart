@@ -8,12 +8,19 @@ class DiscoveryStateData {
 
   DiscoveryStateData({this.state = DiscoverState.initial, this.currentQuery});
 
-  DiscoveryStateData copyWith({DiscoverState? state, String? currentQuery}) {
+  DiscoveryStateData copyWith({
+    DiscoverState? state,
+    Object? currentQuery = _unset,
+  }) {
     return DiscoveryStateData(
       state: state ?? this.state,
-      currentQuery: currentQuery ?? this.currentQuery,
+      currentQuery: currentQuery == _unset
+          ? this.currentQuery
+          : currentQuery as String?,
     );
   }
+
+  static const _unset = Object();
 }
 
 class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {

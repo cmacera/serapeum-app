@@ -6,14 +6,12 @@ class MediaResultCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final String? imageUrl;
-  final String? description;
 
   const MediaResultCard({
     super.key,
     required this.title,
     required this.subtitle,
     this.imageUrl,
-    this.description,
   });
 
   @override

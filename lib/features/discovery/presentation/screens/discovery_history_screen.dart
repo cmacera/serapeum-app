@@ -173,14 +173,14 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
           l10n.clearHistory,
           style: const TextStyle(color: Colors.white),
         ),
-        content: const Text(
-          'Are you sure you want to clear all search history?',
-          style: TextStyle(color: Colors.white70),
+        content: Text(
+          l10n.clearHistoryConfirmation,
+          style: const TextStyle(color: Colors.white70),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {

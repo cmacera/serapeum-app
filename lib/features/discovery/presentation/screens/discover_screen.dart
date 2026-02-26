@@ -29,13 +29,14 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   void _executeSearch(String query) {
-    if (query.trim().isEmpty) return;
+    final trimmedQuery = query.trim();
+    if (trimmedQuery.isEmpty) return;
 
     // Save query to history
-    ref.read(discoverHistoryProvider.notifier).addQuery(query.trim());
+    ref.read(discoverHistoryProvider.notifier).addQuery(trimmedQuery);
 
     // Update global discovery state
-    ref.read(discoveryProvider.notifier).executeSearch(query);
+    ref.read(discoveryProvider.notifier).executeSearch(trimmedQuery);
 
     setState(() {
       _textController.clear();

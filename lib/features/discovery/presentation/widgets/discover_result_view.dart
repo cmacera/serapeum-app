@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:serapeum_app/l10n/app_localizations.dart';
 import '../../domain/entities/orchestrator_response.dart';
 import '../../domain/entities/search_all_response.dart';
 import '../providers/discover_query_provider.dart';
@@ -15,6 +16,7 @@ class DiscoverResultView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final responseAsync = ref.watch(discoverQueryProvider(query));
+    final l10n = AppLocalizations.of(context)!;
 
     return responseAsync.when(
       data: (data) {
@@ -27,7 +29,7 @@ class DiscoverResultView extends ConsumerWidget {
             children: [
               ChatMessageBubble(text: query, isUser: true),
               const SizedBox(height: 16),
-              const Center(child: Text('No response from the Oracle.')),
+              Center(child: Text(l10n.noResponseFromOracle)),
             ],
           );
         }
@@ -50,7 +52,7 @@ class DiscoverResultView extends ConsumerWidget {
           ) =>
             _buildResultList(
               context,
-              'Here is what I found specifically for your request:',
+              l10n.resultIntro,
               SearchAllResponse(
                 books: books ?? [],
                 media: media ?? [],
@@ -64,9 +66,10 @@ class DiscoverResultView extends ConsumerWidget {
                 ChatMessageBubble(text: query, isUser: true),
                 const SizedBox(height: 16),
                 ChatMessageBubble(
-                  text:
-                      'The Oracle encountered an error: $error'
-                      '${(details != null && details.isNotEmpty) ? '\n$details' : ''}',
+                  text: l10n.oracleErrorTemplate(
+                    error,
+                    (details != null && details.isNotEmpty) ? '\n$details' : '',
+                  ),
                   isUser: false,
                 ),
               ],
@@ -90,7 +93,7 @@ class DiscoverResultView extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ChatMessageBubble(
-              text: 'Error querying the Oracle: $err',
+              text: l10n.queryError(err.toString()),
               isUser: false,
             ),
           ),
@@ -104,15 +107,16 @@ class DiscoverResultView extends ConsumerWidget {
     String text,
     SearchAllResponse data,
   ) {
+    final l10n = AppLocalizations.of(context)!;
+
     final hasResults =
         data.media.isNotEmpty || data.books.isNotEmpty || data.games.isNotEmpty;
 
     final allCards = [
       for (final media in data.media)
         MediaResultCard(
-          title: media.title ?? media.name ?? 'Unknown Media',
+          title: media.title ?? media.name ?? l10n.unknownMedia,
           subtitle: media.mediaType.toString().split('.').last.toUpperCase(),
-          description: media.overview,
           imageUrl: media.posterPath != null
               ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
               : null,
@@ -120,8 +124,7 @@ class DiscoverResultView extends ConsumerWidget {
       for (final book in data.books)
         MediaResultCard(
           title: book.title,
-          subtitle: 'BOOK · ${book.publishedDate ?? 'Unknown Year'}',
-          description: book.description,
+          subtitle: l10n.bookSubtitle(book.publishedDate ?? l10n.unknownYear),
           imageUrl:
               book.imageLinks?['thumbnail'] ??
               book.imageLinks?['smallThumbnail'],
@@ -129,8 +132,7 @@ class DiscoverResultView extends ConsumerWidget {
       for (final game in data.games)
         MediaResultCard(
           title: game.name,
-          subtitle: 'GAME',
-          description: game.summary,
+          subtitle: l10n.gameSubtitle,
           imageUrl: game.coverUrl,
         ),
     ];
@@ -147,12 +149,12 @@ class DiscoverResultView extends ConsumerWidget {
                 const SizedBox(height: 16),
                 ChatMessageBubble(text: text, isUser: false),
                 if (!hasResults)
-                  const Padding(
-                    padding: EdgeInsets.all(16.0),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      'No matching items found in the catalogs.',
+                      l10n.noMatches,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontStyle: FontStyle.italic),
+                      style: const TextStyle(fontStyle: FontStyle.italic),
                     ),
                   ),
               ],

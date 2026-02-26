@@ -157,6 +157,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No history yet'**
   String get noHistory;
+
+  /// No description provided for @clearHistoryConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to clear all search history?'**
+  String get clearHistoryConfirmation;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @noResponseFromOracle.
+  ///
+  /// In en, this message translates to:
+  /// **'No response from the Oracle.'**
+  String get noResponseFromOracle;
+
+  /// No description provided for @resultIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Here is what I found specifically for your request:'**
+  String get resultIntro;
+
+  /// No description provided for @oracleErrorTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'The Oracle encountered an error: {error}{details}'**
+  String oracleErrorTemplate(String error, String details);
+
+  /// No description provided for @noMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching items found in the catalogs.'**
+  String get noMatches;
+
+  /// No description provided for @queryError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error querying the Oracle: {error}'**
+  String queryError(String error);
+
+  /// No description provided for @unknownMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Media'**
+  String get unknownMedia;
+
+  /// No description provided for @bookSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'BOOK · {date}'**
+  String bookSubtitle(String date);
+
+  /// No description provided for @unknownYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Year'**
+  String get unknownYear;
+
+  /// No description provided for @gameSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'GAME'**
+  String get gameSubtitle;
 }
 
 class _AppLocalizationsDelegate
