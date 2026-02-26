@@ -78,5 +78,9 @@
     "placeholders": {
       "code": { "type": "int" }
     }
+  },
+  "consultingOracle": "Consulting the Oracle...",
+  "@consultingOracle": {
+    "description": "Loading message shown while the Oracle (AI) is processing the request"
   }
 }

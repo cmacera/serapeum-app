@@ -22,9 +22,9 @@ class DiscoveryUIHelper {
       );
     } else if (response is OrchestratorError) {
       final String errorMessage = switch (response.error) {
-        'NETWORK_ERROR' => l10n.networkError,
-        'TIMEOUT_ERROR' => l10n.timeoutError,
-        'SERVER_ERROR' => l10n.serverError(
+        OrchestratorError.networkError => l10n.networkError,
+        OrchestratorError.timeoutError => l10n.timeoutError,
+        OrchestratorError.serverError => l10n.serverError(
           int.tryParse(response.details ?? '') ?? 0,
         ),
         _ => l10n.oracleErrorTemplate(
@@ -49,7 +49,9 @@ class DiscoveryUIHelper {
       );
     }
 
-    onClear();
+    if (currentState.state != DiscoverState.searching) {
+      onClear();
+    }
   }
 
   static void _showDiscoveryDialog({

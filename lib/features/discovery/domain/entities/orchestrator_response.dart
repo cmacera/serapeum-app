@@ -40,6 +40,11 @@ class OrchestratorSelection extends OrchestratorResponse {
 }
 
 class OrchestratorError extends OrchestratorResponse {
+  static const String serverError = 'SERVER_ERROR';
+  static const String networkError = 'NETWORK_ERROR';
+  static const String timeoutError = 'TIMEOUT_ERROR';
+  static const String unknownError = 'UNKNOWN_ERROR';
+
   final String error;
   final String? details;
   const OrchestratorError({required this.error, this.details});

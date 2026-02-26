@@ -92,7 +92,7 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
       _stopTimer();
 
       if (response == null) {
-        state = state.copyWith(state: DiscoverState.initial);
+        state = DiscoveryStateData();
         return null;
       }
 
@@ -105,24 +105,27 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
       } else {
         // Refusal or Error: stay in initial, showing alert is handled by UI
         // We revert to initial state so the input bar and sentences are reset/handled
-        state = state.copyWith(state: DiscoverState.initial);
+        state = DiscoveryStateData();
       }
       return response;
     } catch (e) {
       _stopTimer();
       // On error, we always reset to initial so the user can try again
-      state = state.copyWith(state: DiscoverState.initial);
+      state = DiscoveryStateData();
       if (e is ServerFailure) {
         return OrchestratorError(
-          error: 'SERVER_ERROR',
+          error: OrchestratorError.serverError,
           details: e.statusCode.toString(),
         );
       } else if (e is NetworkFailure) {
-        return const OrchestratorError(error: 'NETWORK_ERROR');
+        return const OrchestratorError(error: OrchestratorError.networkError);
       } else if (e is TimeoutFailure) {
-        return const OrchestratorError(error: 'TIMEOUT_ERROR');
+        return const OrchestratorError(error: OrchestratorError.timeoutError);
       }
-      return OrchestratorError(error: 'UNKNOWN_ERROR', details: e.toString());
+      return OrchestratorError(
+        error: OrchestratorError.unknownError,
+        details: e.toString(),
+      );
     }
   }
 }

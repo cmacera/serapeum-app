@@ -104,4 +104,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String serverError(int code) {
     return 'The server returned an error ($code).';
   }
+
+  @override
+  String get consultingOracle => 'Consulting the Oracle...';
 }

@@ -105,4 +105,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String serverError(int code) {
     return 'El servidor devolvió un error ($code).';
   }
+
+  @override
+  String get consultingOracle => 'Consultando al Oráculo...';
 }

@@ -32,5 +32,6 @@
     "placeholders": {
       "code": { "type": "int" }
     }
-  }
+  },
+  "consultingOracle": "Consultando al Oráculo..."
 }

@@ -265,6 +265,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The server returned an error ({code}).'**
   String serverError(int code);
+
+  /// Loading message shown while the Oracle (AI) is processing the request
+  ///
+  /// In en, this message translates to:
+  /// **'Consulting the Oracle...'**
+  String get consultingOracle;
 }
 
 class _AppLocalizationsDelegate

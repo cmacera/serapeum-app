@@ -97,9 +97,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               children: [
                 const CircularProgressIndicator(),
                 const SizedBox(height: 24),
-                const Text(
-                  'Consulting the Oracle...',
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                Text(
+                  l10n.consultingOracle,
+                  style: const TextStyle(color: Colors.white70, fontSize: 16),
                 ),
                 if (kDebugMode) ...[
                   const SizedBox(height: 12),
