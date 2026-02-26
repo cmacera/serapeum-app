@@ -90,9 +90,9 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
                         itemCount: history.length,
                         itemBuilder: (context, index) {
                           final item = history[index];
-                          final formattedDate = DateFormat(
-                            'd/M/y • HH:mm',
-                          ).format(item.timestamp);
+                          final locale = l10n.localeName;
+                          final formattedDate =
+                              '${DateFormat.yMd(locale).format(item.timestamp)} • ${DateFormat.Hm(locale).format(item.timestamp)}';
 
                           return Padding(
                             padding: const EdgeInsets.symmetric(

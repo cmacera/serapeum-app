@@ -1,8 +1,10 @@
+enum MediaType { movie, tv, unknown }
+
 class Media {
   final int id;
   final String? title;
   final String? name;
-  final String mediaType;
+  final MediaType mediaType;
   final String? releaseDate;
   final String? posterPath;
   final String? overview;

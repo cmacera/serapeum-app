@@ -116,7 +116,7 @@ class DiscoverResultView extends ConsumerWidget {
       for (final media in data.media)
         MediaResultCard(
           title: media.title ?? media.name ?? l10n.unknownMedia,
-          subtitle: media.mediaType.toString().split('.').last.toUpperCase(),
+          subtitle: media.mediaType.name.toUpperCase(),
           imageUrl: media.posterPath != null
               ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
               : null,

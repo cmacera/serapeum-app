@@ -46,7 +46,10 @@ class MediaDto {
     id: id,
     title: title,
     name: name,
-    mediaType: mediaType,
+    mediaType: MediaType.values.firstWhere(
+      (e) => e.name == mediaType,
+      orElse: () => MediaType.unknown,
+    ),
     releaseDate: releaseDate,
     posterPath: posterPath,
     overview: overview,
