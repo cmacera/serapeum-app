@@ -66,5 +66,6 @@
     }
   },
   "unknownYear": "Unknown Year",
-  "gameSubtitle": "GAME"
+  "gameSubtitle": "GAME",
+  "queryFailed": "I'm sorry, I couldn't process your request right now. Please try again later."
 }

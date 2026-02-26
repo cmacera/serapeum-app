@@ -223,6 +223,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'GAME'**
   String get gameSubtitle;
+
+  /// No description provided for @queryFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m sorry, I couldn\'t process your request right now. Please try again later.'**
+  String get queryFailed;
 }
 
 class _AppLocalizationsDelegate

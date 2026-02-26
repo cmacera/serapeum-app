@@ -86,19 +86,19 @@ class DiscoverResultView extends ConsumerWidget {
           ),
         ],
       ),
-      error: (err, stack) => ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-        children: [
-          ChatMessageBubble(text: query, isUser: true),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ChatMessageBubble(
-              text: l10n.queryError(err.toString()),
-              isUser: false,
+      error: (err, stack) {
+        debugPrint('Error querying the Oracle: $err\n$stack');
+        return ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+          children: [
+            ChatMessageBubble(text: query, isUser: true),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ChatMessageBubble(text: l10n.queryFailed, isUser: false),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 

@@ -78,4 +78,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gameSubtitle => 'GAME';
+
+  @override
+  String get queryFailed =>
+      'I\'m sorry, I couldn\'t process your request right now. Please try again later.';
 }

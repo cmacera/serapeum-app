@@ -20,5 +20,6 @@
   "unknownMedia": "Medio desconocido",
   "bookSubtitle": "LIBRO · {date}",
   "unknownYear": "Año desconocido",
-  "gameSubtitle": "JUEGO"
+  "gameSubtitle": "JUEGO",
+  "queryFailed": "Lo siento, no he podido procesar tu solicitud en este momento. Por favor, inténtalo de nuevo más tarde."
 }
