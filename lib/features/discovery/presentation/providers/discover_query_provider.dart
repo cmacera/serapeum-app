@@ -13,6 +13,9 @@ Future<OrchestratorResponse?> discoverQuery(
 ) async {
   if (query.isEmpty) return null;
 
+  // Ensure the provider stays alive during navigation/transitions
+  ref.keepAlive();
+
   final repository = ref.watch(catalogDiscoverRepositoryProvider);
   final language = ref.watch(localeProvider);
 

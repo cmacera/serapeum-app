@@ -76,15 +76,11 @@ class DiscoverResultView extends ConsumerWidget {
             ),
         };
       },
-      loading: () => ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-        children: [
-          ChatMessageBubble(text: query, isUser: true),
-          const Padding(
-            padding: EdgeInsets.all(32.0),
-            child: Center(child: CircularProgressIndicator()),
-          ),
-        ],
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(32.0),
+          child: CircularProgressIndicator(),
+        ),
       ),
       error: (err, stack) {
         debugPrint('Error querying the Oracle: $err\n$stack');
@@ -120,6 +116,7 @@ class DiscoverResultView extends ConsumerWidget {
           imageUrl: media.posterPath != null
               ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
               : null,
+          description: media.overview,
         ),
       for (final book in data.books)
         MediaResultCard(
@@ -128,12 +125,14 @@ class DiscoverResultView extends ConsumerWidget {
           imageUrl:
               book.imageLinks?['thumbnail'] ??
               book.imageLinks?['smallThumbnail'],
+          description: book.description,
         ),
       for (final game in data.games)
         MediaResultCard(
           title: game.name,
           subtitle: l10n.gameSubtitle,
           imageUrl: game.coverUrl,
+          description: game.summary,
         ),
     ];
 

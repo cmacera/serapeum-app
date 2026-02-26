@@ -15,12 +15,14 @@ class CatalogDiscoverRepository implements ICatalogDiscoverRepository {
   Future<T> _post<T>(
     String path,
     dynamic dataPayload,
-    T Function(dynamic data) converter,
-  ) async {
+    T Function(dynamic data) converter, {
+    Duration? receiveTimeout,
+  }) async {
     try {
       final response = await _dio.post<dynamic>(
         path,
         data: {'data': dataPayload},
+        options: Options(receiveTimeout: receiveTimeout),
       );
 
       final responseData = response.data;
@@ -50,6 +52,7 @@ class CatalogDiscoverRepository implements ICatalogDiscoverRepository {
         ApiConstants.orchestratorFlow,
         CatalogSearchInputDto(query: query, language: language).toJson(),
         (data) => OrchestratorResponseDto.mapToDomain(data),
+        receiveTimeout: const Duration(minutes: 5),
       );
 
   Failure _mapDioError(DioException e) {

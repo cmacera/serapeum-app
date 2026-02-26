@@ -1,9 +1,11 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
-import '../providers/discover_history_provider.dart';
 import '../providers/discovery_provider.dart';
 import '../widgets/discover_result_view.dart';
+import '../widgets/discovery_ui_helper.dart';
 import '../../../../core/constants/app_colors.dart';
 
 class DiscoverScreen extends ConsumerStatefulWidget {
@@ -28,19 +30,27 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     super.dispose();
   }
 
-  void _executeSearch(String query) {
+  Future<void> _executeSearch(String query) async {
     final trimmedQuery = query.trim();
     if (trimmedQuery.isEmpty) return;
 
-    // Save query to history
-    ref.read(discoverHistoryProvider.notifier).addQuery(trimmedQuery);
+    // Execute search and get response
+    final response = await ref
+        .read(discoveryProvider.notifier)
+        .executeSearch(trimmedQuery);
 
-    // Update global discovery state
-    ref.read(discoveryProvider.notifier).executeSearch(trimmedQuery);
-
-    setState(() {
-      _textController.clear();
-    });
+    if (mounted) {
+      DiscoveryUIHelper.handleSearchResponse(
+        context: context,
+        response: response,
+        currentState: ref.read(discoveryProvider),
+        onClear: () {
+          setState(() {
+            _textController.clear();
+          });
+        },
+      );
+    }
   }
 
   @override
@@ -58,34 +68,76 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
     return Column(
       children: [
-        Expanded(
-          child: discoveryState.state == DiscoverState.initial
-              ? const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Placeholder for "waiting for your query" animation
-                      SizedBox(height: 100),
-                      Opacity(
-                        opacity: 0.5,
-                        child: Icon(
-                          Icons.auto_awesome,
-                          size: 64,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : DiscoverResultView(query: discoveryState.currentQuery!),
-        ),
-        if (discoveryState.state == DiscoverState.initial)
-          _buildInputBar(context, l10n),
+        Expanded(child: _buildBody(context, l10n, discoveryState)),
+        if (discoveryState.state != DiscoverState.result)
+          _buildInputBar(
+            context,
+            l10n,
+            discoveryState.state == DiscoverState.searching,
+          ),
       ],
     );
   }
 
-  Widget _buildInputBar(BuildContext context, AppLocalizations l10n) {
+  Widget _buildBody(
+    BuildContext context,
+    AppLocalizations l10n,
+    DiscoveryStateData discoveryState,
+  ) {
+    if (discoveryState.state == DiscoverState.result) {
+      return DiscoverResultView(query: discoveryState.currentQuery!);
+    }
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (discoveryState.state == DiscoverState.searching)
+            Column(
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(height: 24),
+                const Text(
+                  'Consulting the Oracle...',
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
+                if (kDebugMode) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    '${discoveryState.elapsedSeconds}s elapsed',
+                    style: const TextStyle(
+                      color: Colors.white38,
+                      fontSize: 12,
+                      fontFamily: 'monospace',
+                    ),
+                  ),
+                ],
+              ],
+            )
+          else
+            const Column(
+              children: [
+                SizedBox(height: 100),
+                Opacity(
+                  opacity: 0.5,
+                  child: Icon(
+                    Icons.auto_awesome,
+                    size: 64,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputBar(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isSearching,
+  ) {
     return SafeArea(
       bottom: false,
       child: Padding(
@@ -111,6 +163,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               Expanded(
                 child: TextField(
                   controller: _textController,
+                  enabled: !isSearching,
                   textInputAction: TextInputAction.send,
                   onSubmitted: _executeSearch,
                   style: const TextStyle(color: Colors.white, fontSize: 16),
@@ -129,22 +182,35 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.accent,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.accent.withValues(alpha: 0.5),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                    ),
-                  ],
+                  color: isSearching ? Colors.grey : AppColors.accent,
+                  boxShadow: isSearching
+                      ? []
+                      : [
+                          BoxShadow(
+                            color: AppColors.accent.withValues(alpha: 0.5),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ],
                 ),
                 child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_upward_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  onPressed: () => _executeSearch(_textController.text),
+                  icon: isSearching
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(
+                          Icons.arrow_upward_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                  onPressed: isSearching
+                      ? null
+                      : () => _executeSearch(_textController.text),
                   tooltip: l10n.askOracleTooltip,
                 ),
               ),

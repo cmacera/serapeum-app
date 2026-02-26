@@ -9,6 +9,7 @@ import 'package:serapeum_app/core/presentation/widgets/particle_background.dart'
 
 import 'package:serapeum_app/features/discovery/presentation/providers/discovery_provider.dart';
 import 'package:serapeum_app/features/discovery/presentation/screens/discovery_history_screen.dart';
+import 'package:serapeum_app/features/discovery/presentation/widgets/discovery_ui_helper.dart';
 
 class AppShell extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
@@ -89,7 +90,18 @@ class AppShell extends ConsumerWidget {
                   );
 
                   if (query != null && context.mounted) {
-                    ref.read(discoveryProvider.notifier).executeSearch(query);
+                    final response = await ref
+                        .read(discoveryProvider.notifier)
+                        .executeSearch(query);
+
+                    if (context.mounted) {
+                      DiscoveryUIHelper.handleSearchResponse(
+                        context: context,
+                        response: response,
+                        currentState: ref.read(discoveryProvider),
+                        onClear: () {},
+                      );
+                    }
                   }
                 },
                 tooltip: l10n.discoveryHistoryTitle,
