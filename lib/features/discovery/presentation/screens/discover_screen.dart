@@ -104,7 +104,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 if (kDebugMode) ...[
                   const SizedBox(height: 12),
                   Text(
-                    '${discoveryState.elapsedSeconds}s elapsed',
+                    l10n.elapsedSecondsLabel(discoveryState.elapsedSeconds),
                     style: const TextStyle(
                       color: Colors.white38,
                       fontSize: 12,

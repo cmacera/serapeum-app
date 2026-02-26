@@ -271,6 +271,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Consulting the Oracle...'**
   String get consultingOracle;
+
+  /// Label for the debug timer showing elapsed seconds
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s elapsed'**
+  String elapsedSecondsLabel(int seconds);
 }
 
 class _AppLocalizationsDelegate

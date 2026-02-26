@@ -82,5 +82,14 @@
   "consultingOracle": "Consulting the Oracle...",
   "@consultingOracle": {
     "description": "Loading message shown while the Oracle (AI) is processing the request"
+  },
+  "elapsedSecondsLabel": "{seconds}s elapsed",
+  "@elapsedSecondsLabel": {
+    "description": "Label for the debug timer showing elapsed seconds",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
   }
 }

@@ -38,6 +38,7 @@ class DiscoveryStateData {
 class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
   final Ref _ref;
   Timer? _timer;
+  int _requestEpoch = 0;
 
   DiscoveryNotifier(this._ref) : super(DiscoveryStateData());
 
@@ -62,6 +63,7 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
 
   void startNewConversation() {
     _stopTimer();
+    _requestEpoch++;
     state = DiscoveryStateData(state: DiscoverState.initial);
   }
 
@@ -77,6 +79,7 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
 
     // 1. Enter searching state (stay on initial screen UX)
     _startTimer();
+    final localEpoch = ++_requestEpoch;
     state = state.copyWith(
       state: DiscoverState.searching,
       currentQuery: trimmedQuery,
@@ -88,6 +91,8 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
       final response = await _ref.read(
         discoverQueryProvider(trimmedQuery).future,
       );
+
+      if (localEpoch != _requestEpoch) return null;
 
       _stopTimer();
 
@@ -109,6 +114,8 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
       }
       return response;
     } catch (e) {
+      if (localEpoch != _requestEpoch) return null;
+
       _stopTimer();
       // On error, we always reset to initial so the user can try again
       state = DiscoveryStateData();

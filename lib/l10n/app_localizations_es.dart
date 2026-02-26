@@ -107,5 +107,10 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get consultingOracle => 'Consultando al Oráculo...';
+  String get consultingOracle => 'Consulting the Oracle...';
+
+  @override
+  String elapsedSecondsLabel(int seconds) {
+    return '${seconds}s transcurridos';
+  }
 }

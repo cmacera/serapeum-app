@@ -33,5 +33,6 @@
       "code": { "type": "int" }
     }
   },
-  "consultingOracle": "Consultando al Oráculo..."
+  "consultingOracle": "Consultando al Oráculo...",
+  "elapsedSecondsLabel": "{seconds}s transcurridos"
 }
