@@ -24,7 +24,30 @@ class DiscoverResultList extends StatefulWidget {
 }
 
 class _DiscoverResultListState extends State<DiscoverResultList> {
-  String? _selectedCategory;
+  DiscoverCategory? _selectedCategory;
+
+  @override
+  void didUpdateWidget(covariant DiscoverResultList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.response != oldWidget.response) {
+      _validateSelectedCategory();
+    }
+  }
+
+  void _validateSelectedCategory() {
+    if (_selectedCategory == null) return;
+
+    final data = widget.response;
+    bool isValid = switch (_selectedCategory!) {
+      DiscoverCategory.media => data.media.isNotEmpty,
+      DiscoverCategory.books => data.books.isNotEmpty,
+      DiscoverCategory.games => data.games.isNotEmpty,
+    };
+
+    if (!isValid) {
+      _selectedCategory = null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +141,8 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
   ) {
     List<Widget> cards = [];
 
-    if (_selectedCategory == null || _selectedCategory == 'Media') {
+    if (_selectedCategory == null ||
+        _selectedCategory == DiscoverCategory.media) {
       cards.addAll([
         for (final media in data.media)
           MediaResultCard(
@@ -132,7 +156,8 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
       ]);
     }
 
-    if (_selectedCategory == null || _selectedCategory == 'Books') {
+    if (_selectedCategory == null ||
+        _selectedCategory == DiscoverCategory.books) {
       cards.addAll([
         for (final book in data.books)
           MediaResultCard(
@@ -146,7 +171,8 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
       ]);
     }
 
-    if (_selectedCategory == null || _selectedCategory == 'Games') {
+    if (_selectedCategory == null ||
+        _selectedCategory == DiscoverCategory.games) {
       cards.addAll([
         for (final game in data.games)
           MediaResultCard(

@@ -47,10 +47,14 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(response: response));
       await tester.pumpAndSettle();
 
-      expect(find.text('All'), findsNothing);
-      expect(find.text('Media'), findsNothing);
-      expect(find.text('Books'), findsNothing);
-      expect(find.text('Games'), findsNothing);
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverResultView)),
+      )!;
+
+      expect(find.text(l10n.filterAll), findsNothing);
+      expect(find.text(l10n.filterMedia), findsNothing);
+      expect(find.text(l10n.filterBooks), findsNothing);
+      expect(find.text(l10n.filterGames), findsNothing);
       expect(find.text('Test Movie'), findsOneWidget);
     });
 
@@ -75,10 +79,14 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(response: response));
       await tester.pumpAndSettle();
 
-      expect(find.text('All'), findsOneWidget);
-      expect(find.text('Media'), findsOneWidget);
-      expect(find.text('Books'), findsOneWidget);
-      expect(find.text('Games'), findsNothing);
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverResultView)),
+      )!;
+
+      expect(find.text(l10n.filterAll), findsOneWidget);
+      expect(find.text(l10n.filterMedia), findsOneWidget);
+      expect(find.text(l10n.filterBooks), findsOneWidget);
+      expect(find.text(l10n.filterGames), findsNothing);
 
       // Both results should be visible under "All"
       expect(find.text('Test Movie'), findsOneWidget);
@@ -106,10 +114,14 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(response: response));
       await tester.pumpAndSettle();
 
-      expect(find.text('All'), findsOneWidget);
-      expect(find.text('Media'), findsOneWidget);
-      expect(find.text('Books'), findsOneWidget);
-      expect(find.text('Games'), findsOneWidget);
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverResultView)),
+      )!;
+
+      expect(find.text(l10n.filterAll), findsOneWidget);
+      expect(find.text(l10n.filterMedia), findsOneWidget);
+      expect(find.text(l10n.filterBooks), findsOneWidget);
+      expect(find.text(l10n.filterGames), findsOneWidget);
     });
 
     testWidgets('filters results when tapping tabs', (
@@ -133,13 +145,17 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(response: response));
       await tester.pumpAndSettle();
 
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverResultView)),
+      )!;
+
       // Initially 'All' is selected, so all items should be visible
       expect(find.text('Test Movie'), findsOneWidget);
       expect(find.text('Test Book'), findsOneWidget);
       expect(find.text('Test Game'), findsOneWidget);
 
       // Tap 'Media' tab
-      await tester.tap(find.text('Media'));
+      await tester.tap(find.text(l10n.filterMedia));
       await tester.pumpAndSettle();
 
       expect(find.text('Test Movie'), findsOneWidget);
@@ -147,7 +163,7 @@ void main() {
       expect(find.text('Test Game'), findsNothing);
 
       // Tap 'Books' tab
-      await tester.tap(find.text('Books'));
+      await tester.tap(find.text(l10n.filterBooks));
       await tester.pumpAndSettle();
 
       expect(find.text('Test Movie'), findsNothing);
@@ -155,7 +171,7 @@ void main() {
       expect(find.text('Test Game'), findsNothing);
 
       // Tap 'Games' tab
-      await tester.tap(find.text('Games'));
+      await tester.tap(find.text(l10n.filterGames));
       await tester.pumpAndSettle();
 
       expect(find.text('Test Movie'), findsNothing);
@@ -163,7 +179,7 @@ void main() {
       expect(find.text('Test Game'), findsOneWidget);
 
       // Tap 'All' tab to restore
-      await tester.tap(find.text('All'));
+      await tester.tap(find.text(l10n.filterAll));
       await tester.pumpAndSettle();
 
       expect(find.text('Test Movie'), findsOneWidget);

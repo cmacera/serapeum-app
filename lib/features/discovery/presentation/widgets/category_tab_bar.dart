@@ -42,6 +42,8 @@ class CategoryTabItem extends StatelessWidget {
   }
 }
 
+enum DiscoverCategory { media, books, games }
+
 class CategoryTabBar extends StatelessWidget {
   final String filterAllLabel;
   final String filterMediaLabel;
@@ -52,8 +54,8 @@ class CategoryTabBar extends StatelessWidget {
   final bool hasBooks;
   final bool hasGames;
 
-  final String? selectedCategory;
-  final ValueChanged<String?> onCategorySelected;
+  final DiscoverCategory? selectedCategory;
+  final ValueChanged<DiscoverCategory?> onCategorySelected;
 
   const CategoryTabBar({
     super.key,
@@ -84,24 +86,24 @@ class CategoryTabBar extends StatelessWidget {
             const SizedBox(width: 8),
             CategoryTabItem(
               label: filterMediaLabel,
-              isSelected: selectedCategory == 'Media',
-              onTap: () => onCategorySelected('Media'),
+              isSelected: selectedCategory == DiscoverCategory.media,
+              onTap: () => onCategorySelected(DiscoverCategory.media),
             ),
           ],
           if (hasBooks) ...[
             const SizedBox(width: 8),
             CategoryTabItem(
               label: filterBooksLabel,
-              isSelected: selectedCategory == 'Books',
-              onTap: () => onCategorySelected('Books'),
+              isSelected: selectedCategory == DiscoverCategory.books,
+              onTap: () => onCategorySelected(DiscoverCategory.books),
             ),
           ],
           if (hasGames) ...[
             const SizedBox(width: 8),
             CategoryTabItem(
               label: filterGamesLabel,
-              isSelected: selectedCategory == 'Games',
-              onTap: () => onCategorySelected('Games'),
+              isSelected: selectedCategory == DiscoverCategory.games,
+              onTap: () => onCategorySelected(DiscoverCategory.games),
             ),
           ],
         ],
