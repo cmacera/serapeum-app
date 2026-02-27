@@ -41,5 +41,15 @@
   "filterGames": "Juegos",
   "mediaTypeMovie": "PELÍCULA",
   "mediaTypeTv": "SERIE",
-  "mediaTypeUnknown": "MULTIMEDIA"
+  "mediaTypeUnknown": "MULTIMEDIA",
+  "detailSynopsis": "Sinopsis",
+  "detailPublishingInfo": "Información de publicación",
+  "detailAuthors": "Autores",
+  "detailPublisher": "Editorial",
+  "detailPlatforms": "Plataformas",
+  "detailGenres": "Géneros",
+  "detailDevelopers": "Desarrolladores",
+  "detailDefaultTitle": "Detalles",
+  "unknownPublisher": "Editorial desconocida",
+  "unknownAuthors": "Desconocido"
 }

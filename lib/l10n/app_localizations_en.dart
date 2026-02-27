@@ -133,4 +133,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mediaTypeUnknown => 'MEDIA';
+
+  @override
+  String get detailSynopsis => 'Synopsis';
+
+  @override
+  String get detailPublishingInfo => 'Publishing Info';
+
+  @override
+  String get detailAuthors => 'Authors';
+
+  @override
+  String get detailPublisher => 'Publisher';
+
+  @override
+  String get detailPlatforms => 'Platforms';
+
+  @override
+  String get detailGenres => 'Genres';
+
+  @override
+  String get detailDevelopers => 'Developers';
+
+  @override
+  String get detailDefaultTitle => 'Details';
+
+  @override
+  String get unknownPublisher => 'Unknown Publisher';
+
+  @override
+  String get unknownAuthors => 'Unknown';
 }

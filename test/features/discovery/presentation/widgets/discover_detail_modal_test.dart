@@ -4,10 +4,14 @@ import 'package:serapeum_app/features/discovery/domain/entities/book.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/game.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
 import 'package:serapeum_app/features/discovery/presentation/widgets/discover_detail_modal.dart';
+import 'package:serapeum_app/l10n/app_localizations.dart';
 
 void main() {
   Widget createWidgetUnderTest(Object entity) {
     return MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('en'),
       home: Scaffold(body: DiscoverDetailModal(entity: entity)),
     );
   }
@@ -26,10 +30,14 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(media));
       await tester.pumpAndSettle();
 
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverDetailModal)),
+      )!;
+
       expect(find.text('Inception'), findsOneWidget);
       expect(find.text('2010'), findsOneWidget);
       expect(find.text('8.8'), findsOneWidget);
-      expect(find.text('Synopsis'), findsOneWidget);
+      expect(find.text(l10n.detailSynopsis), findsOneWidget);
       expect(
         find.text('A thief who steals corporate secrets...'),
         findsOneWidget,
@@ -51,18 +59,25 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(book));
       await tester.pumpAndSettle();
 
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverDetailModal)),
+      )!;
+
       expect(find.text('1984'), findsOneWidget);
       expect(find.text('1949'), findsOneWidget);
       expect(find.text('328 p.'), findsOneWidget);
-      expect(find.text('Synopsis'), findsOneWidget);
+      expect(find.text(l10n.detailSynopsis), findsOneWidget);
       expect(
         find.text('Among the seminal texts of the 20th century...'),
         findsOneWidget,
       );
-      expect(find.text('Publishing Info'), findsOneWidget);
-      expect(find.textContaining('Authors: George Orwell'), findsOneWidget);
+      expect(find.text(l10n.detailPublishingInfo), findsOneWidget);
       expect(
-        find.textContaining('Publisher: Secker & Warburg'),
+        find.textContaining('${l10n.detailAuthors}: George Orwell'),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('${l10n.detailPublisher}: Secker & Warburg'),
         findsOneWidget,
       );
       expect(find.textContaining('ISBN: 9780451524935'), findsOneWidget);
@@ -84,21 +99,25 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(game));
       await tester.pumpAndSettle();
 
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverDetailModal)),
+      )!;
+
       expect(find.text('The Witcher 3: Wild Hunt'), findsOneWidget);
       expect(find.text('2015'), findsOneWidget);
       expect(find.text('4.7'), findsOneWidget);
-      expect(find.text('Synopsis'), findsOneWidget);
+      expect(find.text(l10n.detailSynopsis), findsOneWidget);
       expect(
         find.text(
           'A story-driven, next-generation open world role-playing game...',
         ),
         findsOneWidget,
       );
-      expect(find.text('Platforms'), findsOneWidget);
+      expect(find.text(l10n.detailPlatforms), findsOneWidget);
       expect(find.text('PC, PlayStation 4, Xbox One'), findsOneWidget);
-      expect(find.text('Genres'), findsOneWidget);
+      expect(find.text(l10n.detailGenres), findsOneWidget);
       expect(find.text('Action, RPG'), findsOneWidget);
-      expect(find.text('Developers'), findsOneWidget);
+      expect(find.text(l10n.detailDevelopers), findsOneWidget);
       expect(find.text('CD PROJEKT RED'), findsOneWidget);
     });
 
@@ -114,9 +133,13 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(emptyMedia));
       await tester.pumpAndSettle();
 
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverDetailModal)),
+      )!;
+
       expect(find.text('Unknown Title'), findsOneWidget);
       expect(
-        find.text('Synopsis'),
+        find.text(l10n.detailSynopsis),
         findsNothing,
       ); // Should not display synopsis section if null
     });

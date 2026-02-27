@@ -98,5 +98,15 @@
   "filterGames": "Games",
   "mediaTypeMovie": "MOVIE",
   "mediaTypeTv": "TV SERIES",
-  "mediaTypeUnknown": "MEDIA"
+  "mediaTypeUnknown": "MEDIA",
+  "detailSynopsis": "Synopsis",
+  "detailPublishingInfo": "Publishing Info",
+  "detailAuthors": "Authors",
+  "detailPublisher": "Publisher",
+  "detailPlatforms": "Platforms",
+  "detailGenres": "Genres",
+  "detailDevelopers": "Developers",
+  "detailDefaultTitle": "Details",
+  "unknownPublisher": "Unknown Publisher",
+  "unknownAuthors": "Unknown"
 }

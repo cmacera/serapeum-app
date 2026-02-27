@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:serapeum_app/l10n/app_localizations.dart';
 import '../../domain/entities/media.dart';
 import '../../domain/entities/book.dart';
 import '../../domain/entities/game.dart';
@@ -51,15 +52,15 @@ class DiscoverDetailModal extends StatelessWidget {
     );
   }
 
-  String _getTitle() {
+  String _getTitle(AppLocalizations l10n) {
     if (entity is Media) {
       return (entity as Media).title ??
           (entity as Media).name ??
-          'Unknown Media';
+          l10n.unknownMedia;
     }
     if (entity is Book) return (entity as Book).title;
     if (entity is Game) return (entity as Game).name;
-    return 'Details';
+    return l10n.detailDefaultTitle;
   }
 
   String? _getBackdropUrl() {
@@ -79,7 +80,8 @@ class DiscoverDetailModal extends StatelessWidget {
 
   Widget _buildImmersiveHeader(BuildContext context) {
     final theme = Theme.of(context);
-    final title = _getTitle();
+    final l10n = AppLocalizations.of(context)!;
+    final title = _getTitle(l10n);
     final backdropUrl = _getBackdropUrl();
 
     return SliverToBoxAdapter(
@@ -233,12 +235,13 @@ class DiscoverDetailModal extends StatelessWidget {
     }
 
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Synopsis',
+          l10n.detailSynopsis,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -256,17 +259,19 @@ class DiscoverDetailModal extends StatelessWidget {
   }
 
   Widget _buildSpecializedInfo(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (entity is Media) {
       return const SizedBox.shrink();
     } else if (entity is Book) {
       final book = entity as Book;
-      final authors = book.authors?.join(', ') ?? 'Unknown';
-      final publisher = book.publisher ?? 'Unknown Publisher';
+      final authors = book.authors?.join(', ') ?? l10n.unknownAuthors;
+      final publisher = book.publisher ?? l10n.unknownPublisher;
 
       return _InfoSection(
-        title: 'Publishing Info',
+        title: l10n.detailPublishingInfo,
         content:
-            'Authors: $authors\nPublisher: $publisher${book.isbn != null ? '\nISBN: ${book.isbn}' : ''}',
+            '${l10n.detailAuthors}: $authors\n${l10n.detailPublisher}: $publisher${book.isbn != null ? '\nISBN: ${book.isbn}' : ''}',
       );
     } else if (entity is Game) {
       final game = entity as Game;
@@ -275,14 +280,17 @@ class DiscoverDetailModal extends StatelessWidget {
         children: [
           if (game.platforms != null && game.platforms!.isNotEmpty)
             _InfoSection(
-              title: 'Platforms',
+              title: l10n.detailPlatforms,
               content: game.platforms!.join(', '),
             ),
           if (game.genres != null && game.genres!.isNotEmpty)
-            _InfoSection(title: 'Genres', content: game.genres!.join(', ')),
+            _InfoSection(
+              title: l10n.detailGenres,
+              content: game.genres!.join(', '),
+            ),
           if (game.developers != null && game.developers!.isNotEmpty)
             _InfoSection(
-              title: 'Developers',
+              title: l10n.detailDevelopers,
               content: game.developers!.join(', '),
             ),
         ],
