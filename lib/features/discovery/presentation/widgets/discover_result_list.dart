@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../../core/constants/api_constants.dart';
+import '../../domain/entities/discover_category.dart';
 import '../../domain/entities/search_all_response.dart';
 import 'category_tab_bar.dart';
 import 'chat_message_bubble.dart';

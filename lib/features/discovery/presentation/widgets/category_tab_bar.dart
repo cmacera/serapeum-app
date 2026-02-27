@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../domain/entities/discover_category.dart';
+
 class CategoryTabItem extends StatelessWidget {
   final String label;
   final bool isSelected;
@@ -41,8 +43,6 @@ class CategoryTabItem extends StatelessWidget {
     );
   }
 }
-
-enum DiscoverCategory { media, books, games }
 
 class CategoryTabBar extends StatelessWidget {
   final String filterAllLabel;
