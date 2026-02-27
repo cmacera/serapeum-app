@@ -107,10 +107,31 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get consultingOracle => 'Consulting the Oracle...';
+  String get consultingOracle => 'Consultando al Oráculo...';
 
   @override
   String elapsedSecondsLabel(int seconds) {
     return '${seconds}s transcurridos';
   }
+
+  @override
+  String get filterAll => 'Todo';
+
+  @override
+  String get filterMedia => 'Cine y TV';
+
+  @override
+  String get filterBooks => 'Libros';
+
+  @override
+  String get filterGames => 'Juegos';
+
+  @override
+  String get mediaTypeMovie => 'PELÍCULA';
+
+  @override
+  String get mediaTypeTv => 'SERIE';
+
+  @override
+  String get mediaTypeUnknown => 'MULTIMEDIA';
 }

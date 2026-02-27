@@ -277,6 +277,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{seconds}s elapsed'**
   String elapsedSecondsLabel(int seconds);
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @filterMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Media'**
+  String get filterMedia;
+
+  /// No description provided for @filterBooks.
+  ///
+  /// In en, this message translates to:
+  /// **'Books'**
+  String get filterBooks;
+
+  /// No description provided for @filterGames.
+  ///
+  /// In en, this message translates to:
+  /// **'Games'**
+  String get filterGames;
+
+  /// No description provided for @mediaTypeMovie.
+  ///
+  /// In en, this message translates to:
+  /// **'MOVIE'**
+  String get mediaTypeMovie;
+
+  /// No description provided for @mediaTypeTv.
+  ///
+  /// In en, this message translates to:
+  /// **'TV SERIES'**
+  String get mediaTypeTv;
+
+  /// No description provided for @mediaTypeUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'MEDIA'**
+  String get mediaTypeUnknown;
 }
 
 class _AppLocalizationsDelegate

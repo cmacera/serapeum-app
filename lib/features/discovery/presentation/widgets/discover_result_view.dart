@@ -5,8 +5,7 @@ import '../../domain/entities/orchestrator_response.dart';
 import '../../domain/entities/search_all_response.dart';
 import '../providers/discover_query_provider.dart';
 import '../widgets/chat_message_bubble.dart';
-import '../widgets/media_result_card.dart';
-import '../../../../core/constants/api_constants.dart';
+import 'discover_result_list.dart';
 
 class DiscoverResultView extends ConsumerWidget {
   final String query;
@@ -22,10 +21,7 @@ class DiscoverResultView extends ConsumerWidget {
       data: (data) {
         if (data == null) {
           return ListView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8.0,
-              vertical: 16.0,
-            ),
+            padding: const EdgeInsets.all(16.0),
             children: [
               ChatMessageBubble(text: query, isUser: true),
               const SizedBox(height: 16),
@@ -44,16 +40,20 @@ class DiscoverResultView extends ConsumerWidget {
             ],
           ),
           OrchestratorGeneral(text: final text, data: final searchData) =>
-            _buildResultList(context, text, searchData),
+            DiscoverResultList(
+              query: query,
+              assistantText: text,
+              response: searchData,
+            ),
           OrchestratorSelection(
             books: final books,
             media: final media,
             games: final games,
           ) =>
-            _buildResultList(
-              context,
-              l10n.resultIntro,
-              SearchAllResponse(
+            DiscoverResultList(
+              query: query,
+              assistantText: l10n.resultIntro,
+              response: SearchAllResponse(
                 books: books ?? [],
                 media: media ?? [],
                 games: games ?? [],
@@ -85,7 +85,7 @@ class DiscoverResultView extends ConsumerWidget {
       error: (err, stack) {
         debugPrint('Error querying the Oracle: $err\n$stack');
         return ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+          padding: const EdgeInsets.all(16.0),
           children: [
             ChatMessageBubble(text: query, isUser: true),
             Padding(
@@ -95,90 +95,6 @@ class DiscoverResultView extends ConsumerWidget {
           ],
         );
       },
-    );
-  }
-
-  Widget _buildResultList(
-    BuildContext context,
-    String text,
-    SearchAllResponse data,
-  ) {
-    final l10n = AppLocalizations.of(context)!;
-
-    final hasResults =
-        data.media.isNotEmpty || data.books.isNotEmpty || data.games.isNotEmpty;
-
-    final allCards = [
-      for (final media in data.media)
-        MediaResultCard(
-          title: media.title ?? media.name ?? l10n.unknownMedia,
-          subtitle: media.mediaType.name.toUpperCase(),
-          imageUrl: media.posterPath != null
-              ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
-              : null,
-          description: media.overview,
-        ),
-      for (final book in data.books)
-        MediaResultCard(
-          title: book.title,
-          subtitle: l10n.bookSubtitle(book.publishedDate ?? l10n.unknownYear),
-          imageUrl:
-              book.imageLinks?['thumbnail'] ??
-              book.imageLinks?['smallThumbnail'],
-          description: book.description,
-        ),
-      for (final game in data.games)
-        MediaResultCard(
-          title: game.name,
-          subtitle: l10n.gameSubtitle,
-          imageUrl: game.coverUrl,
-          description: game.summary,
-        ),
-    ];
-
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ChatMessageBubble(text: query, isUser: true),
-                const SizedBox(height: 16),
-                ChatMessageBubble(text: text, isUser: false),
-                if (!hasResults)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      l10n.noMatches,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-        if (allCards.isNotEmpty)
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-            ).copyWith(bottom: 32.0),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16.0,
-                crossAxisSpacing: 16.0,
-                childAspectRatio: 0.65,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => allCards[index],
-                childCount: allCards.length,
-              ),
-            ),
-          ),
-      ],
     );
   }
 }

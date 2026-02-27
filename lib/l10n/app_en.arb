@@ -91,5 +91,12 @@
         "type": "int"
       }
     }
-  }
+  },
+  "filterAll": "All",
+  "filterMedia": "Media",
+  "filterBooks": "Books",
+  "filterGames": "Games",
+  "mediaTypeMovie": "MOVIE",
+  "mediaTypeTv": "TV SERIES",
+  "mediaTypeUnknown": "MEDIA"
 }
