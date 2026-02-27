@@ -112,4 +112,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String elapsedSecondsLabel(int seconds) {
     return '${seconds}s elapsed';
   }
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterMedia => 'Media';
+
+  @override
+  String get filterBooks => 'Books';
+
+  @override
+  String get filterGames => 'Games';
 }

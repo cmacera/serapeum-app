@@ -34,5 +34,9 @@
     }
   },
   "consultingOracle": "Consultando al Oráculo...",
-  "elapsedSecondsLabel": "{seconds}s transcurridos"
+  "elapsedSecondsLabel": "{seconds}s transcurridos",
+  "filterAll": "Todo",
+  "filterMedia": "Cine y TV",
+  "filterBooks": "Libros",
+  "filterGames": "Juegos"
 }
