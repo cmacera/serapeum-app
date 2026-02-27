@@ -38,5 +38,8 @@
   "filterAll": "Todo",
   "filterMedia": "Cine y TV",
   "filterBooks": "Libros",
-  "filterGames": "Juegos"
+  "filterGames": "Juegos",
+  "mediaTypeMovie": "PELÍCULA",
+  "mediaTypeTv": "SERIE",
+  "mediaTypeUnknown": "MULTIMEDIA"
 }

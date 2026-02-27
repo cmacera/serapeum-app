@@ -95,5 +95,8 @@
   "filterAll": "All",
   "filterMedia": "Media",
   "filterBooks": "Books",
-  "filterGames": "Games"
+  "filterGames": "Games",
+  "mediaTypeMovie": "MOVIE",
+  "mediaTypeTv": "TV SERIES",
+  "mediaTypeUnknown": "MEDIA"
 }

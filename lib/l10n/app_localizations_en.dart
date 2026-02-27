@@ -124,4 +124,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filterGames => 'Games';
+
+  @override
+  String get mediaTypeMovie => 'MOVIE';
+
+  @override
+  String get mediaTypeTv => 'TV SERIES';
+
+  @override
+  String get mediaTypeUnknown => 'MEDIA';
 }

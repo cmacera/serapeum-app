@@ -3,6 +3,7 @@ import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../../core/constants/api_constants.dart';
 import '../../domain/entities/discover_category.dart';
+import '../../domain/entities/media.dart';
 import '../../domain/entities/search_all_response.dart';
 import 'category_tab_bar.dart';
 import 'chat_message_bubble.dart';
@@ -148,7 +149,7 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
         for (final media in data.media)
           MediaResultCard(
             title: media.title ?? media.name ?? l10n.unknownMedia,
-            subtitle: media.mediaType.name.toUpperCase(),
+            subtitle: _getLocalizedMediaType(media.mediaType, l10n),
             imageUrl: media.posterPath != null
                 ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
                 : null,
@@ -186,5 +187,13 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
     }
 
     return cards;
+  }
+
+  String _getLocalizedMediaType(MediaType type, AppLocalizations l10n) {
+    return switch (type) {
+      MediaType.movie => l10n.mediaTypeMovie,
+      MediaType.tv => l10n.mediaTypeTv,
+      MediaType.unknown => l10n.mediaTypeUnknown,
+    };
   }
 }
