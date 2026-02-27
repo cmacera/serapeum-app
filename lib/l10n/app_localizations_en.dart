@@ -82,4 +82,34 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get queryFailed =>
       'I\'m sorry, I couldn\'t process your request right now. Please try again later.';
+
+  @override
+  String get outOfScopeTitle => 'Out of Scope';
+
+  @override
+  String get errorTitle => 'Oracle Error';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get networkError =>
+      'Network error. Please check your internet connection.';
+
+  @override
+  String get timeoutError =>
+      'The request timed out. The Oracle is busy or the connection is slow.';
+
+  @override
+  String serverError(int code) {
+    return 'The server returned an error ($code).';
+  }
+
+  @override
+  String get consultingOracle => 'Consulting the Oracle...';
+
+  @override
+  String elapsedSecondsLabel(int seconds) {
+    return '${seconds}s elapsed';
+  }
 }

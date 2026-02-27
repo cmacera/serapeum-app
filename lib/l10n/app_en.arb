@@ -67,5 +67,29 @@
   },
   "unknownYear": "Unknown Year",
   "gameSubtitle": "GAME",
-  "queryFailed": "I'm sorry, I couldn't process your request right now. Please try again later."
+  "queryFailed": "I'm sorry, I couldn't process your request right now. Please try again later.",
+  "outOfScopeTitle": "Out of Scope",
+  "errorTitle": "Oracle Error",
+  "ok": "OK",
+  "networkError": "Network error. Please check your internet connection.",
+  "timeoutError": "The request timed out. The Oracle is busy or the connection is slow.",
+  "serverError": "The server returned an error ({code}).",
+  "@serverError": {
+    "placeholders": {
+      "code": { "type": "int" }
+    }
+  },
+  "consultingOracle": "Consulting the Oracle...",
+  "@consultingOracle": {
+    "description": "Loading message shown while the Oracle (AI) is processing the request"
+  },
+  "elapsedSecondsLabel": "{seconds}s elapsed",
+  "@elapsedSecondsLabel": {
+    "description": "Label for the debug timer showing elapsed seconds",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  }
 }

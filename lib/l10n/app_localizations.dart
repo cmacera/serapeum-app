@@ -229,6 +229,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'I\'m sorry, I couldn\'t process your request right now. Please try again later.'**
   String get queryFailed;
+
+  /// No description provided for @outOfScopeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of Scope'**
+  String get outOfScopeTitle;
+
+  /// No description provided for @errorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Oracle Error'**
+  String get errorTitle;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @networkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Please check your internet connection.'**
+  String get networkError;
+
+  /// No description provided for @timeoutError.
+  ///
+  /// In en, this message translates to:
+  /// **'The request timed out. The Oracle is busy or the connection is slow.'**
+  String get timeoutError;
+
+  /// No description provided for @serverError.
+  ///
+  /// In en, this message translates to:
+  /// **'The server returned an error ({code}).'**
+  String serverError(int code);
+
+  /// Loading message shown while the Oracle (AI) is processing the request
+  ///
+  /// In en, this message translates to:
+  /// **'Consulting the Oracle...'**
+  String get consultingOracle;
+
+  /// Label for the debug timer showing elapsed seconds
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s elapsed'**
+  String elapsedSecondsLabel(int seconds);
 }
 
 class _AppLocalizationsDelegate

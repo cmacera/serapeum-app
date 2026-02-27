@@ -83,4 +83,34 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get queryFailed =>
       'Lo siento, no he podido procesar tu solicitud en este momento. Por favor, inténtalo de nuevo más tarde.';
+
+  @override
+  String get outOfScopeTitle => 'Fuera de alcance';
+
+  @override
+  String get errorTitle => 'Error del Oráculo';
+
+  @override
+  String get ok => 'Aceptar';
+
+  @override
+  String get networkError =>
+      'Error de red. Por favor, comprueba tu conexión a internet.';
+
+  @override
+  String get timeoutError =>
+      'La solicitud ha caducado. El Oráculo está ocupado o la conexión es lenta.';
+
+  @override
+  String serverError(int code) {
+    return 'El servidor devolvió un error ($code).';
+  }
+
+  @override
+  String get consultingOracle => 'Consulting the Oracle...';
+
+  @override
+  String elapsedSecondsLabel(int seconds) {
+    return '${seconds}s transcurridos';
+  }
 }

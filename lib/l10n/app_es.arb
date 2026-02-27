@@ -21,5 +21,18 @@
   "bookSubtitle": "LIBRO · {date}",
   "unknownYear": "Año desconocido",
   "gameSubtitle": "JUEGO",
-  "queryFailed": "Lo siento, no he podido procesar tu solicitud en este momento. Por favor, inténtalo de nuevo más tarde."
+  "queryFailed": "Lo siento, no he podido procesar tu solicitud en este momento. Por favor, inténtalo de nuevo más tarde.",
+  "outOfScopeTitle": "Fuera de alcance",
+  "errorTitle": "Error del Oráculo",
+  "ok": "Aceptar",
+  "networkError": "Error de red. Por favor, comprueba tu conexión a internet.",
+  "timeoutError": "La solicitud ha caducado. El Oráculo está ocupado o la conexión es lenta.",
+  "serverError": "El servidor devolvió un error ({code}).",
+  "@serverError": {
+    "placeholders": {
+      "code": { "type": "int" }
+    }
+  },
+  "consultingOracle": "Consultando al Oráculo...",
+  "elapsedSecondsLabel": "{seconds}s transcurridos"
 }

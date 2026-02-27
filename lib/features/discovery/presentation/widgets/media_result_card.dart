@@ -5,12 +5,14 @@ import '../../../../core/constants/app_colors.dart';
 class MediaResultCard extends StatelessWidget {
   final String title;
   final String subtitle;
+  final String? description;
   final String? imageUrl;
 
   const MediaResultCard({
     super.key,
     required this.title,
     required this.subtitle,
+    this.description,
     this.imageUrl,
   });
 
@@ -70,6 +72,18 @@ class MediaResultCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                if (description != null && description!.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    description!,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: AppColors.subtitle.withValues(alpha: 0.7),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ],
             ),
           ),

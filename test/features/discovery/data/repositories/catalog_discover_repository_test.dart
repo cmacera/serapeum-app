@@ -17,6 +17,7 @@ void main() {
     repository = CatalogDiscoverRepository(mockDio);
 
     registerFallbackValue(RequestOptions(path: ''));
+    registerFallbackValue(Options());
   });
 
   group('CatalogDiscoverRepository Protocol (Genkit)', () {
@@ -29,24 +30,32 @@ void main() {
           'result': {'kind': 'refusal', 'message': 'conversational response'},
         };
 
+        Options? capturedOptions;
         when(
-          () => mockDio.post<dynamic>(any(), data: any(named: 'data')),
-        ).thenAnswer(
-          (_) async => Response(
+          () => mockDio.post<dynamic>(
+            any(),
+            data: any(named: 'data'),
+            options: any(named: 'options'),
+          ),
+        ).thenAnswer((invocation) async {
+          capturedOptions = invocation.namedArguments[#options] as Options?;
+          return Response(
             data: mockData,
             requestOptions: RequestOptions(path: ''),
             statusCode: 200,
-          ),
-        );
+          );
+        });
 
         // act
         final result = await repository.orchestrate(query);
 
         // assert
+        expect(capturedOptions?.receiveTimeout, const Duration(minutes: 5));
         verify(
           () => mockDio.post<dynamic>(
             ApiConstants.orchestratorFlow,
             data: {'data': containsPair('query', query)},
+            options: any(named: 'options'),
           ),
         ).called(1);
         expect(result, isA<OrchestratorMessage>());
@@ -63,7 +72,11 @@ void main() {
       };
 
       when(
-        () => mockDio.post<dynamic>(any(), data: any(named: 'data')),
+        () => mockDio.post<dynamic>(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
       ).thenAnswer(
         (_) async => Response(
           data: mockResponse,
@@ -82,6 +95,7 @@ void main() {
           data: {
             'data': {'query': query, 'language': language},
           },
+          options: any(named: 'options'),
         ),
       ).called(1);
     });
@@ -91,7 +105,11 @@ void main() {
       () async {
         // arrange
         when(
-          () => mockDio.post<dynamic>(any(), data: any(named: 'data')),
+          () => mockDio.post<dynamic>(
+            any(),
+            data: any(named: 'data'),
+            options: any(named: 'options'),
+          ),
         ).thenAnswer(
           (_) async => Response(
             data: {'not_result': 'error'},
@@ -113,7 +131,11 @@ void main() {
     test('should handle refusal as OrchestratorMessage', () async {
       // arrange
       when(
-        () => mockDio.post<dynamic>(any(), data: any(named: 'data')),
+        () => mockDio.post<dynamic>(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
       ).thenAnswer(
         (_) async => Response(
           data: {
@@ -135,7 +157,11 @@ void main() {
     test('should handle search_results kind as OrchestratorGeneral', () async {
       // arrange
       when(
-        () => mockDio.post<dynamic>(any(), data: any(named: 'data')),
+        () => mockDio.post<dynamic>(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
       ).thenAnswer(
         (_) async => Response(
           data: {
@@ -168,7 +194,11 @@ void main() {
     test('should handle error kind as OrchestratorError', () async {
       // arrange
       when(
-        () => mockDio.post<dynamic>(any(), data: any(named: 'data')),
+        () => mockDio.post<dynamic>(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
       ).thenAnswer(
         (_) async => Response(
           data: {
@@ -200,7 +230,11 @@ void main() {
       () async {
         // arrange
         when(
-          () => mockDio.post<dynamic>(any(), data: any(named: 'data')),
+          () => mockDio.post<dynamic>(
+            any(),
+            data: any(named: 'data'),
+            options: any(named: 'options'),
+          ),
         ).thenThrow(
           DioException(
             type: DioExceptionType.connectionError,
