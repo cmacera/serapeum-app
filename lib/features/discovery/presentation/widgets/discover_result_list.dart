@@ -7,6 +7,7 @@ import '../../domain/entities/media.dart';
 import '../../domain/entities/search_all_response.dart';
 import 'category_tab_bar.dart';
 import 'chat_message_bubble.dart';
+import 'discover_detail_modal.dart';
 import 'media_result_card.dart';
 
 class DiscoverResultList extends StatefulWidget {
@@ -136,6 +137,23 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
     );
   }
 
+  void _showDetails(BuildContext context, Object entity) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      backgroundColor: Colors
+          .transparent, // Required for transparent scaffold in DiscoverDetailModal
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (_, controller) =>
+            DiscoverDetailModal(entity: entity, scrollController: controller),
+      ),
+    );
+  }
+
   List<Widget> _buildFilteredCards(
     BuildContext context,
     AppLocalizations l10n,
@@ -154,6 +172,7 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
                 ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
                 : null,
             description: media.overview,
+            onTap: () => _showDetails(context, media),
           ),
       ]);
     }
@@ -169,6 +188,7 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
                 book.imageLinks?['thumbnail'] ??
                 book.imageLinks?['smallThumbnail'],
             description: book.description,
+            onTap: () => _showDetails(context, book),
           ),
       ]);
     }
@@ -182,6 +202,7 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
             subtitle: l10n.gameSubtitle,
             imageUrl: game.coverUrl,
             description: game.summary,
+            onTap: () => _showDetails(context, game),
           ),
       ]);
     }

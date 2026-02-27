@@ -319,6 +319,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'MEDIA'**
   String get mediaTypeUnknown;
+
+  /// No description provided for @detailSynopsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Synopsis'**
+  String get detailSynopsis;
+
+  /// No description provided for @detailPublishingInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Publishing Info'**
+  String get detailPublishingInfo;
+
+  /// No description provided for @detailAuthors.
+  ///
+  /// In en, this message translates to:
+  /// **'Authors'**
+  String get detailAuthors;
+
+  /// No description provided for @detailPublisher.
+  ///
+  /// In en, this message translates to:
+  /// **'Publisher'**
+  String get detailPublisher;
+
+  /// No description provided for @detailPlatforms.
+  ///
+  /// In en, this message translates to:
+  /// **'Platforms'**
+  String get detailPlatforms;
+
+  /// No description provided for @detailGenres.
+  ///
+  /// In en, this message translates to:
+  /// **'Genres'**
+  String get detailGenres;
+
+  /// No description provided for @detailDevelopers.
+  ///
+  /// In en, this message translates to:
+  /// **'Developers'**
+  String get detailDevelopers;
+
+  /// No description provided for @detailDefaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get detailDefaultTitle;
+
+  /// No description provided for @unknownPublisher.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Publisher'**
+  String get unknownPublisher;
+
+  /// No description provided for @unknownAuthors.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknownAuthors;
 }
 
 class _AppLocalizationsDelegate

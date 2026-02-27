@@ -20,6 +20,7 @@ void main() {
       child: const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale('en'),
         home: Scaffold(body: DiscoverResultView(query: 'test query')),
       ),
     );
