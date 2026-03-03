@@ -61,6 +61,13 @@ java -jar "$JAR" generate \
   --model-name-suffix Dto \
   -c "$CONFIG" \
   2>&1 | grep -v "^\[main\]" | grep -v "^$" || true
+# || true prevents set -e/pipefail from triggering on grep -v "^$" exiting 1
+# (empty output); PIPESTATUS still captures java's actual exit code.
+JAVA_EXIT="${PIPESTATUS[0]}"
+if [ "$JAVA_EXIT" -ne 0 ]; then
+  echo "❌ openapi-generator failed (exit $JAVA_EXIT)" >&2
+  exit "$JAVA_EXIT"
+fi
 
 # dart-dio outputs to lib/src/model or lib/model depending on version
 GENERATED_DIR="$TMP_DIR/lib/src/model"
@@ -73,15 +80,15 @@ if [ ! -d "$GENERATED_DIR" ]; then
   exit 1
 fi
 
-# Replace reference output (clean slate each run)
-rm -rf "$OUTPUT_DIR"
-mkdir -p "$OUTPUT_DIR"
-
-# Fail fast if the generator produced no .dart files
+# Verify .dart files exist before wiping OUTPUT_DIR (preserves prior output on failure)
 if ! ls "$GENERATED_DIR"/*.dart &>/dev/null; then
   echo "❌ No .dart files found in $GENERATED_DIR — generator produced no output" >&2
   exit 1
 fi
+
+# Replace reference output (clean slate each run)
+rm -rf "$OUTPUT_DIR"
+mkdir -p "$OUTPUT_DIR"
 cp "$GENERATED_DIR"/*.dart "$OUTPUT_DIR/"
 
 # Cleanup
