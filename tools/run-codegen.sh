@@ -45,6 +45,12 @@ if [ ! -f "$SPEC" ]; then
   exit 1
 fi
 
+if [ ! -f "$CONFIG" ]; then
+  echo "❌ OpenAPI config not found at $CONFIG"
+  echo "   Create tools/openapi-config.yaml or check the path."
+  exit 1
+fi
+
 echo "🔧 Generating reference models from $SPEC ..."
 
 java -jar "$JAR" generate \
@@ -70,7 +76,13 @@ fi
 # Replace reference output (clean slate each run)
 rm -rf "$OUTPUT_DIR"
 mkdir -p "$OUTPUT_DIR"
-cp "$GENERATED_DIR"/*.dart "$OUTPUT_DIR/" 2>/dev/null || true
+
+# Fail fast if the generator produced no .dart files
+if ! ls "$GENERATED_DIR"/*.dart &>/dev/null; then
+  echo "❌ No .dart files found in $GENERATED_DIR — generator produced no output" >&2
+  exit 1
+fi
+cp "$GENERATED_DIR"/*.dart "$OUTPUT_DIR/"
 
 # Cleanup
 rm -rf "$TMP_DIR"
