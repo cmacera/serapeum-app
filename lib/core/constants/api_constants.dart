@@ -21,6 +21,7 @@ class ApiConstants {
   // TMDB
   static const String tmdbImageBaseUrl = 'https://image.tmdb.org/t/p';
   static const String tmdbImageTierW500 = '/w500';
+  static const String tmdbImageTierW780 = '/w780';
   static const String tmdbImageTierOriginal = '/original';
 
   // Hosts for AuthInterceptor

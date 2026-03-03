@@ -80,7 +80,10 @@ void main() {
         find.textContaining('${l10n.detailPublisher}: Secker & Warburg'),
         findsOneWidget,
       );
-      expect(find.textContaining('ISBN: 9780451524935'), findsOneWidget);
+      expect(
+        find.textContaining('${l10n.detailIsbn}: 9780451524935'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('renders Game entity correctly', (WidgetTester tester) async {
@@ -143,5 +146,124 @@ void main() {
         findsNothing,
       ); // Should not display synopsis section if null
     });
+
+    testWidgets('renders Media genres from genreIds', (
+      WidgetTester tester,
+    ) async {
+      const media = Media(
+        id: 1,
+        title: 'Inception',
+        mediaType: MediaType.movie,
+        genreIds: [28, 878], // Action, Sci-Fi
+      );
+
+      await tester.pumpWidget(createWidgetUnderTest(media));
+      await tester.pumpAndSettle();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverDetailModal)),
+      )!;
+
+      expect(find.text(l10n.detailGenres), findsOneWidget);
+      expect(
+        find.text('${l10n.genreAction}, ${l10n.genreSciFi}'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('renders Media originalLanguage chip', (
+      WidgetTester tester,
+    ) async {
+      const media = Media(
+        id: 1,
+        title: 'Inception',
+        mediaType: MediaType.movie,
+        originalLanguage: 'en',
+      );
+
+      await tester.pumpWidget(createWidgetUnderTest(media));
+      await tester.pumpAndSettle();
+
+      expect(find.text('EN'), findsOneWidget);
+    });
+
+    testWidgets('renders Media without genres section when genreIds is empty', (
+      WidgetTester tester,
+    ) async {
+      const media = Media(
+        id: 1,
+        title: 'Inception',
+        mediaType: MediaType.movie,
+        genreIds: [],
+      );
+
+      await tester.pumpWidget(createWidgetUnderTest(media));
+      await tester.pumpAndSettle();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverDetailModal)),
+      )!;
+
+      expect(find.text(l10n.detailGenres), findsNothing);
+    });
+
+    testWidgets('renders Book averageRating chip', (WidgetTester tester) async {
+      const book = Book(id: '1', title: '1984', averageRating: 4.5);
+
+      await tester.pumpWidget(createWidgetUnderTest(book));
+      await tester.pumpAndSettle();
+
+      expect(find.text('4.5'), findsOneWidget);
+    });
+
+    testWidgets('renders Game enriched metadata fields', (
+      WidgetTester tester,
+    ) async {
+      const game = Game(
+        id: 1,
+        name: 'The Witcher 3',
+        themes: ['Fantasy', 'Open World'],
+        gameModes: ['Single player'],
+        ageRatings: [AgeRating(category: 2, rating: 4)], // PEGI 16
+        similarGames: [SimilarGame(id: 2, name: 'Dragon Age: Origins')],
+      );
+
+      await tester.pumpWidget(createWidgetUnderTest(game));
+      await tester.pumpAndSettle();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverDetailModal)),
+      )!;
+
+      expect(find.text(l10n.detailThemes), findsOneWidget);
+      expect(find.text('Fantasy, Open World'), findsOneWidget);
+      expect(find.text(l10n.detailGameModes), findsOneWidget);
+      expect(find.text('Single player'), findsOneWidget);
+      expect(find.text(l10n.detailAgeRatings), findsOneWidget);
+      expect(find.text('PEGI 16'), findsOneWidget);
+      expect(find.text(l10n.detailSimilarGames), findsOneWidget);
+      expect(find.text('Dragon Age: Origins'), findsOneWidget);
+    });
+
+    testWidgets(
+      'renders Game screenshots section title when screenshots provided',
+      (WidgetTester tester) async {
+        const game = Game(
+          id: 1,
+          name: 'Cyberpunk 2077',
+          screenshots: ['https://example.com/screenshot1.jpg'],
+        );
+
+        await tester.pumpWidget(createWidgetUnderTest(game));
+        await tester
+            .pump(); // don't settle — network image keeps pending timers
+
+        final l10n = AppLocalizations.of(
+          tester.element(find.byType(DiscoverDetailModal)),
+        )!;
+
+        expect(find.text(l10n.detailScreenshots), findsOneWidget);
+      },
+    );
   });
 }

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
-import '../../domain/entities/media.dart';
-import '../../domain/entities/book.dart';
+import '../../../../core/constants/api_constants.dart';
 import '../../domain/entities/game.dart';
+import '../../domain/entities/book.dart';
+import '../../domain/entities/media.dart';
+import 'detail_sections/book_info_section.dart';
+import 'detail_sections/game_info_section.dart';
+import 'detail_sections/media_info_section.dart';
 
 class DiscoverDetailModal extends StatelessWidget {
   final Object entity;
@@ -24,7 +28,7 @@ class DiscoverDetailModal extends StatelessWidget {
         color: theme.colorScheme.surface,
         child: CustomScrollView(
           controller: scrollController,
-          physics: const BouncingScrollPhysics(),
+          physics: const ClampingScrollPhysics(),
           slivers: [
             _buildImmersiveHeader(context),
             SliverToBoxAdapter(
@@ -38,7 +42,6 @@ class DiscoverDetailModal extends StatelessWidget {
                     _buildSynopsis(context),
                     const SizedBox(height: 24.0),
                     _buildSpecializedInfo(context),
-                    // Adding Safe Area bottom clearance
                     SizedBox(
                       height: MediaQuery.paddingOf(context).bottom + 24.0,
                     ),
@@ -65,8 +68,16 @@ class DiscoverDetailModal extends StatelessWidget {
 
   String? _getBackdropUrl() {
     if (entity is Media) {
-      final path = (entity as Media).posterPath;
-      if (path != null) return 'https://image.tmdb.org/t/p/w500$path';
+      final m = entity as Media;
+      final backdrop = m.backdropPath?.trim();
+      if (backdrop != null && backdrop.isNotEmpty) {
+        return '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW780}$backdrop';
+      }
+      final poster = m.posterPath?.trim();
+      if (poster != null && poster.isNotEmpty) {
+        return '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}$poster';
+      }
+      return null;
     }
     if (entity is Book) {
       return (entity as Book).imageLinks?['thumbnail'] ??
@@ -83,6 +94,7 @@ class DiscoverDetailModal extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final title = _getTitle(l10n);
     final backdropUrl = _getBackdropUrl();
+    final topInset = MediaQuery.paddingOf(context).top;
 
     return SliverToBoxAdapter(
       child: Stack(
@@ -144,19 +156,35 @@ class DiscoverDetailModal extends StatelessWidget {
             ),
           ),
 
+          // Drag handle overlay
+          Positioned(
+            top: topInset + 10,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+          ),
+
           // Close button
           Positioned(
-            top: 16,
-            left: 16,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.5),
-                shape: BoxShape.circle,
+            top: topInset + 10,
+            left: 12,
+            child: IconButton(
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.black26,
+                padding: const EdgeInsets.all(4),
+                minimumSize: const Size(32, 32),
               ),
-              child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
-              ),
+              icon: const Icon(Icons.close, color: Colors.white, size: 18),
+              onPressed: () => Navigator.pop(context),
             ),
           ),
         ],
@@ -201,6 +229,10 @@ class DiscoverDetailModal extends StatelessWidget {
       if (media.voteAverage != null && media.voteAverage! > 0) {
         addChip(Icons.star, media.voteAverage!.toStringAsFixed(1));
       }
+      final origLang = media.originalLanguage?.trim();
+      if (origLang != null && origLang.isNotEmpty) {
+        addChip(Icons.language, origLang.toUpperCase());
+      }
     } else if (entity is Book) {
       final book = entity as Book;
       if (book.publishedDate != null && book.publishedDate!.length >= 4) {
@@ -208,6 +240,9 @@ class DiscoverDetailModal extends StatelessWidget {
       }
       if (book.pageCount != null) {
         addChip(Icons.auto_stories, '${book.pageCount} p.');
+      }
+      if (book.averageRating != null && book.averageRating! > 0) {
+        addChip(Icons.star, book.averageRating!.toStringAsFixed(1));
       }
     } else if (entity is Game) {
       final game = entity as Game;
@@ -259,76 +294,9 @@ class DiscoverDetailModal extends StatelessWidget {
   }
 
   Widget _buildSpecializedInfo(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    if (entity is Media) {
-      return const SizedBox.shrink();
-    } else if (entity is Book) {
-      final book = entity as Book;
-      final authors = book.authors?.join(', ') ?? l10n.unknownAuthors;
-      final publisher = book.publisher ?? l10n.unknownPublisher;
-
-      return _InfoSection(
-        title: l10n.detailPublishingInfo,
-        content:
-            '${l10n.detailAuthors}: $authors\n${l10n.detailPublisher}: $publisher${book.isbn != null ? '\nISBN: ${book.isbn}' : ''}',
-      );
-    } else if (entity is Game) {
-      final game = entity as Game;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (game.platforms != null && game.platforms!.isNotEmpty)
-            _InfoSection(
-              title: l10n.detailPlatforms,
-              content: game.platforms!.join(', '),
-            ),
-          if (game.genres != null && game.genres!.isNotEmpty)
-            _InfoSection(
-              title: l10n.detailGenres,
-              content: game.genres!.join(', '),
-            ),
-          if (game.developers != null && game.developers!.isNotEmpty)
-            _InfoSection(
-              title: l10n.detailDevelopers,
-              content: game.developers!.join(', '),
-            ),
-        ],
-      );
-    }
+    if (entity is Media) return MediaInfoSection(media: entity as Media);
+    if (entity is Book) return BookInfoSection(book: entity as Book);
+    if (entity is Game) return GameInfoSection(game: entity as Game);
     return const SizedBox.shrink();
-  }
-}
-
-class _InfoSection extends StatelessWidget {
-  final String title;
-  final String content;
-
-  const _InfoSection({required this.title, required this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            content,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

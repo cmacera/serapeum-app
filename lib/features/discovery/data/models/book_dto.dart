@@ -17,6 +17,8 @@ class BookDto {
   final BookImageLinksDto? imageLinks;
   final String? language;
   final String? previewLink;
+  final num? averageRating;
+  final String? maturityRating;
 
   const BookDto({
     required this.id,
@@ -31,6 +33,8 @@ class BookDto {
     this.imageLinks,
     this.language,
     this.previewLink,
+    this.averageRating,
+    this.maturityRating,
   });
 
   factory BookDto.fromJson(Map<String, dynamic> json) =>
@@ -60,6 +64,8 @@ class BookDto {
       imageLinks: links.isNotEmpty ? links : null,
       language: language,
       previewLink: previewLink,
+      averageRating: averageRating,
+      maturityRating: maturityRating,
     );
   }
 }

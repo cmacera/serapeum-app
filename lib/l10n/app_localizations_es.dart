@@ -164,4 +164,115 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get unknownAuthors => 'Desconocido';
+
+  @override
+  String get genreAction => 'Acción';
+
+  @override
+  String get genreAdventure => 'Aventura';
+
+  @override
+  String get genreAnimation => 'Animación';
+
+  @override
+  String get genreComedy => 'Comedia';
+
+  @override
+  String get genreCrime => 'Crimen';
+
+  @override
+  String get genreDocumentary => 'Documental';
+
+  @override
+  String get genreDrama => 'Drama';
+
+  @override
+  String get genreFamily => 'Familiar';
+
+  @override
+  String get genreFantasy => 'Fantasía';
+
+  @override
+  String get genreHistory => 'Historia';
+
+  @override
+  String get genreHorror => 'Terror';
+
+  @override
+  String get genreMusic => 'Música';
+
+  @override
+  String get genreMystery => 'Misterio';
+
+  @override
+  String get genreRomance => 'Romance';
+
+  @override
+  String get genreSciFi => 'Ciencia ficción';
+
+  @override
+  String get genreTvMovie => 'Película de TV';
+
+  @override
+  String get genreThriller => 'Suspense';
+
+  @override
+  String get genreWar => 'Bélica';
+
+  @override
+  String get genreWestern => 'Western';
+
+  @override
+  String get genreActionAdventure => 'Acción y aventura';
+
+  @override
+  String get genreKids => 'Infantil';
+
+  @override
+  String get genreNews => 'Noticias';
+
+  @override
+  String get genreReality => 'Reality';
+
+  @override
+  String get genreSciFiFantasy => 'Ciencia ficción y fantasía';
+
+  @override
+  String get genreSoap => 'Telenovela';
+
+  @override
+  String get genreTalk => 'Programa de entrevistas';
+
+  @override
+  String get genreWarPolitics => 'Guerra y política';
+
+  @override
+  String get detailOriginalLanguage => 'Idioma';
+
+  @override
+  String get detailThemes => 'Temáticas';
+
+  @override
+  String get detailGameModes => 'Modos de juego';
+
+  @override
+  String get detailAgeRatings => 'Clasificación de edad';
+
+  @override
+  String get detailSimilarGames => 'Juegos similares';
+
+  @override
+  String get detailAverageRating => 'Valoración de usuarios';
+
+  @override
+  String get detailMaturityRating => 'Clasificación de madurez';
+
+  @override
+  String get detailScreenshots => 'Capturas de pantalla';
+
+  @override
+  String get detailTrailers => 'Tráilers';
+
+  @override
+  String get detailIsbn => 'ISBN';
 }
