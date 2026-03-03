@@ -31,31 +31,75 @@ class GameInfoSection extends StatelessWidget {
             ];
           }(),
         ],
-        if (game.platforms != null && game.platforms!.isNotEmpty)
-          InfoSection(
-            title: l10n.detailPlatforms,
-            content: game.platforms!.join(', '),
-          ),
-        if (game.genres != null && game.genres!.isNotEmpty)
-          InfoSection(
-            title: l10n.detailGenres,
-            content: game.genres!.join(', '),
-          ),
-        if (game.themes != null && game.themes!.isNotEmpty)
-          InfoSection(
-            title: l10n.detailThemes,
-            content: game.themes!.join(', '),
-          ),
-        if (game.gameModes != null && game.gameModes!.isNotEmpty)
-          InfoSection(
-            title: l10n.detailGameModes,
-            content: game.gameModes!.join(', '),
-          ),
-        if (game.developers != null && game.developers!.isNotEmpty)
-          InfoSection(
-            title: l10n.detailDevelopers,
-            content: game.developers!.join(', '),
-          ),
+        if (game.platforms != null && game.platforms!.isNotEmpty) ...[
+          ...() {
+            final items = game.platforms!
+                .map((s) => s.trim())
+                .where((s) => s.isNotEmpty)
+                .toList();
+            if (items.isEmpty) return <Widget>[];
+            return <Widget>[
+              InfoSection(
+                title: l10n.detailPlatforms,
+                content: items.join(', '),
+              ),
+            ];
+          }(),
+        ],
+        if (game.genres != null && game.genres!.isNotEmpty) ...[
+          ...() {
+            final items = game.genres!
+                .map((s) => s.trim())
+                .where((s) => s.isNotEmpty)
+                .toList();
+            if (items.isEmpty) return <Widget>[];
+            return <Widget>[
+              InfoSection(title: l10n.detailGenres, content: items.join(', ')),
+            ];
+          }(),
+        ],
+        if (game.themes != null && game.themes!.isNotEmpty) ...[
+          ...() {
+            final items = game.themes!
+                .map((s) => s.trim())
+                .where((s) => s.isNotEmpty)
+                .toList();
+            if (items.isEmpty) return <Widget>[];
+            return <Widget>[
+              InfoSection(title: l10n.detailThemes, content: items.join(', ')),
+            ];
+          }(),
+        ],
+        if (game.gameModes != null && game.gameModes!.isNotEmpty) ...[
+          ...() {
+            final items = game.gameModes!
+                .map((s) => s.trim())
+                .where((s) => s.isNotEmpty)
+                .toList();
+            if (items.isEmpty) return <Widget>[];
+            return <Widget>[
+              InfoSection(
+                title: l10n.detailGameModes,
+                content: items.join(', '),
+              ),
+            ];
+          }(),
+        ],
+        if (game.developers != null && game.developers!.isNotEmpty) ...[
+          ...() {
+            final items = game.developers!
+                .map((s) => s.trim())
+                .where((s) => s.isNotEmpty)
+                .toList();
+            if (items.isEmpty) return <Widget>[];
+            return <Widget>[
+              InfoSection(
+                title: l10n.detailDevelopers,
+                content: items.join(', '),
+              ),
+            ];
+          }(),
+        ],
         if (game.ageRatings != null && game.ageRatings!.isNotEmpty) ...[
           SectionTitle(title: l10n.detailAgeRatings),
           const SizedBox(height: 8),
@@ -68,11 +112,21 @@ class GameInfoSection extends StatelessWidget {
           ),
           const SizedBox(height: 16),
         ],
-        if (game.similarGames != null && game.similarGames!.isNotEmpty)
-          InfoSection(
-            title: l10n.detailSimilarGames,
-            content: game.similarGames!.map((g) => g.name).join(', '),
-          ),
+        if (game.similarGames != null && game.similarGames!.isNotEmpty) ...[
+          ...() {
+            final items = game.similarGames!
+                .map((g) => g.name.trim())
+                .where((s) => s.isNotEmpty)
+                .toList();
+            if (items.isEmpty) return <Widget>[];
+            return <Widget>[
+              InfoSection(
+                title: l10n.detailSimilarGames,
+                content: items.join(', '),
+              ),
+            ];
+          }(),
+        ],
       ],
     );
   }

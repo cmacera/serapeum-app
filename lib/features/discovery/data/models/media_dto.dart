@@ -25,6 +25,9 @@ class MediaDto {
   final String? overview;
   final num? voteAverage;
   final num? popularity;
+
+  /// Kept for JSON round-tripping; genre names are resolved from [genreIds]
+  /// via `tmdb_genres.dart` at the presentation layer with full l10n support.
   final List<String>? genres;
   final List<int>? genreIds;
   final String? originalLanguage;

@@ -94,6 +94,7 @@ class DiscoverDetailModal extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final title = _getTitle(l10n);
     final backdropUrl = _getBackdropUrl();
+    final topInset = MediaQuery.paddingOf(context).top;
 
     return SliverToBoxAdapter(
       child: Stack(
@@ -157,7 +158,7 @@ class DiscoverDetailModal extends StatelessWidget {
 
           // Drag handle overlay
           Positioned(
-            top: 10,
+            top: topInset + 10,
             left: 0,
             right: 0,
             child: Center(
@@ -174,7 +175,7 @@ class DiscoverDetailModal extends StatelessWidget {
 
           // Close button
           Positioned(
-            top: 10,
+            top: topInset + 10,
             left: 12,
             child: IconButton(
               style: IconButton.styleFrom(
