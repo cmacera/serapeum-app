@@ -1,4 +1,4 @@
-import '../../../l10n/app_localizations.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Maps TMDB genre IDs to their localized display name via [AppLocalizations].
 /// Returns an empty list when [ids] is null or empty, or when none of the IDs

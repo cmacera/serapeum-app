@@ -228,9 +228,9 @@ class DiscoverDetailModal extends StatelessWidget {
       if (media.voteAverage != null && media.voteAverage! > 0) {
         addChip(Icons.star, media.voteAverage!.toStringAsFixed(1));
       }
-      if (media.originalLanguage != null &&
-          media.originalLanguage!.isNotEmpty) {
-        addChip(Icons.language, media.originalLanguage!.toUpperCase());
+      final origLang = media.originalLanguage?.trim();
+      if (origLang != null && origLang.isNotEmpty) {
+        addChip(Icons.language, origLang.toUpperCase());
       }
     } else if (entity is Book) {
       final book = entity as Book;
