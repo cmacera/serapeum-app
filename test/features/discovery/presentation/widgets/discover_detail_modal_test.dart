@@ -80,7 +80,10 @@ void main() {
         find.textContaining('${l10n.detailPublisher}: Secker & Warburg'),
         findsOneWidget,
       );
-      expect(find.textContaining('ISBN: 9780451524935'), findsOneWidget);
+      expect(
+        find.textContaining('${l10n.detailIsbn}: 9780451524935'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('renders Game entity correctly', (WidgetTester tester) async {

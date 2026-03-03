@@ -16,10 +16,13 @@ class GameInfoSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (game.screenshots != null && game.screenshots!.isNotEmpty) ...[
+        if (game.screenshots != null &&
+            game.screenshots!.any((s) => s.trim().isNotEmpty)) ...[
           SectionTitle(title: l10n.detailScreenshots),
           const SizedBox(height: 8),
-          _buildScreenshotStrip(game.screenshots!),
+          _buildScreenshotStrip(
+            game.screenshots!.where((s) => s.trim().isNotEmpty).toList(),
+          ),
           const SizedBox(height: 16),
         ],
         if (game.platforms != null && game.platforms!.isNotEmpty)

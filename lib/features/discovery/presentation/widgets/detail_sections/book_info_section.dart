@@ -25,7 +25,7 @@ class BookInfoSection extends StatelessWidget {
       title: l10n.detailPublishingInfo,
       content:
           '${l10n.detailAuthors}: $authors\n${l10n.detailPublisher}: $publisher'
-          '${book.isbn != null ? '\n${l10n.detailIsbn}: ${book.isbn}' : ''}',
+          '${book.isbn != null && book.isbn!.trim().isNotEmpty ? '\n${l10n.detailIsbn}: ${book.isbn}' : ''}',
     );
   }
 }
