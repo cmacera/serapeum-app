@@ -82,6 +82,9 @@ coverage/
 *.g.dart
 *.freezed.dart
 
+# OpenAPI reference codegen output (run tools/run-codegen.sh to regenerate)
+lib/generated/
+
 # Husky
 .husky/_
 

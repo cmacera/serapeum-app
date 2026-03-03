@@ -1,0 +1,5 @@
+additionalProperties:
+  pubName: serapeum_app
+  nullSafe: true
+  nullSafeArrayDefault: true
+  dateLibrary: core
