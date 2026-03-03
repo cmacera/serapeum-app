@@ -21,9 +21,13 @@ class MediaDto {
   final String mediaType;
   final String? releaseDate;
   final String? posterPath;
+  final String? backdropPath;
   final String? overview;
   final num? voteAverage;
   final num? popularity;
+  final List<String>? genres;
+  final List<int>? genreIds;
+  final String? originalLanguage;
 
   const MediaDto({
     required this.id,
@@ -32,9 +36,13 @@ class MediaDto {
     this.name,
     this.releaseDate,
     this.posterPath,
+    this.backdropPath,
     this.overview,
     this.voteAverage,
     this.popularity,
+    this.genres,
+    this.genreIds,
+    this.originalLanguage,
   });
 
   factory MediaDto.fromJson(Map<String, dynamic> json) =>
@@ -52,8 +60,11 @@ class MediaDto {
     ),
     releaseDate: releaseDate,
     posterPath: posterPath,
+    backdropPath: backdropPath,
     overview: overview,
     voteAverage: voteAverage,
     popularity: popularity,
+    genreIds: genreIds,
+    originalLanguage: originalLanguage,
   );
 }

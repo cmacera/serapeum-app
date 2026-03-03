@@ -120,18 +120,7 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
             padding: const EdgeInsets.symmetric(
               horizontal: 16.0,
             ).copyWith(bottom: 32.0 + MediaQuery.paddingOf(context).bottom),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16.0,
-                crossAxisSpacing: 16.0,
-                childAspectRatio: 0.65,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => cards[index],
-                childCount: cards.length,
-              ),
-            ),
+            sliver: SliverToBoxAdapter(child: _buildMasonryGrid(cards)),
           ),
       ],
     );
@@ -142,15 +131,31 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
       context: context,
       isScrollControlled: true,
       useRootNavigator: true,
-      backgroundColor: Colors
-          .transparent, // Required for transparent scaffold in DiscoverDetailModal
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        builder: (_, controller) =>
-            DiscoverDetailModal(entity: entity, scrollController: controller),
-      ),
+      backgroundColor: Colors.transparent,
+      builder: (modalContext) {
+        var dismissing = false;
+        return NotificationListener<DraggableScrollableNotification>(
+          onNotification: (notification) {
+            if (!dismissing && notification.extent <= notification.minExtent) {
+              dismissing = true;
+              Navigator.pop(modalContext);
+            }
+            return false;
+          },
+          child: DraggableScrollableSheet(
+            initialChildSize: 0.9,
+            minChildSize: 0.4,
+            maxChildSize: 0.95,
+            snap: true,
+            snapSizes: const [0.9],
+            shouldCloseOnMinExtent: true,
+            builder: (_, controller) => DiscoverDetailModal(
+              entity: entity,
+              scrollController: controller,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -167,11 +172,16 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
         for (final media in data.media)
           MediaResultCard(
             title: media.title ?? media.name ?? l10n.unknownMedia,
-            subtitle: _getLocalizedMediaType(media.mediaType, l10n),
+            mediaType: media.mediaType == MediaType.tv
+                ? MediaCardType.tv
+                : MediaCardType.movie,
+            subtitle: _buildSubtitle(
+              _extractYear(media.releaseDate),
+              _formatRating(media.voteAverage),
+            ),
             imageUrl: media.posterPath != null
                 ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
                 : null,
-            description: media.overview,
             onTap: () => _showDetails(context, media),
           ),
       ]);
@@ -183,11 +193,11 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
         for (final book in data.books)
           MediaResultCard(
             title: book.title,
-            subtitle: l10n.bookSubtitle(book.publishedDate ?? l10n.unknownYear),
+            mediaType: MediaCardType.book,
+            subtitle: _buildSubtitle(_extractYear(book.publishedDate), null),
             imageUrl:
                 book.imageLinks?['thumbnail'] ??
                 book.imageLinks?['smallThumbnail'],
-            description: book.description,
             onTap: () => _showDetails(context, book),
           ),
       ]);
@@ -199,9 +209,12 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
         for (final game in data.games)
           MediaResultCard(
             title: game.name,
-            subtitle: l10n.gameSubtitle,
+            mediaType: MediaCardType.game,
+            subtitle: _buildSubtitle(
+              _extractYear(game.released),
+              _formatRating(game.rating ?? game.aggregatedRating),
+            ),
             imageUrl: game.coverUrl,
-            description: game.summary,
             onTap: () => _showDetails(context, game),
           ),
       ]);
@@ -210,11 +223,55 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
     return cards;
   }
 
-  String _getLocalizedMediaType(MediaType type, AppLocalizations l10n) {
-    return switch (type) {
-      MediaType.movie => l10n.mediaTypeMovie,
-      MediaType.tv => l10n.mediaTypeTv,
-      MediaType.unknown => l10n.mediaTypeUnknown,
-    };
+  Widget _buildMasonryGrid(List<Widget> cards) {
+    final leftCards = <Widget>[];
+    final rightCards = <Widget>[];
+    for (int i = 0; i < cards.length; i++) {
+      if (i.isEven) {
+        leftCards.add(cards[i]);
+      } else {
+        rightCards.add(cards[i]);
+      }
+    }
+
+    Widget column(List<Widget> items) => Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: items
+            .map(
+              (w) => Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: w,
+              ),
+            )
+            .toList(),
+      ),
+    );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        column(leftCards),
+        const SizedBox(width: 16),
+        column(rightCards),
+      ],
+    );
+  }
+
+  String? _extractYear(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return null;
+    final match = RegExp(r'\d{4}').firstMatch(dateStr);
+    return match?.group(0);
+  }
+
+  String? _formatRating(num? rating) {
+    if (rating == null || rating == 0) return null;
+    return '★ ${rating.toStringAsFixed(1)}';
+  }
+
+  String? _buildSubtitle(String? year, String? rating) {
+    final parts = [year, rating].whereType<String>().toList();
+    if (parts.isEmpty) return null;
+    return parts.join('  ·  ');
   }
 }

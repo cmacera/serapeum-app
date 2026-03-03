@@ -163,4 +163,112 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unknownAuthors => 'Unknown';
+
+  @override
+  String get genreAction => 'Action';
+
+  @override
+  String get genreAdventure => 'Adventure';
+
+  @override
+  String get genreAnimation => 'Animation';
+
+  @override
+  String get genreComedy => 'Comedy';
+
+  @override
+  String get genreCrime => 'Crime';
+
+  @override
+  String get genreDocumentary => 'Documentary';
+
+  @override
+  String get genreDrama => 'Drama';
+
+  @override
+  String get genreFamily => 'Family';
+
+  @override
+  String get genreFantasy => 'Fantasy';
+
+  @override
+  String get genreHistory => 'History';
+
+  @override
+  String get genreHorror => 'Horror';
+
+  @override
+  String get genreMusic => 'Music';
+
+  @override
+  String get genreMystery => 'Mystery';
+
+  @override
+  String get genreRomance => 'Romance';
+
+  @override
+  String get genreSciFi => 'Science Fiction';
+
+  @override
+  String get genreTvMovie => 'TV Movie';
+
+  @override
+  String get genreThriller => 'Thriller';
+
+  @override
+  String get genreWar => 'War';
+
+  @override
+  String get genreWestern => 'Western';
+
+  @override
+  String get genreActionAdventure => 'Action & Adventure';
+
+  @override
+  String get genreKids => 'Kids';
+
+  @override
+  String get genreNews => 'News';
+
+  @override
+  String get genreReality => 'Reality';
+
+  @override
+  String get genreSciFiFantasy => 'Sci-Fi & Fantasy';
+
+  @override
+  String get genreSoap => 'Soap';
+
+  @override
+  String get genreTalk => 'Talk';
+
+  @override
+  String get genreWarPolitics => 'War & Politics';
+
+  @override
+  String get detailOriginalLanguage => 'Language';
+
+  @override
+  String get detailThemes => 'Themes';
+
+  @override
+  String get detailGameModes => 'Game Modes';
+
+  @override
+  String get detailAgeRatings => 'Age Ratings';
+
+  @override
+  String get detailSimilarGames => 'Similar Games';
+
+  @override
+  String get detailAverageRating => 'User Rating';
+
+  @override
+  String get detailMaturityRating => 'Maturity Rating';
+
+  @override
+  String get detailScreenshots => 'Screenshots';
+
+  @override
+  String get detailTrailers => 'Trailers';
 }

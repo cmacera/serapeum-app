@@ -11,6 +11,8 @@ class Book {
   final Map<String, String>? imageLinks;
   final String? language;
   final String? previewLink;
+  final num? averageRating;
+  final String? maturityRating;
 
   const Book({
     required this.id,
@@ -25,5 +27,7 @@ class Book {
     this.imageLinks,
     this.language,
     this.previewLink,
+    this.averageRating,
+    this.maturityRating,
   });
 }
