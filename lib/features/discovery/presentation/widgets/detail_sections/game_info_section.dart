@@ -31,75 +31,11 @@ class GameInfoSection extends StatelessWidget {
             ];
           }(),
         ],
-        if (game.platforms != null && game.platforms!.isNotEmpty) ...[
-          ...() {
-            final items = game.platforms!
-                .map((s) => s.trim())
-                .where((s) => s.isNotEmpty)
-                .toList();
-            if (items.isEmpty) return <Widget>[];
-            return <Widget>[
-              InfoSection(
-                title: l10n.detailPlatforms,
-                content: items.join(', '),
-              ),
-            ];
-          }(),
-        ],
-        if (game.genres != null && game.genres!.isNotEmpty) ...[
-          ...() {
-            final items = game.genres!
-                .map((s) => s.trim())
-                .where((s) => s.isNotEmpty)
-                .toList();
-            if (items.isEmpty) return <Widget>[];
-            return <Widget>[
-              InfoSection(title: l10n.detailGenres, content: items.join(', ')),
-            ];
-          }(),
-        ],
-        if (game.themes != null && game.themes!.isNotEmpty) ...[
-          ...() {
-            final items = game.themes!
-                .map((s) => s.trim())
-                .where((s) => s.isNotEmpty)
-                .toList();
-            if (items.isEmpty) return <Widget>[];
-            return <Widget>[
-              InfoSection(title: l10n.detailThemes, content: items.join(', ')),
-            ];
-          }(),
-        ],
-        if (game.gameModes != null && game.gameModes!.isNotEmpty) ...[
-          ...() {
-            final items = game.gameModes!
-                .map((s) => s.trim())
-                .where((s) => s.isNotEmpty)
-                .toList();
-            if (items.isEmpty) return <Widget>[];
-            return <Widget>[
-              InfoSection(
-                title: l10n.detailGameModes,
-                content: items.join(', '),
-              ),
-            ];
-          }(),
-        ],
-        if (game.developers != null && game.developers!.isNotEmpty) ...[
-          ...() {
-            final items = game.developers!
-                .map((s) => s.trim())
-                .where((s) => s.isNotEmpty)
-                .toList();
-            if (items.isEmpty) return <Widget>[];
-            return <Widget>[
-              InfoSection(
-                title: l10n.detailDevelopers,
-                content: items.join(', '),
-              ),
-            ];
-          }(),
-        ],
+        _filteredInfoSection(game.platforms, l10n.detailPlatforms),
+        _filteredInfoSection(game.genres, l10n.detailGenres),
+        _filteredInfoSection(game.themes, l10n.detailThemes),
+        _filteredInfoSection(game.gameModes, l10n.detailGameModes),
+        _filteredInfoSection(game.developers, l10n.detailDevelopers),
         if (game.ageRatings != null && game.ageRatings!.isNotEmpty) ...[
           SectionTitle(title: l10n.detailAgeRatings),
           const SizedBox(height: 8),
@@ -112,23 +48,24 @@ class GameInfoSection extends StatelessWidget {
           ),
           const SizedBox(height: 16),
         ],
-        if (game.similarGames != null && game.similarGames!.isNotEmpty) ...[
-          ...() {
-            final items = game.similarGames!
-                .map((g) => g.name.trim())
-                .where((s) => s.isNotEmpty)
-                .toList();
-            if (items.isEmpty) return <Widget>[];
-            return <Widget>[
-              InfoSection(
-                title: l10n.detailSimilarGames,
-                content: items.join(', '),
-              ),
-            ];
-          }(),
-        ],
-      ],
+        _filteredInfoSection(
+          game.similarGames?.map((g) => g.name).toList(),
+          l10n.detailSimilarGames,
+        ),
+      ].whereType<Widget>().toList(),
     );
+  }
+
+  /// Returns an [InfoSection] after trimming and filtering [items],
+  /// or `null` if no valid entries remain.
+  static Widget? _filteredInfoSection(List<String>? items, String title) {
+    if (items == null || items.isEmpty) return null;
+    final cleaned = items
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+    if (cleaned.isEmpty) return null;
+    return InfoSection(title: title, content: cleaned.join(', '));
   }
 
   Widget _buildScreenshotStrip(List<String> urls) {
