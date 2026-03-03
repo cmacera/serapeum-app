@@ -12,13 +12,20 @@ class BookInfoSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final authors = book.authors?.join(', ') ?? l10n.unknownAuthors;
-    final publisher = book.publisher ?? l10n.unknownPublisher;
+    final authorList =
+        book.authors?.where((a) => a.trim().isNotEmpty).toList() ?? [];
+    final authors = authorList.isNotEmpty
+        ? authorList.join(', ')
+        : l10n.unknownAuthors;
+    final publisherTrimmed = book.publisher?.trim() ?? '';
+    final publisher = publisherTrimmed.isNotEmpty
+        ? publisherTrimmed
+        : l10n.unknownPublisher;
     return InfoSection(
       title: l10n.detailPublishingInfo,
       content:
           '${l10n.detailAuthors}: $authors\n${l10n.detailPublisher}: $publisher'
-          '${book.isbn != null ? '\nISBN: ${book.isbn}' : ''}',
+          '${book.isbn != null ? '\n${l10n.detailIsbn}: ${book.isbn}' : ''}',
     );
   }
 }

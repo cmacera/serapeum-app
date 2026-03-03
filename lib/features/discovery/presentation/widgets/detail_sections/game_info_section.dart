@@ -113,13 +113,37 @@ class GameInfoSection extends StatelessWidget {
       12: 'AO',
     };
     const pegi = {1: '3', 2: '7', 3: '12', 4: '16', 5: '18'};
-    final cat = ar.category == 1
-        ? 'ESRB'
-        : ar.category == 2
-        ? 'PEGI'
-        : '#${ar.category}';
-    final rating =
-        (ar.category == 1 ? esrb : pegi)[ar.rating] ?? '${ar.rating}';
+    const cero = {13: 'A', 14: 'B', 15: 'C', 16: 'D', 17: 'Z'};
+    const usk = {18: '0', 19: '6', 20: '12', 21: '16', 22: '18'};
+    const grac = {
+      23: 'All',
+      24: '12',
+      25: '15',
+      26: '18',
+      27: 'Testing',
+      28: 'RC',
+    };
+    const classInd = {
+      29: 'L',
+      30: '10',
+      31: '12',
+      32: '14',
+      33: '16',
+      34: '18',
+    };
+    const acb = {35: 'G', 36: 'PG', 37: 'M', 38: 'MA15+', 39: 'R18+', 40: 'RC'};
+
+    final (cat, ratingMap) = switch (ar.category) {
+      1 => ('ESRB', esrb),
+      2 => ('PEGI', pegi),
+      3 => ('CERO', cero),
+      4 => ('USK', usk),
+      5 => ('GRAC', grac),
+      6 => ('CLASS_IND', classInd),
+      7 => ('ACB', acb),
+      _ => ('#${ar.category}', <int, String>{}),
+    };
+    final rating = ratingMap[ar.rating] ?? '${ar.rating}';
     return '$cat $rating';
   }
 }

@@ -69,10 +69,10 @@ class DiscoverDetailModal extends StatelessWidget {
   String? _getBackdropUrl() {
     if (entity is Media) {
       final m = entity as Media;
-      if (m.backdropPath != null) {
+      if (m.backdropPath != null && m.backdropPath!.isNotEmpty) {
         return '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW780}${m.backdropPath}';
       }
-      if (m.posterPath != null) {
+      if (m.posterPath != null && m.posterPath!.isNotEmpty) {
         return '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${m.posterPath}';
       }
       return null;

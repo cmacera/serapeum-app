@@ -595,6 +595,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Trailers'**
   String get detailTrailers;
+
+  /// No description provided for @detailIsbn.
+  ///
+  /// In en, this message translates to:
+  /// **'ISBN'**
+  String get detailIsbn;
 }
 
 class _AppLocalizationsDelegate

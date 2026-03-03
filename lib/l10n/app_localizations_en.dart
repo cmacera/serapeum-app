@@ -271,4 +271,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get detailTrailers => 'Trailers';
+
+  @override
+  String get detailIsbn => 'ISBN';
 }

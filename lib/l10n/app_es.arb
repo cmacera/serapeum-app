@@ -77,7 +77,7 @@
   "genreReality": "Reality",
   "genreSciFiFantasy": "Ciencia ficción y fantasía",
   "genreSoap": "Telenovela",
-  "genreTalk": "Talk show",
+  "genreTalk": "Programa de entrevistas",
   "genreWarPolitics": "Guerra y política",
   "detailOriginalLanguage": "Idioma",
   "detailThemes": "Temáticas",
@@ -87,5 +87,6 @@
   "detailAverageRating": "Valoración de usuarios",
   "detailMaturityRating": "Clasificación de madurez",
   "detailScreenshots": "Capturas de pantalla",
-  "detailTrailers": "Tráilers"
+  "detailTrailers": "Tráilers",
+  "detailIsbn": "ISBN"
 }

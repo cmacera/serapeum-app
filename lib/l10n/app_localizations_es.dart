@@ -241,7 +241,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get genreSoap => 'Telenovela';
 
   @override
-  String get genreTalk => 'Talk show';
+  String get genreTalk => 'Programa de entrevistas';
 
   @override
   String get genreWarPolitics => 'Guerra y política';
@@ -272,4 +272,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get detailTrailers => 'Tráilers';
+
+  @override
+  String get detailIsbn => 'ISBN';
 }

@@ -191,6 +191,7 @@ void main() {
         id: 1,
         title: 'Inception',
         mediaType: MediaType.movie,
+        genreIds: [],
       );
 
       await tester.pumpWidget(createWidgetUnderTest(media));

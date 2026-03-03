@@ -144,5 +144,6 @@
   "detailAverageRating": "User Rating",
   "detailMaturityRating": "Maturity Rating",
   "detailScreenshots": "Screenshots",
-  "detailTrailers": "Trailers"
+  "detailTrailers": "Trailers",
+  "detailIsbn": "ISBN"
 }

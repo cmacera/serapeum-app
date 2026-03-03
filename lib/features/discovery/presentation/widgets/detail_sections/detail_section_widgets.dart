@@ -55,12 +55,7 @@ class InfoSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          SectionTitle(title: title),
           const SizedBox(height: 8.0),
           Text(
             content,
