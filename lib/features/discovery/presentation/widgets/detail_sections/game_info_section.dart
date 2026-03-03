@@ -16,21 +16,7 @@ class GameInfoSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (game.screenshots != null) ...[
-          ...() {
-            final screenshots = game.screenshots!
-                .map((s) => s.trim())
-                .where((s) => s.isNotEmpty)
-                .toList();
-            if (screenshots.isEmpty) return <Widget>[];
-            return <Widget>[
-              SectionTitle(title: l10n.detailScreenshots),
-              const SizedBox(height: 8),
-              _buildScreenshotStrip(screenshots),
-              const SizedBox(height: 16),
-            ];
-          }(),
-        ],
+        ..._buildScreenshotSection(l10n),
         _filteredInfoSection(game.platforms, l10n.detailPlatforms),
         _filteredInfoSection(game.genres, l10n.detailGenres),
         _filteredInfoSection(game.themes, l10n.detailThemes),
@@ -54,6 +40,23 @@ class GameInfoSection extends StatelessWidget {
         ),
       ].whereType<Widget>().toList(),
     );
+  }
+
+  /// Returns the screenshot section widgets after trimming and filtering URLs,
+  /// or an empty list if no valid screenshots remain.
+  List<Widget> _buildScreenshotSection(AppLocalizations l10n) {
+    if (game.screenshots == null) return const [];
+    final screenshots = game.screenshots!
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+    if (screenshots.isEmpty) return const [];
+    return [
+      SectionTitle(title: l10n.detailScreenshots),
+      const SizedBox(height: 8),
+      _buildScreenshotStrip(screenshots),
+      const SizedBox(height: 16),
+    ];
   }
 
   /// Returns an [InfoSection] after trimming and filtering [items],
