@@ -145,5 +145,32 @@
   "detailMaturityRating": "Maturity Rating",
   "detailScreenshots": "Screenshots",
   "detailTrailers": "Trailers",
-  "detailIsbn": "ISBN"
+  "detailIsbn": "ISBN",
+  "detailCast": "Cast",
+  "detailWhereToWatch": "Where to Watch",
+  "detailWatchStream": "Streaming",
+  "detailWatchRent": "Rent",
+  "detailWatchBuy": "Buy",
+  "detailSeasons": "Seasons",
+  "detailNetworks": "Networks",
+  "detailCreators": "Creators",
+  "detailRuntime": "Runtime",
+  "detailTagline": "Tagline",
+  "detailTaglineQuoted": "\"{tagline}\"",
+  "@detailTaglineQuoted": {
+    "description": "Tagline text wrapped in locale-appropriate quotation marks",
+    "placeholders": {
+      "tagline": { "type": "String" }
+    }
+  },
+  "detailBudget": "Budget",
+  "detailRevenue": "Revenue",
+  "detailLoadingEnriched": "Loading details\u2026",
+  "detailEnrichmentError": "Could not load additional details",
+  "detailEpisodes": "{count, plural, =1{1 episode} other{{count} episodes}}",
+  "@detailEpisodes": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  }
 }
