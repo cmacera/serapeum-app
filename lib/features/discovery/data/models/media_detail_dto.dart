@@ -225,6 +225,7 @@ class MovieDetailDto {
   final Map<String, WatchProviderRegionDto> watchProviders;
   @JsonKey(defaultValue: [])
   final List<VideoDto> trailers;
+  final String? certification;
 
   const MovieDetailDto({
     required this.id,
@@ -247,6 +248,7 @@ class MovieDetailDto {
     required this.cast,
     this.watchProviders = const {},
     this.trailers = const [],
+    this.certification,
   });
 
   factory MovieDetailDto.fromJson(Map<String, dynamic> json) {
@@ -273,6 +275,7 @@ class MovieDetailDto {
       cast: base.cast,
       watchProviders: providers,
       trailers: base.trailers,
+      certification: base.certification,
     );
   }
 
@@ -301,6 +304,7 @@ class MovieDetailDto {
       (key, value) => MapEntry(key, value.toDomain()),
     ),
     trailers: trailers.youtubeTrailerKeys,
+    certification: certification,
   );
 }
 
@@ -338,6 +342,7 @@ class TvDetailDto {
   final List<CreatorDto> creators;
   @JsonKey(defaultValue: [])
   final List<VideoDto> trailers;
+  final String? certification;
 
   const TvDetailDto({
     required this.id,
@@ -364,6 +369,7 @@ class TvDetailDto {
     required this.networks,
     required this.creators,
     this.trailers = const [],
+    this.certification,
   });
 
   factory TvDetailDto.fromJson(Map<String, dynamic> json) {
@@ -394,6 +400,7 @@ class TvDetailDto {
       networks: base.networks,
       creators: base.creators,
       trailers: base.trailers,
+      certification: base.certification,
     );
   }
 
@@ -426,5 +433,6 @@ class TvDetailDto {
     networks: networks.map((e) => e.toDomain()).toList(),
     creators: creators.map((e) => e.toDomain()).toList(),
     trailers: trailers.youtubeTrailerKeys,
+    certification: certification,
   );
 }

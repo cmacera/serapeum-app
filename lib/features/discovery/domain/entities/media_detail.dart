@@ -93,6 +93,7 @@ class MovieDetail {
   final List<CastMember> cast;
   final Map<String, WatchProviderRegion> watchProviders;
   final List<String> trailers;
+  final String? certification;
 
   const MovieDetail({
     required this.id,
@@ -115,6 +116,7 @@ class MovieDetail {
     required this.cast,
     required this.watchProviders,
     this.trailers = const [],
+    this.certification,
   });
 }
 
@@ -143,6 +145,7 @@ class TvDetail {
   final List<Network> networks;
   final List<Creator> creators;
   final List<String> trailers;
+  final String? certification;
 
   const TvDetail({
     required this.id,
@@ -169,5 +172,6 @@ class TvDetail {
     required this.networks,
     required this.creators,
     this.trailers = const [],
+    this.certification,
   });
 }

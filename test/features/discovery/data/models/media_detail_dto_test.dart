@@ -3,6 +3,9 @@ import 'package:serapeum_app/features/discovery/data/models/media_detail_dto.dar
 import 'package:serapeum_app/features/discovery/domain/entities/media_detail.dart';
 
 void main() {
+  const kCertPg13 = 'PG-13';
+  const kCertTvMa = 'TV-MA';
+
   group('MovieDetailDto', () {
     const movieJson = {
       'id': 27205,
@@ -139,6 +142,25 @@ void main() {
       expect(entity.watchProviders['US']!.flatrate!.length, 1);
       expect(entity.watchProviders['US']!.flatrate![0], isA<WatchProvider>());
     });
+
+    test('fromJson parses certification when present', () {
+      final jsonWithCert = Map<String, dynamic>.from(movieJson)
+        ..['certification'] = kCertPg13;
+
+      final dto = MovieDetailDto.fromJson(jsonWithCert);
+      expect(dto.certification, kCertPg13);
+
+      final entity = dto.toDomain();
+      expect(entity.certification, kCertPg13);
+    });
+
+    test('fromJson yields null certification when field is absent', () {
+      final dto = MovieDetailDto.fromJson(movieJson);
+      expect(dto.certification, isNull);
+
+      final entity = dto.toDomain();
+      expect(entity.certification, isNull);
+    });
   });
 
   group('TvDetailDto', () {
@@ -265,6 +287,25 @@ void main() {
       expect(entity.networks[0], isA<Network>());
       expect(entity.creators[0], isA<Creator>());
       expect(entity.creators[0].name, 'Vince Gilligan');
+    });
+
+    test('fromJson parses certification when present', () {
+      final jsonWithCert = Map<String, dynamic>.from(tvJson)
+        ..['certification'] = kCertTvMa;
+
+      final dto = TvDetailDto.fromJson(jsonWithCert);
+      expect(dto.certification, kCertTvMa);
+
+      final entity = dto.toDomain();
+      expect(entity.certification, kCertTvMa);
+    });
+
+    test('fromJson yields null certification when field is absent', () {
+      final dto = TvDetailDto.fromJson(tvJson);
+      expect(dto.certification, isNull);
+
+      final entity = dto.toDomain();
+      expect(entity.certification, isNull);
     });
 
     test('fromJson defaults lists to empty when missing', () {

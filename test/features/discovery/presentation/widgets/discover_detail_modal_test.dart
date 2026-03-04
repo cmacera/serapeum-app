@@ -24,6 +24,16 @@ const _testMovieDetail = MovieDetail(
   watchProviders: {},
 );
 
+const _testMovieDetailWithCert = MovieDetail(
+  id: 1,
+  title: 'Inception',
+  originalTitle: 'Inception',
+  genres: ['Action', 'Science Fiction'],
+  cast: [],
+  watchProviders: {},
+  certification: 'PG-13',
+);
+
 const _testTvDetail = TvDetail(
   id: 2,
   name: 'Breaking Bad',
@@ -35,6 +45,20 @@ const _testTvDetail = TvDetail(
   networks: [Network(id: 174, name: 'AMC')],
   creators: [Creator(id: 1, name: 'Vince Gilligan')],
   episodeRunTime: [47],
+);
+
+const _testTvDetailWithCert = TvDetail(
+  id: 2,
+  name: 'Breaking Bad',
+  originalName: 'Breaking Bad',
+  genres: ['Drama', 'Crime'],
+  cast: [],
+  watchProviders: {},
+  seasons: [],
+  networks: [],
+  creators: [],
+  episodeRunTime: [],
+  certification: 'TV-14',
 );
 
 void main() {
@@ -432,5 +456,216 @@ void main() {
 
       expect(find.text('EN'), findsOneWidget);
     });
+
+    testWidgets(
+      'renders Movie certification chip in header row when non-null',
+      (WidgetTester tester) async {
+        const media = Media(
+          id: 1,
+          title: 'Inception',
+          mediaType: MediaType.movie,
+        );
+
+        await tester.pumpWidget(
+          createWidgetUnderTest(
+            media,
+            overrides: [
+              movieDetailProvider(
+                1,
+              ).overrideWith((ref) async => _testMovieDetailWithCert),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('PG-13'), findsOneWidget);
+      },
+    );
+
+    testWidgets('hides Movie certification chip when certification is null', (
+      WidgetTester tester,
+    ) async {
+      const media = Media(
+        id: 1,
+        title: 'Inception',
+        mediaType: MediaType.movie,
+      );
+
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          media,
+          overrides: [
+            movieDetailProvider(
+              1,
+            ).overrideWith((ref) async => _testMovieDetail),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('PG-13'), findsNothing);
+    });
+
+    testWidgets('renders TV certification chip in header row when non-null', (
+      WidgetTester tester,
+    ) async {
+      const media = Media(id: 2, name: 'Breaking Bad', mediaType: MediaType.tv);
+
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          media,
+          overrides: [
+            tvDetailProvider(
+              2,
+            ).overrideWith((ref) async => _testTvDetailWithCert),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('TV-14'), findsOneWidget);
+    });
+
+    testWidgets(
+      'hides Movie certification chip when certification is empty string',
+      (WidgetTester tester) async {
+        const media = Media(
+          id: 1,
+          title: 'Inception',
+          mediaType: MediaType.movie,
+        );
+        const detailEmptyCert = MovieDetail(
+          id: 1,
+          title: 'Inception',
+          originalTitle: 'Inception',
+          genres: [],
+          cast: [],
+          watchProviders: {},
+          certification: '',
+        );
+
+        await tester.pumpWidget(
+          createWidgetUnderTest(
+            media,
+            overrides: [
+              movieDetailProvider(
+                1,
+              ).overrideWith((ref) async => detailEmptyCert),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('PG-13'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'hides Movie certification chip when certification is whitespace only',
+      (WidgetTester tester) async {
+        const media = Media(
+          id: 1,
+          title: 'Inception',
+          mediaType: MediaType.movie,
+        );
+        const detailWhitespaceCert = MovieDetail(
+          id: 1,
+          title: 'Inception',
+          originalTitle: 'Inception',
+          genres: [],
+          cast: [],
+          watchProviders: {},
+          certification: '   ',
+        );
+
+        await tester.pumpWidget(
+          createWidgetUnderTest(
+            media,
+            overrides: [
+              movieDetailProvider(
+                1,
+              ).overrideWith((ref) async => detailWhitespaceCert),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('   '), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'hides TV certification chip when certification is empty string',
+      (WidgetTester tester) async {
+        const media = Media(
+          id: 2,
+          name: 'Breaking Bad',
+          mediaType: MediaType.tv,
+        );
+        const detailEmptyCert = TvDetail(
+          id: 2,
+          name: 'Breaking Bad',
+          originalName: 'Breaking Bad',
+          genres: [],
+          cast: [],
+          watchProviders: {},
+          seasons: [],
+          networks: [],
+          creators: [],
+          episodeRunTime: [],
+          certification: '',
+        );
+
+        await tester.pumpWidget(
+          createWidgetUnderTest(
+            media,
+            overrides: [
+              tvDetailProvider(2).overrideWith((ref) async => detailEmptyCert),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('TV-14'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'hides TV certification chip when certification is whitespace only',
+      (WidgetTester tester) async {
+        const media = Media(
+          id: 2,
+          name: 'Breaking Bad',
+          mediaType: MediaType.tv,
+        );
+        const detailWhitespaceCert = TvDetail(
+          id: 2,
+          name: 'Breaking Bad',
+          originalName: 'Breaking Bad',
+          genres: [],
+          cast: [],
+          watchProviders: {},
+          seasons: [],
+          networks: [],
+          creators: [],
+          episodeRunTime: [],
+          certification: '   ',
+        );
+
+        await tester.pumpWidget(
+          createWidgetUnderTest(
+            media,
+            overrides: [
+              tvDetailProvider(
+                2,
+              ).overrideWith((ref) async => detailWhitespaceCert),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('   '), findsNothing);
+      },
+    );
   });
 }
