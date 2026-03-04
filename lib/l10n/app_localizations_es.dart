@@ -280,6 +280,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get detailTrailers => 'Tráilers';
 
   @override
+  String get playTrailer => 'Reproducir tráiler';
+
+  @override
   String get detailIsbn => 'ISBN';
 
   @override

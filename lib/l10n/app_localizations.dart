@@ -608,6 +608,12 @@ abstract class AppLocalizations {
   /// **'Trailers'**
   String get detailTrailers;
 
+  /// No description provided for @playTrailer.
+  ///
+  /// In en, this message translates to:
+  /// **'Play trailer'**
+  String get playTrailer;
+
   /// No description provided for @detailIsbn.
   ///
   /// In en, this message translates to:

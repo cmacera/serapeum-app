@@ -279,6 +279,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailTrailers => 'Trailers';
 
   @override
+  String get playTrailer => 'Play trailer';
+
+  @override
   String get detailIsbn => 'ISBN';
 
   @override
