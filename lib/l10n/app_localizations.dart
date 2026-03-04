@@ -662,6 +662,12 @@ abstract class AppLocalizations {
   /// **'Tagline'**
   String get detailTagline;
 
+  /// Tagline text wrapped in locale-appropriate quotation marks
+  ///
+  /// In en, this message translates to:
+  /// **'\"{tagline}\"'**
+  String detailTaglineQuoted(String tagline);
+
   /// No description provided for @detailBudget.
   ///
   /// In en, this message translates to:

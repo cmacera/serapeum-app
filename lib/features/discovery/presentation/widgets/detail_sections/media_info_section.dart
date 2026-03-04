@@ -130,8 +130,8 @@ class _MovieDetailContent extends StatelessWidget {
             title: l10n.detailGenres,
             content: detail.genres.join(', '),
           ),
-        if (detail.tagline != null && detail.tagline!.isNotEmpty)
-          _TaglineSection(tagline: detail.tagline!, l10n: l10n),
+        if ((detail.tagline?.trim() ?? '').isNotEmpty)
+          _TaglineSection(tagline: detail.tagline!.trim(), l10n: l10n),
         if (detail.cast.isNotEmpty) CastSection(cast: detail.cast),
         if (watchRegion != null) WatchProvidersSection(region: watchRegion),
       ],
@@ -157,8 +157,8 @@ class _TvDetailContent extends StatelessWidget {
             title: l10n.detailGenres,
             content: detail.genres.join(', '),
           ),
-        if (detail.tagline != null && detail.tagline!.isNotEmpty)
-          _TaglineSection(tagline: detail.tagline!, l10n: l10n),
+        if ((detail.tagline?.trim() ?? '').isNotEmpty)
+          _TaglineSection(tagline: detail.tagline!.trim(), l10n: l10n),
         if (detail.cast.isNotEmpty) CastSection(cast: detail.cast),
         if (watchRegion != null) WatchProvidersSection(region: watchRegion),
         if (detail.seasons.isNotEmpty ||
@@ -191,7 +191,7 @@ class _TaglineSection extends StatelessWidget {
           SectionTitle(title: l10n.detailTagline),
           const SizedBox(height: 8),
           Text(
-            '"$tagline"',
+            l10n.detailTaglineQuoted(tagline),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
               fontStyle: FontStyle.italic,

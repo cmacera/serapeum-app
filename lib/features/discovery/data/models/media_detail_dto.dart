@@ -9,6 +9,7 @@ Map<String, WatchProviderRegionDto> _parseWatchProviders(Object? raw) {
   if (raw is! Map) return const {};
   final result = <String, WatchProviderRegionDto>{};
   for (final entry in raw.entries) {
+    if (entry.key is! String) continue;
     final value = entry.value;
     if (value is Map<String, dynamic>) {
       result[entry.key as String] = WatchProviderRegionDto.fromJson(value);

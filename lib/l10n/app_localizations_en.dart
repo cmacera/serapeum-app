@@ -306,6 +306,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailTagline => 'Tagline';
 
   @override
+  String detailTaglineQuoted(String tagline) {
+    return '\"$tagline\"';
+  }
+
+  @override
   String get detailBudget => 'Budget';
 
   @override

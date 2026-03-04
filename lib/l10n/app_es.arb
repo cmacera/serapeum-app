@@ -99,6 +99,13 @@
   "detailCreators": "Creadores",
   "detailRuntime": "Duraci\u00f3n",
   "detailTagline": "Eslogan",
+  "detailTaglineQuoted": "\"{tagline}\"",
+  "@detailTaglineQuoted": {
+    "description": "Texto del eslogan entre comillas según la locale",
+    "placeholders": {
+      "tagline": { "type": "String" }
+    }
+  },
   "detailBudget": "Presupuesto",
   "detailRevenue": "Recaudaci\u00f3n",
   "detailLoadingEnriched": "Cargando detalles\u2026",

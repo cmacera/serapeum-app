@@ -307,6 +307,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get detailTagline => 'Eslogan';
 
   @override
+  String detailTaglineQuoted(String tagline) {
+    return '\"$tagline\"';
+  }
+
+  @override
   String get detailBudget => 'Presupuesto';
 
   @override

@@ -156,6 +156,13 @@
   "detailCreators": "Creators",
   "detailRuntime": "Runtime",
   "detailTagline": "Tagline",
+  "detailTaglineQuoted": "\"{tagline}\"",
+  "@detailTaglineQuoted": {
+    "description": "Tagline text wrapped in locale-appropriate quotation marks",
+    "placeholders": {
+      "tagline": { "type": "String" }
+    }
+  },
   "detailBudget": "Budget",
   "detailRevenue": "Revenue",
   "detailLoadingEnriched": "Loading details\u2026",
