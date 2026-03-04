@@ -584,6 +584,18 @@ abstract class AppLocalizations {
   /// **'Maturity Rating'**
   String get detailMaturityRating;
 
+  /// No description provided for @maturityRatingForAll.
+  ///
+  /// In en, this message translates to:
+  /// **'For all audiences'**
+  String get maturityRatingForAll;
+
+  /// No description provided for @maturityRatingMature.
+  ///
+  /// In en, this message translates to:
+  /// **'Mature content'**
+  String get maturityRatingMature;
+
   /// No description provided for @detailScreenshots.
   ///
   /// In en, this message translates to:
@@ -595,6 +607,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Trailers'**
   String get detailTrailers;
+
+  /// No description provided for @playTrailer.
+  ///
+  /// In en, this message translates to:
+  /// **'Play trailer'**
+  String get playTrailer;
 
   /// No description provided for @detailIsbn.
   ///

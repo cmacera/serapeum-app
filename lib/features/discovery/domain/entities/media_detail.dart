@@ -92,6 +92,7 @@ class MovieDetail {
   final List<String> genres;
   final List<CastMember> cast;
   final Map<String, WatchProviderRegion> watchProviders;
+  final List<String> trailers;
 
   const MovieDetail({
     required this.id,
@@ -113,6 +114,7 @@ class MovieDetail {
     required this.genres,
     required this.cast,
     required this.watchProviders,
+    this.trailers = const [],
   });
 }
 
@@ -140,6 +142,7 @@ class TvDetail {
   final List<SeasonSummary> seasons;
   final List<Network> networks;
   final List<Creator> creators;
+  final List<String> trailers;
 
   const TvDetail({
     required this.id,
@@ -165,5 +168,6 @@ class TvDetail {
     required this.seasons,
     required this.networks,
     required this.creators,
+    this.trailers = const [],
   });
 }
