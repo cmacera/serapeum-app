@@ -286,12 +286,16 @@ class _MetaStatsRow extends ConsumerWidget {
         chips.add(chip(Icons.language, lang.toUpperCase()));
       }
 
+      void addCertificationChip(String? certification) {
+        if (certification != null && certification.trim().isNotEmpty) {
+          chips.add(chip(Icons.shield_outlined, certification.trim()));
+        }
+      }
+
       // Enriched chips — added once detail loads
       if (media.mediaType == MediaType.movie) {
         ref.watch(movieDetailProvider(media.id)).whenData((d) {
-          if (d.certification != null && d.certification!.trim().isNotEmpty) {
-            chips.add(chip(Icons.shield_outlined, d.certification!.trim()));
-          }
+          addCertificationChip(d.certification);
           if (d.runtime != null && d.runtime! > 0) {
             final h = d.runtime! ~/ 60;
             final m = d.runtime! % 60;
@@ -316,9 +320,7 @@ class _MetaStatsRow extends ConsumerWidget {
         });
       } else if (media.mediaType == MediaType.tv) {
         ref.watch(tvDetailProvider(media.id)).whenData((d) {
-          if (d.certification != null && d.certification!.trim().isNotEmpty) {
-            chips.add(chip(Icons.shield_outlined, d.certification!.trim()));
-          }
+          addCertificationChip(d.certification);
           if (d.episodeRunTime.isNotEmpty) {
             chips.add(chip(Icons.schedule, '${d.episodeRunTime.first}m'));
           }

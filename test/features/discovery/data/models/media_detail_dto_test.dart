@@ -3,6 +3,9 @@ import 'package:serapeum_app/features/discovery/data/models/media_detail_dto.dar
 import 'package:serapeum_app/features/discovery/domain/entities/media_detail.dart';
 
 void main() {
+  const kCertPg13 = 'PG-13';
+  const kCertTvMa = 'TV-MA';
+
   group('MovieDetailDto', () {
     const movieJson = {
       'id': 27205,
@@ -142,13 +145,13 @@ void main() {
 
     test('fromJson parses certification when present', () {
       final jsonWithCert = Map<String, dynamic>.from(movieJson)
-        ..['certification'] = 'PG-13';
+        ..['certification'] = kCertPg13;
 
       final dto = MovieDetailDto.fromJson(jsonWithCert);
-      expect(dto.certification, 'PG-13');
+      expect(dto.certification, kCertPg13);
 
       final entity = dto.toDomain();
-      expect(entity.certification, 'PG-13');
+      expect(entity.certification, kCertPg13);
     });
 
     test('fromJson yields null certification when field is absent', () {
@@ -288,13 +291,13 @@ void main() {
 
     test('fromJson parses certification when present', () {
       final jsonWithCert = Map<String, dynamic>.from(tvJson)
-        ..['certification'] = 'TV-MA';
+        ..['certification'] = kCertTvMa;
 
       final dto = TvDetailDto.fromJson(jsonWithCert);
-      expect(dto.certification, 'TV-MA');
+      expect(dto.certification, kCertTvMa);
 
       final entity = dto.toDomain();
-      expect(entity.certification, 'TV-MA');
+      expect(entity.certification, kCertTvMa);
     });
 
     test('fromJson yields null certification when field is absent', () {
