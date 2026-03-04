@@ -189,6 +189,12 @@ class VideoDto {
   Map<String, dynamic> toJson() => _$VideoDtoToJson(this);
 }
 
+extension _VideoDtoListX on List<VideoDto> {
+  List<String> get youtubeTrailerKeys => where(
+    (v) => v.site == 'YouTube' && v.type == 'Trailer',
+  ).map((v) => v.key).toList();
+}
+
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class MovieDetailDto {
   final int id;
@@ -291,10 +297,7 @@ class MovieDetailDto {
     watchProviders: watchProviders.map(
       (key, value) => MapEntry(key, value.toDomain()),
     ),
-    trailers: trailers
-        .where((v) => v.site == 'YouTube' && v.type == 'Trailer')
-        .map((v) => v.key)
-        .toList(),
+    trailers: trailers.youtubeTrailerKeys,
   );
 }
 
@@ -419,9 +422,6 @@ class TvDetailDto {
     seasons: seasons.map((e) => e.toDomain()).toList(),
     networks: networks.map((e) => e.toDomain()).toList(),
     creators: creators.map((e) => e.toDomain()).toList(),
-    trailers: trailers
-        .where((v) => v.site == 'YouTube' && v.type == 'Trailer')
-        .map((v) => v.key)
-        .toList(),
+    trailers: trailers.youtubeTrailerKeys,
   );
 }

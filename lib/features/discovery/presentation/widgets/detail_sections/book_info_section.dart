@@ -4,6 +4,8 @@ import 'package:serapeum_app/l10n/app_localizations.dart';
 import '../../../domain/entities/book.dart';
 import 'detail_section_widgets.dart';
 
+const _kMaturityNotMature = 'NOT_MATURE';
+
 class BookInfoSection extends StatelessWidget {
   final Book book;
 
@@ -38,13 +40,15 @@ class BookInfoSection extends StatelessWidget {
           Row(
             children: [
               Icon(
-                maturity == 'NOT_MATURE' ? Icons.child_care : Icons.explicit,
+                maturity == _kMaturityNotMature
+                    ? Icons.child_care
+                    : Icons.explicit,
                 size: 18,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 6),
               AgeRatingChip(
-                label: maturity == 'NOT_MATURE'
+                label: maturity == _kMaturityNotMature
                     ? l10n.maturityRatingForAll
                     : l10n.maturityRatingMature,
               ),

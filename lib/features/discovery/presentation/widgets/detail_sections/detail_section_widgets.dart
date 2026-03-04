@@ -79,8 +79,9 @@ class TrailersSection extends StatelessWidget {
 
   Future<void> _launch(String videoId) async {
     final uri = Uri.parse('https://www.youtube.com/watch?v=$videoId');
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched) {
+      debugPrint('Could not launch $uri');
     }
   }
 
@@ -121,46 +122,52 @@ class _TrailerThumbnail extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final thumbnailUrl = 'https://img.youtube.com/vi/$videoId/mqdefault.jpg';
-    return GestureDetector(
-      onTap: () => onTap(videoId),
-      child: ClipRRect(
+    return Semantics(
+      button: true,
+      label: 'Play trailer',
+      child: InkWell(
+        onTap: () => onTap(videoId),
         borderRadius: BorderRadius.circular(8),
-        child: SizedBox(
-          width: 200,
-          height: 112,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              CachedNetworkImage(
-                imageUrl: thumbnailUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    Container(color: theme.colorScheme.surfaceContainerHighest),
-                errorWidget: (context, url, error) => Container(
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  child: Icon(
-                    Icons.broken_image,
-                    color: theme.colorScheme.onSurfaceVariant,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: SizedBox(
+            width: 200,
+            height: 112,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                CachedNetworkImage(
+                  imageUrl: thumbnailUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: theme.colorScheme.surfaceContainerHighest,
                   ),
-                ),
-              ),
-              Center(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Colors.black54,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(4),
+                  errorWidget: (context, url, error) => Container(
+                    color: theme.colorScheme.surfaceContainerHighest,
                     child: Icon(
-                      Icons.play_arrow_rounded,
-                      color: Colors.white,
-                      size: 36,
+                      Icons.broken_image,
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
-              ),
-            ],
+                Center(
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.play_arrow_rounded,
+                        color: Colors.white,
+                        size: 36,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

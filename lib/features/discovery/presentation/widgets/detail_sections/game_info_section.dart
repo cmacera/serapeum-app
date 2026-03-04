@@ -43,8 +43,8 @@ class GameInfoSection extends StatelessWidget {
     );
   }
 
-  /// Returns the screenshot section widgets after trimming and filtering URLs,
-  /// or an empty list if no valid screenshots remain.
+  /// Returns the trailers section widgets after trimming and filtering video IDs,
+  /// or an empty list if no valid entries remain.
   List<Widget> _buildTrailersSection(AppLocalizations l10n) {
     if (game.videos == null) return const [];
     final videos = game.videos!
