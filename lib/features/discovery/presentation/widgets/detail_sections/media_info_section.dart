@@ -25,6 +25,18 @@ WatchProviderRegion? _resolveWatchRegion(
   return providers.values.first;
 }
 
+Widget _buildDetail<T>(
+  AsyncValue<T> async,
+  AppLocalizations l10n,
+  Widget Function(T) dataBuilder,
+) {
+  return async.when(
+    loading: () => _LoadingEnriched(l10n: l10n),
+    error: (_, _) => _EnrichmentError(l10n: l10n),
+    data: dataBuilder,
+  );
+}
+
 class MediaInfoSection extends ConsumerWidget {
   final Media media;
 
@@ -35,20 +47,18 @@ class MediaInfoSection extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     if (media.mediaType == MediaType.movie) {
-      final detailAsync = ref.watch(movieDetailProvider(media.id));
-      return detailAsync.when(
-        loading: () => _LoadingEnriched(l10n: l10n),
-        error: (_, _) => _EnrichmentError(l10n: l10n),
-        data: (detail) => _MovieDetailContent(detail: detail, l10n: l10n),
+      return _buildDetail(
+        ref.watch(movieDetailProvider(media.id)),
+        l10n,
+        (detail) => _MovieDetailContent(detail: detail, l10n: l10n),
       );
     }
 
     if (media.mediaType == MediaType.tv) {
-      final detailAsync = ref.watch(tvDetailProvider(media.id));
-      return detailAsync.when(
-        loading: () => _LoadingEnriched(l10n: l10n),
-        error: (_, _) => _EnrichmentError(l10n: l10n),
-        data: (detail) => _TvDetailContent(detail: detail, l10n: l10n),
+      return _buildDetail(
+        ref.watch(tvDetailProvider(media.id)),
+        l10n,
+        (detail) => _TvDetailContent(detail: detail, l10n: l10n),
       );
     }
 
