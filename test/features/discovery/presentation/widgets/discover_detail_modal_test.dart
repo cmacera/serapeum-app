@@ -360,7 +360,10 @@ void main() {
         name: 'The Witcher 3',
         themes: ['Fantasy', 'Open World'],
         gameModes: ['Single player'],
-        ageRatings: [AgeRating(category: 2, rating: 4)], // PEGI 16
+        ageRatings: [
+          AgeRating(organization: 'ESRB', rating: 'T'),
+          AgeRating(organization: 'PEGI', rating: '16'),
+        ],
         similarGames: [SimilarGame(id: 2, name: 'Dragon Age: Origins')],
       );
 
@@ -375,8 +378,7 @@ void main() {
       expect(find.text('Fantasy, Open World'), findsOneWidget);
       expect(find.text(l10n.detailGameModes), findsOneWidget);
       expect(find.text('Single player'), findsOneWidget);
-      expect(find.text(l10n.detailAgeRatings), findsOneWidget);
-      expect(find.text('PEGI 16'), findsOneWidget);
+      expect(find.text('ESRB T'), findsOneWidget);
       expect(find.text(l10n.detailSimilarGames), findsOneWidget);
       expect(find.text('Dragon Age: Origins'), findsOneWidget);
     });

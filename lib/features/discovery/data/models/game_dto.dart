@@ -5,17 +5,17 @@ part 'game_dto.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class AgeRatingDto {
-  final int category;
-  final int rating;
+  final String organization;
+  final String rating;
 
-  const AgeRatingDto({required this.category, required this.rating});
+  const AgeRatingDto({required this.organization, required this.rating});
 
   factory AgeRatingDto.fromJson(Map<String, dynamic> json) =>
       _$AgeRatingDtoFromJson(json);
 
   Map<String, dynamic> toJson() => _$AgeRatingDtoToJson(this);
 
-  AgeRating toDomain() => AgeRating(category: category, rating: rating);
+  AgeRating toDomain() => AgeRating(organization: organization, rating: rating);
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
