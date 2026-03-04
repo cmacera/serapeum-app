@@ -268,6 +268,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get detailMaturityRating => 'Clasificación de madurez';
 
   @override
+  String get maturityRatingForAll => 'Para todos los públicos';
+
+  @override
+  String get maturityRatingMature => 'Contenido para adultos';
+
+  @override
   String get detailScreenshots => 'Capturas de pantalla';
 
   @override

@@ -144,6 +144,8 @@ class _MovieDetailContent extends StatelessWidget {
           _TaglineSection(tagline: detail.tagline!.trim(), l10n: l10n),
         if (detail.cast.isNotEmpty) CastSection(cast: detail.cast),
         if (watchRegion != null) WatchProvidersSection(region: watchRegion),
+        if (detail.trailers.isNotEmpty)
+          TrailersSection(youtubeIds: detail.trailers),
       ],
     );
   }
@@ -171,6 +173,8 @@ class _TvDetailContent extends StatelessWidget {
           _TaglineSection(tagline: detail.tagline!.trim(), l10n: l10n),
         if (detail.cast.isNotEmpty) CastSection(cast: detail.cast),
         if (watchRegion != null) WatchProvidersSection(region: watchRegion),
+        if (detail.trailers.isNotEmpty)
+          TrailersSection(youtubeIds: detail.trailers),
         if (detail.seasons.isNotEmpty ||
             detail.networks.isNotEmpty ||
             detail.creators.isNotEmpty)

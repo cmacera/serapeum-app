@@ -17,6 +17,7 @@ class GameInfoSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ..._buildScreenshotSection(l10n),
+        ..._buildTrailersSection(l10n),
         _filteredInfoSection(game.platforms, l10n.detailPlatforms),
         _filteredInfoSection(game.genres, l10n.detailGenres),
         _filteredInfoSection(game.themes, l10n.detailThemes),
@@ -44,6 +45,16 @@ class GameInfoSection extends StatelessWidget {
 
   /// Returns the screenshot section widgets after trimming and filtering URLs,
   /// or an empty list if no valid screenshots remain.
+  List<Widget> _buildTrailersSection(AppLocalizations l10n) {
+    if (game.videos == null) return const [];
+    final videos = game.videos!
+        .map((v) => v.trim())
+        .where((v) => v.isNotEmpty)
+        .toList();
+    if (videos.isEmpty) return const [];
+    return [TrailersSection(youtubeIds: videos)];
+  }
+
   List<Widget> _buildScreenshotSection(AppLocalizations l10n) {
     if (game.screenshots == null) return const [];
     final screenshots = game.screenshots!

@@ -143,6 +143,8 @@
   "detailSimilarGames": "Similar Games",
   "detailAverageRating": "User Rating",
   "detailMaturityRating": "Maturity Rating",
+  "maturityRatingForAll": "For all audiences",
+  "maturityRatingMature": "Mature content",
   "detailScreenshots": "Screenshots",
   "detailTrailers": "Trailers",
   "detailIsbn": "ISBN",

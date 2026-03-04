@@ -21,11 +21,38 @@ class BookInfoSection extends StatelessWidget {
     final publisher = publisherTrimmed.isNotEmpty
         ? publisherTrimmed
         : l10n.unknownPublisher;
-    return InfoSection(
-      title: l10n.detailPublishingInfo,
-      content:
-          '${l10n.detailAuthors}: $authors\n${l10n.detailPublisher}: $publisher'
-          '${book.isbn != null && book.isbn!.trim().isNotEmpty ? '\n${l10n.detailIsbn}: ${book.isbn!.trim()}' : ''}',
+    final maturity = book.maturityRating?.trim() ?? '';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InfoSection(
+          title: l10n.detailPublishingInfo,
+          content:
+              '${l10n.detailAuthors}: $authors\n${l10n.detailPublisher}: $publisher'
+              '${book.isbn != null && book.isbn!.trim().isNotEmpty ? '\n${l10n.detailIsbn}: ${book.isbn!.trim()}' : ''}',
+        ),
+        if (maturity.isNotEmpty) ...[
+          SectionTitle(title: l10n.detailMaturityRating),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(
+                maturity == 'NOT_MATURE' ? Icons.child_care : Icons.explicit,
+                size: 18,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 6),
+              AgeRatingChip(
+                label: maturity == 'NOT_MATURE'
+                    ? l10n.maturityRatingForAll
+                    : l10n.maturityRatingMature,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+        ],
+      ],
     );
   }
 }

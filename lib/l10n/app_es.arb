@@ -86,6 +86,8 @@
   "detailSimilarGames": "Juegos similares",
   "detailAverageRating": "Valoración de usuarios",
   "detailMaturityRating": "Clasificación de madurez",
+  "maturityRatingForAll": "Para todos los públicos",
+  "maturityRatingMature": "Contenido para adultos",
   "detailScreenshots": "Capturas de pantalla",
   "detailTrailers": "Tráilers",
   "detailIsbn": "ISBN",

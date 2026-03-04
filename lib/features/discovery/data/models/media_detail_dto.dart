@@ -165,6 +165,30 @@ class CreatorDto {
   Creator toDomain() => Creator(id: id, name: name, profilePath: profilePath);
 }
 
+@JsonSerializable(fieldRename: FieldRename.snake)
+class VideoDto {
+  final String id;
+  final String key;
+  final String name;
+  final String site;
+  final String type;
+  final bool official;
+
+  const VideoDto({
+    required this.id,
+    required this.key,
+    required this.name,
+    required this.site,
+    required this.type,
+    required this.official,
+  });
+
+  factory VideoDto.fromJson(Map<String, dynamic> json) =>
+      _$VideoDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$VideoDtoToJson(this);
+}
+
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class MovieDetailDto {
   final int id;
@@ -190,6 +214,8 @@ class MovieDetailDto {
   // watch_providers is Map<regionCode, WatchProviderRegionDto> — parsed manually
   @JsonKey(includeFromJson: false, includeToJson: false)
   final Map<String, WatchProviderRegionDto> watchProviders;
+  @JsonKey(defaultValue: [])
+  final List<VideoDto> trailers;
 
   const MovieDetailDto({
     required this.id,
@@ -211,6 +237,7 @@ class MovieDetailDto {
     required this.genres,
     required this.cast,
     this.watchProviders = const {},
+    this.trailers = const [],
   });
 
   factory MovieDetailDto.fromJson(Map<String, dynamic> json) {
@@ -236,6 +263,7 @@ class MovieDetailDto {
       genres: base.genres,
       cast: base.cast,
       watchProviders: providers,
+      trailers: base.trailers,
     );
   }
 
@@ -263,6 +291,10 @@ class MovieDetailDto {
     watchProviders: watchProviders.map(
       (key, value) => MapEntry(key, value.toDomain()),
     ),
+    trailers: trailers
+        .where((v) => v.site == 'YouTube' && v.type == 'Trailer')
+        .map((v) => v.key)
+        .toList(),
   );
 }
 
@@ -298,6 +330,8 @@ class TvDetailDto {
   final List<NetworkDto> networks;
   @JsonKey(defaultValue: [])
   final List<CreatorDto> creators;
+  @JsonKey(defaultValue: [])
+  final List<VideoDto> trailers;
 
   const TvDetailDto({
     required this.id,
@@ -323,6 +357,7 @@ class TvDetailDto {
     required this.seasons,
     required this.networks,
     required this.creators,
+    this.trailers = const [],
   });
 
   factory TvDetailDto.fromJson(Map<String, dynamic> json) {
@@ -352,6 +387,7 @@ class TvDetailDto {
       seasons: base.seasons,
       networks: base.networks,
       creators: base.creators,
+      trailers: base.trailers,
     );
   }
 
@@ -383,5 +419,9 @@ class TvDetailDto {
     seasons: seasons.map((e) => e.toDomain()).toList(),
     networks: networks.map((e) => e.toDomain()).toList(),
     creators: creators.map((e) => e.toDomain()).toList(),
+    trailers: trailers
+        .where((v) => v.site == 'YouTube' && v.type == 'Trailer')
+        .map((v) => v.key)
+        .toList(),
   );
 }
