@@ -275,4 +275,52 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get detailIsbn => 'ISBN';
+
+  @override
+  String get detailCast => 'Reparto';
+
+  @override
+  String get detailWhereToWatch => 'Dónde ver';
+
+  @override
+  String get detailWatchStream => 'Streaming';
+
+  @override
+  String get detailWatchRent => 'Alquilar';
+
+  @override
+  String get detailWatchBuy => 'Comprar';
+
+  @override
+  String get detailSeasons => 'Temporadas';
+
+  @override
+  String get detailNetworks => 'Cadenas';
+
+  @override
+  String get detailCreators => 'Creadores';
+
+  @override
+  String get detailRuntime => 'Duración';
+
+  @override
+  String get detailTagline => 'Tagline';
+
+  @override
+  String get detailBudget => 'Presupuesto';
+
+  @override
+  String get detailRevenue => 'Recaudación';
+
+  @override
+  String get detailLoadingEnriched => 'Cargando detalles…';
+
+  @override
+  String get detailEnrichmentError =>
+      'No se pudieron cargar los detalles adicionales';
+
+  @override
+  String detailEpisodes(int count) {
+    return '$count episodios';
+  }
 }

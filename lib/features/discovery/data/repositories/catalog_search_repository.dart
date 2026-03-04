@@ -4,11 +4,13 @@ import 'package:serapeum_app/core/network/failure.dart';
 import 'package:serapeum_app/features/discovery/data/models/book_dto.dart';
 import 'package:serapeum_app/features/discovery/data/models/catalog_search_input_dto.dart';
 import 'package:serapeum_app/features/discovery/data/models/game_dto.dart';
+import 'package:serapeum_app/features/discovery/data/models/media_detail_dto.dart';
 import 'package:serapeum_app/features/discovery/data/models/media_dto.dart';
 import 'package:serapeum_app/features/discovery/data/models/search_all_response_dto.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/book.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/game.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
+import 'package:serapeum_app/features/discovery/domain/entities/media_detail.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/search_all_response.dart';
 import 'package:serapeum_app/features/discovery/domain/repositories/i_catalog_search_repository.dart';
 
@@ -112,6 +114,35 @@ class CatalogSearchRepository implements ICatalogSearchRepository {
                 .toList();
           }
           throw const UnknownFailure('Expected List for searchGames response');
+        },
+      );
+
+  @override
+  Future<MovieDetail> getMovieDetail(
+    int id, {
+    String? language,
+    String? region,
+  }) => _post<MovieDetail>(
+    ApiConstants.getMovieDetail,
+    {'id': id, 'language': ?language, 'region': ?region},
+    (data) {
+      if (data is Map<String, dynamic>) {
+        return MovieDetailDto.fromJson(data).toDomain();
+      }
+      throw const UnknownFailure('Expected Map for getMovieDetail response');
+    },
+  );
+
+  @override
+  Future<TvDetail> getTvDetail(int id, {String? language, String? region}) =>
+      _post<TvDetail>(
+        ApiConstants.getTvDetail,
+        {'id': id, 'language': ?language, 'region': ?region},
+        (data) {
+          if (data is Map<String, dynamic>) {
+            return TvDetailDto.fromJson(data).toDomain();
+          }
+          throw const UnknownFailure('Expected Map for getTvDetail response');
         },
       );
 

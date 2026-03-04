@@ -22,6 +22,8 @@ class ApiConstants {
   static const String tmdbImageBaseUrl = 'https://image.tmdb.org/t/p';
   static const String tmdbImageTierW500 = '/w500';
   static const String tmdbImageTierW780 = '/w780';
+  static const String tmdbImageTierW185 = '/w185';
+  static const String tmdbImageTierW45 = '/w45';
   static const String tmdbImageTierOriginal = '/original';
 
   // Hosts for AuthInterceptor
@@ -37,4 +39,6 @@ class ApiConstants {
   static const String searchGames = '/searchGames';
   static const String searchAll = '/searchAll';
   static const String orchestratorFlow = '/orchestratorFlow';
+  static const String getMovieDetail = '/getMovieDetail';
+  static const String getTvDetail = '/getTvDetail';
 }

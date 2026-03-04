@@ -274,4 +274,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get detailIsbn => 'ISBN';
+
+  @override
+  String get detailCast => 'Cast';
+
+  @override
+  String get detailWhereToWatch => 'Where to Watch';
+
+  @override
+  String get detailWatchStream => 'Streaming';
+
+  @override
+  String get detailWatchRent => 'Rent';
+
+  @override
+  String get detailWatchBuy => 'Buy';
+
+  @override
+  String get detailSeasons => 'Seasons';
+
+  @override
+  String get detailNetworks => 'Networks';
+
+  @override
+  String get detailCreators => 'Creators';
+
+  @override
+  String get detailRuntime => 'Runtime';
+
+  @override
+  String get detailTagline => 'Tagline';
+
+  @override
+  String get detailBudget => 'Budget';
+
+  @override
+  String get detailRevenue => 'Revenue';
+
+  @override
+  String get detailLoadingEnriched => 'Loading details…';
+
+  @override
+  String get detailEnrichmentError => 'Could not load additional details';
+
+  @override
+  String detailEpisodes(int count) {
+    return '$count episodes';
+  }
 }

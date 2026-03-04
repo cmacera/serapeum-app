@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../domain/entities/game.dart';
 import '../../domain/entities/book.dart';
 import '../../domain/entities/media.dart';
+import '../providers/media_detail_provider.dart';
 import 'detail_sections/book_info_section.dart';
 import 'detail_sections/game_info_section.dart';
 import 'detail_sections/media_info_section.dart';
@@ -37,7 +39,7 @@ class DiscoverDetailModal extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildMetaStats(context),
+                    _MetaStatsRow(entity: entity),
                     const SizedBox(height: 24.0),
                     _buildSynopsis(context),
                     const SizedBox(height: 24.0),
@@ -192,73 +194,6 @@ class DiscoverDetailModal extends StatelessWidget {
     );
   }
 
-  Widget _buildMetaStats(BuildContext context) {
-    final theme = Theme.of(context);
-    List<Widget> chips = [];
-
-    void addChip(IconData icon, String text) {
-      chips.add(
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
-              const SizedBox(width: 4),
-              Text(
-                text,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    if (entity is Media) {
-      final media = entity as Media;
-      if (media.releaseDate != null && media.releaseDate!.length >= 4) {
-        addChip(Icons.calendar_today, media.releaseDate!.substring(0, 4));
-      }
-      if (media.voteAverage != null && media.voteAverage! > 0) {
-        addChip(Icons.star, media.voteAverage!.toStringAsFixed(1));
-      }
-      final origLang = media.originalLanguage?.trim();
-      if (origLang != null && origLang.isNotEmpty) {
-        addChip(Icons.language, origLang.toUpperCase());
-      }
-    } else if (entity is Book) {
-      final book = entity as Book;
-      if (book.publishedDate != null && book.publishedDate!.length >= 4) {
-        addChip(Icons.calendar_today, book.publishedDate!.substring(0, 4));
-      }
-      if (book.pageCount != null) {
-        addChip(Icons.auto_stories, '${book.pageCount} p.');
-      }
-      if (book.averageRating != null && book.averageRating! > 0) {
-        addChip(Icons.star, book.averageRating!.toStringAsFixed(1));
-      }
-    } else if (entity is Game) {
-      final game = entity as Game;
-      if (game.released != null && game.released!.length >= 4) {
-        addChip(Icons.calendar_today, game.released!.substring(0, 4));
-      }
-      if (game.rating != null && game.rating! > 0) {
-        addChip(Icons.star, game.rating!.toStringAsFixed(1));
-      }
-    }
-
-    if (chips.isEmpty) return const SizedBox.shrink();
-
-    return Wrap(spacing: 8, runSpacing: 8, children: chips);
-  }
-
   Widget _buildSynopsis(BuildContext context) {
     String? synopsis;
     if (entity is Media) synopsis = (entity as Media).overview;
@@ -298,5 +233,113 @@ class DiscoverDetailModal extends StatelessWidget {
     if (entity is Book) return BookInfoSection(book: entity as Book);
     if (entity is Game) return GameInfoSection(game: entity as Game);
     return const SizedBox.shrink();
+  }
+}
+
+class _MetaStatsRow extends ConsumerWidget {
+  final Object entity;
+
+  const _MetaStatsRow({required this.entity});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final chips = <Widget>[];
+
+    Widget chip(IconData icon, String text) => Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (entity is Media) {
+      final media = entity as Media;
+
+      // Basic chips — always available immediately
+      if (media.releaseDate != null && media.releaseDate!.length >= 4) {
+        chips.add(
+          chip(Icons.calendar_today, media.releaseDate!.substring(0, 4)),
+        );
+      }
+      if (media.voteAverage != null && media.voteAverage! > 0) {
+        chips.add(chip(Icons.star, media.voteAverage!.toStringAsFixed(1)));
+      }
+      final lang = media.originalLanguage?.trim();
+      if (lang != null && lang.isNotEmpty) {
+        chips.add(chip(Icons.language, lang.toUpperCase()));
+      }
+
+      // Enriched chips — added once detail loads
+      if (media.mediaType == MediaType.movie) {
+        ref.watch(movieDetailProvider(media.id)).whenData((d) {
+          if (d.runtime != null && d.runtime! > 0) {
+            final h = d.runtime! ~/ 60;
+            final m = d.runtime! % 60;
+            chips.add(chip(Icons.schedule, h > 0 ? '${h}h ${m}m' : '${m}m'));
+          }
+          if (d.budget != null && d.budget! > 0) {
+            chips.add(
+              chip(
+                Icons.attach_money,
+                '\$${(d.budget! / 1e6).toStringAsFixed(0)}M',
+              ),
+            );
+          }
+          if (d.revenue != null && d.revenue! > 0) {
+            chips.add(
+              chip(
+                Icons.trending_up,
+                '\$${(d.revenue! / 1e6).toStringAsFixed(0)}M',
+              ),
+            );
+          }
+        });
+      } else if (media.mediaType == MediaType.tv) {
+        ref.watch(tvDetailProvider(media.id)).whenData((d) {
+          if (d.episodeRunTime.isNotEmpty) {
+            chips.add(chip(Icons.schedule, '${d.episodeRunTime.first}m'));
+          }
+        });
+      }
+    } else if (entity is Book) {
+      final book = entity as Book;
+      if (book.publishedDate != null && book.publishedDate!.length >= 4) {
+        chips.add(
+          chip(Icons.calendar_today, book.publishedDate!.substring(0, 4)),
+        );
+      }
+      if (book.pageCount != null) {
+        chips.add(chip(Icons.auto_stories, '${book.pageCount} p.'));
+      }
+      if (book.averageRating != null && book.averageRating! > 0) {
+        chips.add(chip(Icons.star, book.averageRating!.toStringAsFixed(1)));
+      }
+    } else if (entity is Game) {
+      final game = entity as Game;
+      if (game.released != null && game.released!.length >= 4) {
+        chips.add(chip(Icons.calendar_today, game.released!.substring(0, 4)));
+      }
+      if (game.rating != null && game.rating! > 0) {
+        chips.add(chip(Icons.star, game.rating!.toStringAsFixed(1)));
+      }
+    }
+
+    if (chips.isEmpty) return const SizedBox.shrink();
+    return Wrap(spacing: 8, runSpacing: 8, children: chips);
   }
 }

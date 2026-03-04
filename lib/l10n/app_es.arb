@@ -88,5 +88,25 @@
   "detailMaturityRating": "Clasificación de madurez",
   "detailScreenshots": "Capturas de pantalla",
   "detailTrailers": "Tráilers",
-  "detailIsbn": "ISBN"
+  "detailIsbn": "ISBN",
+  "detailCast": "Reparto",
+  "detailWhereToWatch": "D\u00f3nde ver",
+  "detailWatchStream": "Streaming",
+  "detailWatchRent": "Alquilar",
+  "detailWatchBuy": "Comprar",
+  "detailSeasons": "Temporadas",
+  "detailNetworks": "Cadenas",
+  "detailCreators": "Creadores",
+  "detailRuntime": "Duraci\u00f3n",
+  "detailTagline": "Tagline",
+  "detailBudget": "Presupuesto",
+  "detailRevenue": "Recaudaci\u00f3n",
+  "detailLoadingEnriched": "Cargando detalles\u2026",
+  "detailEnrichmentError": "No se pudieron cargar los detalles adicionales",
+  "detailEpisodes": "{count} episodios",
+  "@detailEpisodes": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  }
 }

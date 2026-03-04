@@ -601,6 +601,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ISBN'**
   String get detailIsbn;
+
+  /// No description provided for @detailCast.
+  ///
+  /// In en, this message translates to:
+  /// **'Cast'**
+  String get detailCast;
+
+  /// No description provided for @detailWhereToWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Where to Watch'**
+  String get detailWhereToWatch;
+
+  /// No description provided for @detailWatchStream.
+  ///
+  /// In en, this message translates to:
+  /// **'Streaming'**
+  String get detailWatchStream;
+
+  /// No description provided for @detailWatchRent.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent'**
+  String get detailWatchRent;
+
+  /// No description provided for @detailWatchBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get detailWatchBuy;
+
+  /// No description provided for @detailSeasons.
+  ///
+  /// In en, this message translates to:
+  /// **'Seasons'**
+  String get detailSeasons;
+
+  /// No description provided for @detailNetworks.
+  ///
+  /// In en, this message translates to:
+  /// **'Networks'**
+  String get detailNetworks;
+
+  /// No description provided for @detailCreators.
+  ///
+  /// In en, this message translates to:
+  /// **'Creators'**
+  String get detailCreators;
+
+  /// No description provided for @detailRuntime.
+  ///
+  /// In en, this message translates to:
+  /// **'Runtime'**
+  String get detailRuntime;
+
+  /// No description provided for @detailTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Tagline'**
+  String get detailTagline;
+
+  /// No description provided for @detailBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget'**
+  String get detailBudget;
+
+  /// No description provided for @detailRevenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue'**
+  String get detailRevenue;
+
+  /// No description provided for @detailLoadingEnriched.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading details…'**
+  String get detailLoadingEnriched;
+
+  /// No description provided for @detailEnrichmentError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load additional details'**
+  String get detailEnrichmentError;
+
+  /// No description provided for @detailEpisodes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} episodes'**
+  String detailEpisodes(int count);
 }
 
 class _AppLocalizationsDelegate
