@@ -13,6 +13,18 @@ import 'detail_section_widgets.dart';
 import 'tv_extra_section.dart';
 import 'watch_providers_section.dart';
 
+WatchProviderRegion? _resolveWatchRegion(
+  Map<String, WatchProviderRegion> providers,
+) {
+  if (providers.isEmpty) return null;
+  final countryCode = PlatformDispatcher.instance.locale.countryCode
+      ?.toUpperCase();
+  if (countryCode != null && providers.containsKey(countryCode)) {
+    return providers[countryCode];
+  }
+  return providers.values.first;
+}
+
 class MediaInfoSection extends ConsumerWidget {
   final Media media;
 
@@ -125,18 +137,6 @@ class _MovieDetailContent extends StatelessWidget {
       ],
     );
   }
-
-  WatchProviderRegion? _resolveWatchRegion(
-    Map<String, WatchProviderRegion> providers,
-  ) {
-    if (providers.isEmpty) return null;
-    final countryCode = PlatformDispatcher.instance.locale.countryCode
-        ?.toUpperCase();
-    if (countryCode != null && providers.containsKey(countryCode)) {
-      return providers[countryCode];
-    }
-    return providers.values.first;
-  }
 }
 
 class _TvDetailContent extends StatelessWidget {
@@ -171,18 +171,6 @@ class _TvDetailContent extends StatelessWidget {
           ),
       ],
     );
-  }
-
-  WatchProviderRegion? _resolveWatchRegion(
-    Map<String, WatchProviderRegion> providers,
-  ) {
-    if (providers.isEmpty) return null;
-    final countryCode = PlatformDispatcher.instance.locale.countryCode
-        ?.toUpperCase();
-    if (countryCode != null && providers.containsKey(countryCode)) {
-      return providers[countryCode];
-    }
-    return providers.values.first;
   }
 }
 

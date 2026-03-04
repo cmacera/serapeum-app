@@ -304,7 +304,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get detailRuntime => 'Duración';
 
   @override
-  String get detailTagline => 'Tagline';
+  String get detailTagline => 'Eslogan';
 
   @override
   String get detailBudget => 'Presupuesto';
@@ -321,6 +321,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String detailEpisodes(int count) {
-    return '$count episodios';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count episodios',
+      one: '1 episodio',
+    );
+    return '$_temp0';
   }
 }

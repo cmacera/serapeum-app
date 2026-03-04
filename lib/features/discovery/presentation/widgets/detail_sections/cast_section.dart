@@ -68,8 +68,9 @@ class _CastMemberCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profileUrl = member.profilePath != null
-        ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW185}${member.profilePath}'
+    final path = member.profilePath?.trim();
+    final profileUrl = (path != null && path.isNotEmpty)
+        ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW185}$path'
         : null;
 
     return Container(

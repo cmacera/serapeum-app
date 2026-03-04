@@ -689,7 +689,7 @@ abstract class AppLocalizations {
   /// No description provided for @detailEpisodes.
   ///
   /// In en, this message translates to:
-  /// **'{count} episodes'**
+  /// **'{count, plural, =1{1 episode} other{{count} episodes}}'**
   String detailEpisodes(int count);
 }
 

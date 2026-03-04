@@ -160,7 +160,7 @@
   "detailRevenue": "Revenue",
   "detailLoadingEnriched": "Loading details\u2026",
   "detailEnrichmentError": "Could not load additional details",
-  "detailEpisodes": "{count} episodes",
+  "detailEpisodes": "{count, plural, =1{1 episode} other{{count} episodes}}",
   "@detailEpisodes": {
     "placeholders": {
       "count": { "type": "int" }

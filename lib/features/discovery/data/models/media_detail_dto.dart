@@ -3,6 +3,20 @@ import 'package:serapeum_app/features/discovery/domain/entities/media_detail.dar
 
 part 'media_detail_dto.g.dart';
 
+/// Safely parses the `watch_providers` JSON field into a DTO map.
+/// Skips entries where the value is null or not a JSON object.
+Map<String, WatchProviderRegionDto> _parseWatchProviders(Object? raw) {
+  if (raw is! Map) return const {};
+  final result = <String, WatchProviderRegionDto>{};
+  for (final entry in raw.entries) {
+    final value = entry.value;
+    if (value is Map<String, dynamic>) {
+      result[entry.key as String] = WatchProviderRegionDto.fromJson(value);
+    }
+  }
+  return result;
+}
+
 @JsonSerializable(fieldRename: FieldRename.snake)
 class CastMemberDto {
   final int id;
@@ -200,13 +214,7 @@ class MovieDetailDto {
 
   factory MovieDetailDto.fromJson(Map<String, dynamic> json) {
     final base = _$MovieDetailDtoFromJson(json);
-    final rawProviders = json['watch_providers'] as Map<String, dynamic>? ?? {};
-    final providers = rawProviders.map(
-      (key, value) => MapEntry(
-        key,
-        WatchProviderRegionDto.fromJson(value as Map<String, dynamic>),
-      ),
-    );
+    final providers = _parseWatchProviders(json['watch_providers']);
     return MovieDetailDto(
       id: base.id,
       title: base.title,
@@ -318,13 +326,7 @@ class TvDetailDto {
 
   factory TvDetailDto.fromJson(Map<String, dynamic> json) {
     final base = _$TvDetailDtoFromJson(json);
-    final rawProviders = json['watch_providers'] as Map<String, dynamic>? ?? {};
-    final providers = rawProviders.map(
-      (key, value) => MapEntry(
-        key,
-        WatchProviderRegionDto.fromJson(value as Map<String, dynamic>),
-      ),
-    );
+    final providers = _parseWatchProviders(json['watch_providers']);
     return TvDetailDto(
       id: base.id,
       name: base.name,
