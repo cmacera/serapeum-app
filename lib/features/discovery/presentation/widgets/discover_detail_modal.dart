@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
@@ -337,9 +339,52 @@ class _MetaStatsRow extends ConsumerWidget {
       if (game.rating != null && game.rating! > 0) {
         chips.add(chip(Icons.star, game.rating!.toStringAsFixed(1)));
       }
+      final countryCode = PlatformDispatcher.instance.locale.countryCode;
+      final regionalRating = _regionalAgeRating(game.ageRatings, countryCode);
+      if (regionalRating != null) {
+        chips.add(
+          chip(
+            Icons.shield_outlined,
+            '${regionalRating.organization} ${regionalRating.rating}',
+          ),
+        );
+      }
     }
 
     if (chips.isEmpty) return const SizedBox.shrink();
     return Wrap(spacing: 8, runSpacing: 8, children: chips);
+  }
+
+  static const _orgEsrb = 'ESRB';
+  static const _orgCero = 'CERO';
+  static const _orgUsk = 'USK';
+  static const _orgGrac = 'GRAC';
+  static const _orgClassInd = 'ClassInd';
+  static const _orgAcb = 'ACB';
+  static const _orgPegi = 'PEGI';
+
+  static const _countryToOrg = <String, String>{
+    'US': _orgEsrb,
+    'CA': _orgEsrb,
+    'JP': _orgCero,
+    'DE': _orgUsk,
+    'KR': _orgGrac,
+    'BR': _orgClassInd,
+    'AU': _orgAcb,
+    'NZ': _orgAcb,
+  };
+
+  static String _preferredOrg(String? countryCode) =>
+      _countryToOrg[countryCode?.toUpperCase()] ?? _orgPegi;
+
+  static AgeRating? _regionalAgeRating(
+    List<AgeRating>? ratings,
+    String? countryCode,
+  ) {
+    if (ratings == null || ratings.isEmpty) return null;
+    final preferred = _preferredOrg(countryCode);
+    return ratings
+        .where((ar) => ar.organization.toUpperCase() == preferred.toUpperCase())
+        .firstOrNull;
   }
 }

@@ -23,18 +23,6 @@ class GameInfoSection extends StatelessWidget {
         _filteredInfoSection(game.themes, l10n.detailThemes),
         _filteredInfoSection(game.gameModes, l10n.detailGameModes),
         _filteredInfoSection(game.developers, l10n.detailDevelopers),
-        if (game.ageRatings != null && game.ageRatings!.isNotEmpty) ...[
-          SectionTitle(title: l10n.detailAgeRatings),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: game.ageRatings!
-                .map((ar) => AgeRatingChip(label: _formatAgeRating(ar)))
-                .toList(),
-          ),
-          const SizedBox(height: 16),
-        ],
         _filteredInfoSection(
           game.similarGames?.map((g) => g.name).toList(),
           l10n.detailSimilarGames,
@@ -135,50 +123,5 @@ class GameInfoSection extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  static String _formatAgeRating(AgeRating ar) {
-    const esrb = {
-      6: 'RP',
-      7: 'EC',
-      8: 'E',
-      9: 'E10+',
-      10: 'T',
-      11: 'M',
-      12: 'AO',
-    };
-    const pegi = {1: '3', 2: '7', 3: '12', 4: '16', 5: '18'};
-    const cero = {13: 'A', 14: 'B', 15: 'C', 16: 'D', 17: 'Z'};
-    const usk = {18: '0', 19: '6', 20: '12', 21: '16', 22: '18'};
-    const grac = {
-      23: 'All',
-      24: '12',
-      25: '15',
-      26: '18',
-      27: 'Testing',
-      28: 'RC',
-    };
-    const classInd = {
-      29: 'L',
-      30: '10',
-      31: '12',
-      32: '14',
-      33: '16',
-      34: '18',
-    };
-    const acb = {35: 'G', 36: 'PG', 37: 'M', 38: 'MA15+', 39: 'R18+', 40: 'RC'};
-
-    final (cat, ratingMap) = switch (ar.category) {
-      1 => ('ESRB', esrb),
-      2 => ('PEGI', pegi),
-      3 => ('CERO', cero),
-      4 => ('USK', usk),
-      5 => ('GRAC', grac),
-      6 => ('CLASS_IND', classInd),
-      7 => ('ACB', acb),
-      _ => ('#${ar.category}', <int, String>{}),
-    };
-    final rating = ratingMap[ar.rating] ?? '${ar.rating}';
-    return '$cat $rating';
   }
 }

@@ -1,8 +1,8 @@
 class AgeRating {
-  final int category;
-  final int rating;
+  final String organization;
+  final String rating;
 
-  const AgeRating({required this.category, required this.rating});
+  const AgeRating({required this.organization, required this.rating});
 }
 
 class SimilarGame {
