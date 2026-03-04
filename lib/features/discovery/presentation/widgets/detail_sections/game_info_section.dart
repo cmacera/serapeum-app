@@ -17,7 +17,7 @@ class GameInfoSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ..._buildScreenshotSection(l10n),
-        ..._buildTrailersSection(l10n),
+        ..._buildTrailersSection(),
         _filteredInfoSection(game.platforms, l10n.detailPlatforms),
         _filteredInfoSection(game.genres, l10n.detailGenres),
         _filteredInfoSection(game.themes, l10n.detailThemes),
@@ -43,16 +43,37 @@ class GameInfoSection extends StatelessWidget {
     );
   }
 
-  /// Returns the trailers section widgets after trimming and filtering video IDs,
-  /// or an empty list if no valid entries remain.
-  List<Widget> _buildTrailersSection(AppLocalizations l10n) {
+  static final _youtubeIdPattern = RegExp(r'^[A-Za-z0-9_-]{11}$');
+
+  static String? _extractYoutubeId(String raw) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty) return null;
+    if (_youtubeIdPattern.hasMatch(trimmed)) return trimmed;
+    try {
+      final uri = Uri.parse(trimmed);
+      String? candidate;
+      if (uri.host.contains('youtu.be')) {
+        candidate = uri.pathSegments.isNotEmpty ? uri.pathSegments.first : null;
+      } else if (uri.host.contains('youtube.com')) {
+        candidate = uri.queryParameters['v'];
+      }
+      if (candidate != null && _youtubeIdPattern.hasMatch(candidate)) {
+        return candidate;
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  /// Returns the trailers section widgets after validating and extracting
+  /// YouTube video IDs, or an empty list if no valid entries remain.
+  List<Widget> _buildTrailersSection() {
     if (game.videos == null) return const [];
-    final videos = game.videos!
-        .map((v) => v.trim())
-        .where((v) => v.isNotEmpty)
+    final ids = game.videos!
+        .map(_extractYoutubeId)
+        .whereType<String>()
         .toList();
-    if (videos.isEmpty) return const [];
-    return [TrailersSection(youtubeIds: videos)];
+    if (ids.isEmpty) return const [];
+    return [TrailersSection(youtubeIds: ids)];
   }
 
   List<Widget> _buildScreenshotSection(AppLocalizations l10n) {

@@ -189,9 +189,12 @@ class VideoDto {
   Map<String, dynamic> toJson() => _$VideoDtoToJson(this);
 }
 
+const _siteYouTube = 'YouTube';
+const _typeTrailer = 'Trailer';
+
 extension _VideoDtoListX on List<VideoDto> {
   List<String> get youtubeTrailerKeys => where(
-    (v) => v.site == 'YouTube' && v.type == 'Trailer',
+    (v) => v.site == _siteYouTube && v.type == _typeTrailer,
   ).map((v) => v.key).toList();
 }
 

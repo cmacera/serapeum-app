@@ -122,9 +122,10 @@ class _TrailerThumbnail extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final thumbnailUrl = 'https://img.youtube.com/vi/$videoId/mqdefault.jpg';
+    final l10n = AppLocalizations.of(context)!;
     return Semantics(
       button: true,
-      label: 'Play trailer',
+      label: l10n.playTrailer,
       child: InkWell(
         onTap: () => onTap(videoId),
         borderRadius: BorderRadius.circular(8),
