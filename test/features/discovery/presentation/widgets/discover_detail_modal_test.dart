@@ -355,6 +355,10 @@ void main() {
     testWidgets('renders Game enriched metadata fields', (
       WidgetTester tester,
     ) async {
+      final binding = TestWidgetsFlutterBinding.ensureInitialized();
+      binding.platformDispatcher.localeTestValue = const Locale('en', 'US');
+      addTearDown(binding.platformDispatcher.clearLocaleTestValue);
+
       const game = Game(
         id: 1,
         name: 'The Witcher 3',

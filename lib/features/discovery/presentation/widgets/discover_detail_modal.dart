@@ -355,16 +355,27 @@ class _MetaStatsRow extends ConsumerWidget {
     return Wrap(spacing: 8, runSpacing: 8, children: chips);
   }
 
+  static const _orgEsrb = 'ESRB';
+  static const _orgCero = 'CERO';
+  static const _orgUsk = 'USK';
+  static const _orgGrac = 'GRAC';
+  static const _orgClassInd = 'ClassInd';
+  static const _orgAcb = 'ACB';
+  static const _orgPegi = 'PEGI';
+
+  static const _countryToOrg = <String, String>{
+    'US': _orgEsrb,
+    'CA': _orgEsrb,
+    'JP': _orgCero,
+    'DE': _orgUsk,
+    'KR': _orgGrac,
+    'BR': _orgClassInd,
+    'AU': _orgAcb,
+    'NZ': _orgAcb,
+  };
+
   static String _preferredOrg(String? countryCode) =>
-      switch (countryCode?.toUpperCase()) {
-        'US' || 'CA' => 'ESRB',
-        'JP' => 'CERO',
-        'DE' => 'USK',
-        'KR' => 'GRAC',
-        'BR' => 'ClassInd',
-        'AU' || 'NZ' => 'ACB',
-        _ => 'PEGI',
-      };
+      _countryToOrg[countryCode?.toUpperCase()] ?? _orgPegi;
 
   static AgeRating? _regionalAgeRating(
     List<AgeRating>? ratings,
