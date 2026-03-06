@@ -3,7 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../domain/entities/game.dart';
+import '../fullscreen_image_viewer.dart';
 import 'detail_section_widgets.dart';
+
+const _kStripHeight = 140.0;
+const _kThumbnailWidth = 220.0;
+
+// Horizontal padding applied by the parent modal (EdgeInsets.all(24)).
+// Used to restore content alignment inside the full-bleed list.
+const double _parentHorizontalPadding = 24.0;
 
 class GameInfoSection extends StatelessWidget {
   final Game game;
@@ -16,7 +24,7 @@ class GameInfoSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ..._buildScreenshotSection(l10n),
+        ..._buildScreenshotSection(context, l10n),
         ..._buildTrailersSection(),
         _filteredInfoSection(game.platforms, l10n.detailPlatforms),
         _filteredInfoSection(game.genres, l10n.detailGenres),
@@ -64,7 +72,10 @@ class GameInfoSection extends StatelessWidget {
     return [TrailersSection(youtubeIds: ids)];
   }
 
-  List<Widget> _buildScreenshotSection(AppLocalizations l10n) {
+  List<Widget> _buildScreenshotSection(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
     if (game.screenshots == null) return const [];
     final screenshots = game.screenshots!
         .map((s) => s.trim())
@@ -74,7 +85,7 @@ class GameInfoSection extends StatelessWidget {
     return [
       SectionTitle(title: l10n.detailScreenshots),
       const SizedBox(height: 8),
-      _buildScreenshotStrip(screenshots),
+      _buildScreenshotStrip(context, screenshots),
       const SizedBox(height: 16),
     ];
   }
@@ -91,34 +102,63 @@ class GameInfoSection extends StatelessWidget {
     return InfoSection(title: title, content: cleaned.join(', '));
   }
 
-  Widget _buildScreenshotStrip(List<String> urls) {
+  Widget _buildScreenshotStrip(BuildContext context, List<String> urls) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
-      height: 140,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: urls.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
-        itemBuilder: (context, index) => ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: CachedNetworkImage(
-            imageUrl: urls[index],
-            height: 140,
-            width: 220,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Container(
-              width: 220,
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              child: const Center(
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
+      height: _kStripHeight,
+      child: OverflowBox(
+        maxWidth: screenWidth,
+        alignment: Alignment.center,
+        child: SizedBox(
+          width: screenWidth,
+          height: _kStripHeight,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(
+              horizontal: _parentHorizontalPadding,
             ),
-            errorWidget: (context, url, error) => Container(
-              width: 220,
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              child: const Center(
-                child: Icon(Icons.broken_image, color: Colors.grey),
-              ),
-            ),
+            itemCount: urls.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              final url = urls[index];
+              return GestureDetector(
+                onTap: () => FullscreenImageViewer.show(
+                  context,
+                  urls: urls,
+                  initialIndex: index,
+                ),
+                child: Hero(
+                  tag: FullscreenImageViewer.heroTag(url),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: url,
+                      height: _kStripHeight,
+                      width: _kThumbnailWidth,
+                      fit: BoxFit.cover,
+                      placeholder: (context, _) => Container(
+                        width: _kThumbnailWidth,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                        child: const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                      errorWidget: (context, _, _) => Container(
+                        width: _kThumbnailWidth,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                        child: const Center(
+                          child: Icon(Icons.broken_image, color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),
