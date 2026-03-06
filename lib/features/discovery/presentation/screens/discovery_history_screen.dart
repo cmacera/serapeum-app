@@ -100,6 +100,7 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
                                 ref,
                                 l10n,
                               );
+                              if (!context.mounted) return false;
                               if (confirmed == true) {
                                 ref
                                     .read(discoverHistoryProvider.notifier)
@@ -188,6 +189,7 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
                                                 ref,
                                                 l10n,
                                               );
+                                          if (!context.mounted) return;
                                           if (confirmed == true) {
                                             ref
                                                 .read(
