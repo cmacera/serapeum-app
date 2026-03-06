@@ -9,7 +9,7 @@ const _urls = [
   'https://example.com/img3.jpg',
 ];
 
-// PageView animation is 300ms.
+// PageView animation is 300ms; 400ms gives a safe settling buffer in tests.
 const _pageDuration = Duration(milliseconds: 400);
 
 class _PopObserver extends NavigatorObserver {

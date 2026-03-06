@@ -9,10 +9,6 @@ import 'detail_section_widgets.dart';
 const _kStripHeight = 140.0;
 const _kThumbnailWidth = 220.0;
 
-// Horizontal padding applied by the parent modal (EdgeInsets.all(24)).
-// Used to restore content alignment inside the full-bleed list.
-const double _parentHorizontalPadding = 24.0;
-
 class GameInfoSection extends StatelessWidget {
   final Game game;
 
@@ -115,7 +111,7 @@ class GameInfoSection extends StatelessWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(
-              horizontal: _parentHorizontalPadding,
+              horizontal: kDetailModalHorizontalPadding,
             ),
             itemCount: urls.length,
             separatorBuilder: (_, _) => const SizedBox(width: 8),

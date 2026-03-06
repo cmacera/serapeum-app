@@ -4,8 +4,9 @@ import 'package:serapeum_app/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // Horizontal padding applied by the parent modal (EdgeInsets.all(24)).
-// Used to restore content alignment inside the full-bleed list.
-const double _parentHorizontalPadding = 24.0;
+// Exported so sibling detail-section files can restore content alignment
+// inside full-bleed lists without duplicating the value.
+const double kDetailModalHorizontalPadding = 24.0;
 const double _kTrailerHeight = 112.0;
 
 class SectionTitle extends StatelessWidget {
@@ -113,7 +114,7 @@ class TrailersSection extends StatelessWidget {
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: _parentHorizontalPadding,
+                    horizontal: kDetailModalHorizontalPadding,
                   ),
                   itemCount: youtubeIds.length,
                   separatorBuilder: (_, _) => const SizedBox(width: 8),
@@ -152,7 +153,7 @@ class _TrailerThumbnail extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           child: SizedBox(
             width: 200,
-            height: 112,
+            height: _kTrailerHeight,
             child: Stack(
               fit: StackFit.expand,
               children: [
