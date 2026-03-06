@@ -28,4 +28,19 @@ class Media {
     this.genreIds,
     this.originalLanguage,
   });
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'name': name,
+    'media_type': mediaType.name,
+    'release_date': releaseDate,
+    'poster_path': posterPath,
+    'backdrop_path': backdropPath,
+    'overview': overview,
+    'vote_average': voteAverage,
+    'popularity': popularity,
+    'genre_ids': genreIds,
+    'original_language': originalLanguage,
+  };
 }

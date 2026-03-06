@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,9 +8,10 @@ import 'package:serapeum_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import 'package:serapeum_app/core/presentation/widgets/particle_background.dart';
 
+import 'package:serapeum_app/features/discovery/data/local/discover_history_item.dart';
+import 'package:serapeum_app/features/discovery/data/models/orchestrator_response_dto.dart';
 import 'package:serapeum_app/features/discovery/presentation/providers/discovery_provider.dart';
 import 'package:serapeum_app/features/discovery/presentation/screens/discovery_history_screen.dart';
-import 'package:serapeum_app/features/discovery/presentation/widgets/discovery_ui_helper.dart';
 
 class AppShell extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
@@ -81,26 +83,30 @@ class AppShell extends ConsumerWidget {
               IconButton(
                 icon: const Icon(Icons.history, color: Colors.white),
                 onPressed: () async {
-                  final query = await showModalBottomSheet<String>(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    useRootNavigator: true,
-                    builder: (context) => const DiscoveryHistoryScreen(),
-                  );
-
-                  if (query != null && context.mounted) {
-                    final response = await ref
-                        .read(discoveryProvider.notifier)
-                        .executeSearch(query);
-
-                    if (context.mounted) {
-                      DiscoveryUIHelper.handleSearchResponse(
+                  final historyItem =
+                      await showModalBottomSheet<DiscoverHistoryItem>(
                         context: context,
-                        response: response,
-                        currentState: ref.read(discoveryProvider),
-                        onClear: () {},
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        useRootNavigator: true,
+                        builder: (context) => const DiscoveryHistoryScreen(),
                       );
+
+                  if (historyItem != null && context.mounted) {
+                    try {
+                      final cached = OrchestratorResponseDto.mapToDomain(
+                        jsonDecode(historyItem.resultJson),
+                      );
+                      ref
+                          .read(discoveryProvider.notifier)
+                          .loadCachedResult(historyItem.query, cached);
+                    } catch (e) {
+                      debugPrint('Failed to restore history item: $e');
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.queryFailed)),
+                        );
+                      }
                     }
                   }
                 },

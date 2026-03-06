@@ -41,6 +41,14 @@
     "description": "Text shown when history is empty"
   },
   "clearHistoryConfirmation": "Are you sure you want to clear all search history?",
+  "deleteHistoryItem": "Delete",
+  "@deleteHistoryItem": {
+    "description": "Label for the delete button on an individual history entry"
+  },
+  "deleteHistoryItemConfirmation": "Are you sure you want to delete this history entry?",
+  "@deleteHistoryItemConfirmation": {
+    "description": "Confirmation prompt shown before deleting a single history entry"
+  },
   "cancel": "Cancel",
   "noResponseFromOracle": "No response from the Oracle.",
   "resultIntro": "Here is what I found specifically for your request:",

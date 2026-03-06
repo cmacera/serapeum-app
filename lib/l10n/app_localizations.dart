@@ -164,6 +164,18 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to clear all search history?'**
   String get clearHistoryConfirmation;
 
+  /// Label for the delete button on an individual history entry
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteHistoryItem;
+
+  /// Confirmation prompt shown before deleting a single history entry
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this history entry?'**
+  String get deleteHistoryItemConfirmation;
+
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:

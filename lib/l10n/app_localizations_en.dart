@@ -43,6 +43,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Are you sure you want to clear all search history?';
 
   @override
+  String get deleteHistoryItem => 'Delete';
+
+  @override
+  String get deleteHistoryItemConfirmation =>
+      'Are you sure you want to delete this history entry?';
+
+  @override
   String get cancel => 'Cancel';
 
   @override

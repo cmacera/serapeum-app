@@ -30,4 +30,26 @@ class Book {
     this.averageRating,
     this.maturityRating,
   });
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'authors': authors,
+    'publisher': publisher,
+    'publishedDate': publishedDate,
+    'description': description,
+    'isbn': isbn,
+    'pageCount': pageCount,
+    'categories': categories,
+    'imageLinks': imageLinks != null
+        ? {
+            'thumbnail': imageLinks!['thumbnail'],
+            'smallThumbnail': imageLinks!['smallThumbnail'],
+          }
+        : null,
+    'language': language,
+    'previewLink': previewLink,
+    'averageRating': averageRating,
+    'maturityRating': maturityRating,
+  };
 }
