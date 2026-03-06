@@ -102,6 +102,11 @@ class AppShell extends ConsumerWidget {
                           .loadCachedResult(historyItem.query, cached);
                     } catch (e) {
                       debugPrint('Failed to restore history item: $e');
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.queryFailed)),
+                        );
+                      }
                     }
                   }
                 },

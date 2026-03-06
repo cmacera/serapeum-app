@@ -40,7 +40,7 @@ class DiscoverHistory extends _$DiscoverHistory {
         ),
       );
     } catch (e) {
-      debugPrint('DiscoverHistory: failed to persist query "$query": $e');
+      debugPrint('DiscoverHistory: failed to persist entry — $e');
     }
   }
 

@@ -94,11 +94,20 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
                           return Dismissible(
                             key: ValueKey(item.id.toString()),
                             direction: DismissDirection.endToStart,
-                            confirmDismiss: (_) =>
-                                _showDeleteDialog(context, ref, l10n),
-                            onDismissed: (_) => ref
-                                .read(discoverHistoryProvider.notifier)
-                                .deleteItem(item),
+                            confirmDismiss: (_) async {
+                              final confirmed = await _showDeleteDialog(
+                                context,
+                                ref,
+                                l10n,
+                              );
+                              if (confirmed == true) {
+                                ref
+                                    .read(discoverHistoryProvider.notifier)
+                                    .deleteItem(item);
+                                return true;
+                              }
+                              return false;
+                            },
                             background: Container(
                               alignment: Alignment.centerRight,
                               padding: const EdgeInsets.symmetric(
