@@ -282,6 +282,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playTrailer => 'Play trailer';
 
   @override
+  String get viewScreenshot => 'View screenshot';
+
+  @override
   String get detailIsbn => 'ISBN';
 
   @override

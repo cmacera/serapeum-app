@@ -283,6 +283,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get playTrailer => 'Reproducir tráiler';
 
   @override
+  String get viewScreenshot => 'Ver captura de pantalla';
+
+  @override
   String get detailIsbn => 'ISBN';
 
   @override

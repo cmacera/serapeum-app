@@ -76,6 +76,7 @@ class GameInfoSection extends StatelessWidget {
     final screenshots = game.screenshots!
         .map((s) => s.trim())
         .where((s) => s.isNotEmpty)
+        .toSet()
         .toList();
     if (screenshots.isEmpty) return const [];
     return [
@@ -117,37 +118,42 @@ class GameInfoSection extends StatelessWidget {
             separatorBuilder: (_, _) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
               final url = urls[index];
-              return GestureDetector(
-                onTap: () => FullscreenImageViewer.show(
-                  context,
-                  urls: urls,
-                  initialIndex: index,
-                ),
-                child: Hero(
-                  tag: FullscreenImageViewer.heroTag(url),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: CachedNetworkImage(
-                      imageUrl: url,
-                      height: _kStripHeight,
-                      width: _kThumbnailWidth,
-                      fit: BoxFit.cover,
-                      placeholder: (context, _) => Container(
+              final l10n = AppLocalizations.of(context)!;
+              return Semantics(
+                button: true,
+                label: l10n.viewScreenshot,
+                child: GestureDetector(
+                  onTap: () => FullscreenImageViewer.show(
+                    context,
+                    urls: urls,
+                    initialIndex: index,
+                  ),
+                  child: Hero(
+                    tag: FullscreenImageViewer.heroTag(url),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: CachedNetworkImage(
+                        imageUrl: url,
+                        height: _kStripHeight,
                         width: _kThumbnailWidth,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.surfaceContainerHighest,
-                        child: const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                        fit: BoxFit.cover,
+                        placeholder: (context, _) => Container(
+                          width: _kThumbnailWidth,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
+                          child: const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
                         ),
-                      ),
-                      errorWidget: (context, _, _) => Container(
-                        width: _kThumbnailWidth,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.surfaceContainerHighest,
-                        child: const Center(
-                          child: Icon(Icons.broken_image, color: Colors.grey),
+                        errorWidget: (context, _, _) => Container(
+                          width: _kThumbnailWidth,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
+                          child: const Center(
+                            child: Icon(Icons.broken_image, color: Colors.grey),
+                          ),
                         ),
                       ),
                     ),

@@ -614,6 +614,12 @@ abstract class AppLocalizations {
   /// **'Play trailer'**
   String get playTrailer;
 
+  /// No description provided for @viewScreenshot.
+  ///
+  /// In en, this message translates to:
+  /// **'View screenshot'**
+  String get viewScreenshot;
+
   /// No description provided for @detailIsbn.
   ///
   /// In en, this message translates to:
