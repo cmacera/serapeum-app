@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// Horizontal padding applied by the parent modal (EdgeInsets.all(24)).
+// Exported so sibling detail-section files can restore content alignment
+// inside full-bleed lists without duplicating the value.
+const double kDetailModalHorizontalPadding = 24.0;
+const double _kTrailerHeight = 112.0;
+
 class SectionTitle extends StatelessWidget {
   final String title;
 
@@ -89,6 +95,7 @@ class TrailersSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (youtubeIds.isEmpty) return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context)!;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
@@ -97,13 +104,26 @@ class TrailersSection extends StatelessWidget {
           SectionTitle(title: l10n.detailTrailers),
           const SizedBox(height: 8.0),
           SizedBox(
-            height: 112,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: youtubeIds.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 8),
-              itemBuilder: (context, index) =>
-                  _TrailerThumbnail(videoId: youtubeIds[index], onTap: _launch),
+            height: _kTrailerHeight,
+            child: OverflowBox(
+              maxWidth: screenWidth,
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: screenWidth,
+                height: _kTrailerHeight,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kDetailModalHorizontalPadding,
+                  ),
+                  itemCount: youtubeIds.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 8),
+                  itemBuilder: (context, index) => _TrailerThumbnail(
+                    videoId: youtubeIds[index],
+                    onTap: _launch,
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -133,7 +153,7 @@ class _TrailerThumbnail extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           child: SizedBox(
             width: 200,
-            height: 112,
+            height: _kTrailerHeight,
             child: Stack(
               fit: StackFit.expand,
               children: [
