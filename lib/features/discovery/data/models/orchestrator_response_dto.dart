@@ -14,6 +14,7 @@ class OrchestratorResponseDto {
   static const String _kindRefusal = 'refusal';
   static const String _kindSearchResults = 'search_results';
   static const String _kindDiscovery = 'discovery';
+  static const String _kindSelection = 'orchestrator_selection';
   static const String _kindError = 'error';
 
   static const String _kUnknownError = 'Unknown error';
@@ -49,6 +50,22 @@ class OrchestratorResponseDto {
           ).toDomain();
 
           return OrchestratorGeneral(text: text, data: searchAllResponse);
+
+        case _kindSelection:
+          final rawResults = data[_kData];
+          final resultsMap = rawResults is Map<String, dynamic>
+              ? rawResults
+              : <String, dynamic>{};
+
+          final searchAllResponse = SearchAllResponseDto.fromJson(
+            resultsMap,
+          ).toDomain();
+
+          return OrchestratorSelection(
+            media: searchAllResponse.media,
+            books: searchAllResponse.books,
+            games: searchAllResponse.games,
+          );
 
         case _kindError:
           return OrchestratorError(

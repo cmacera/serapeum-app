@@ -45,8 +45,7 @@ class OrchestratorSelection extends OrchestratorResponse {
   List<Object?> get props => [books, media, games];
 
   Map<String, dynamic> toJson() => {
-    'kind': 'discovery',
-    'message': '',
+    'kind': 'orchestrator_selection',
     'data': SearchAllResponse(
       media: media ?? [],
       books: books ?? [],

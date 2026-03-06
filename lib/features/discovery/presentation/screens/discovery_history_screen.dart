@@ -131,28 +131,63 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
                                       width: 1,
                                     ),
                                   ),
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  padding: const EdgeInsets.only(
+                                    left: 16.0,
+                                    top: 16.0,
+                                    bottom: 16.0,
+                                    right: 4.0,
+                                  ),
+                                  child: Row(
                                     children: [
-                                      Text(
-                                        item.query,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          height: 1.3,
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item.query,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                height: 1.3,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Text(
+                                              formattedDate,
+                                              style: TextStyle(
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.5,
+                                                ),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        formattedDate,
-                                        style: TextStyle(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.5,
-                                          ),
-                                          fontSize: 12,
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.delete_outline,
+                                          color: Colors.white54,
+                                          size: 20,
                                         ),
+                                        tooltip: l10n.deleteHistoryItem,
+                                        onPressed: () async {
+                                          final confirmed =
+                                              await _showDeleteDialog(
+                                                context,
+                                                ref,
+                                                l10n,
+                                              );
+                                          if (confirmed == true) {
+                                            ref
+                                                .read(
+                                                  discoverHistoryProvider
+                                                      .notifier,
+                                                )
+                                                .deleteItem(item);
+                                          }
+                                        },
                                       ),
                                     ],
                                   ),

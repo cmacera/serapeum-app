@@ -93,12 +93,16 @@ class AppShell extends ConsumerWidget {
                       );
 
                   if (historyItem != null && context.mounted) {
-                    final cached = OrchestratorResponseDto.mapToDomain(
-                      jsonDecode(historyItem.resultJson),
-                    );
-                    ref
-                        .read(discoveryProvider.notifier)
-                        .loadCachedResult(historyItem.query, cached);
+                    try {
+                      final cached = OrchestratorResponseDto.mapToDomain(
+                        jsonDecode(historyItem.resultJson),
+                      );
+                      ref
+                          .read(discoveryProvider.notifier)
+                          .loadCachedResult(historyItem.query, cached);
+                    } catch (e) {
+                      debugPrint('Failed to restore history item: $e');
+                    }
                   }
                 },
                 tooltip: l10n.discoveryHistoryTitle,

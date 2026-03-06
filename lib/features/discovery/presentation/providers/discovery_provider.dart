@@ -76,6 +76,7 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
 
   void loadCachedResult(String query, OrchestratorResponse cachedResponse) {
     _stopTimer();
+    _requestEpoch++;
     state = DiscoveryStateData(
       state: DiscoverState.result,
       currentQuery: query,
@@ -103,8 +104,9 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
     );
 
     try {
-      // 2. Coordinate the request
-      // Note: we use read here because we want to trigger the future once
+      // 2. Invalidate any cached result for this query so every explicit
+      //    search always hits the API fresh, regardless of keepAlive.
+      _ref.invalidate(discoverQueryProvider(trimmedQuery));
       final response = await _ref.read(
         discoverQueryProvider(trimmedQuery).future,
       );

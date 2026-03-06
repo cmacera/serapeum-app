@@ -22,5 +22,9 @@ class SearchAllResponse {
     'media': media.map((e) => e.toJson()).toList(),
     'books': books.map((e) => e.toJson()).toList(),
     'games': games.map((e) => e.toJson()).toList(),
+    'errors': errors
+        ?.map((e) => {'source': e.source, 'message': e.message})
+        .toList(),
+    'text': text,
   };
 }

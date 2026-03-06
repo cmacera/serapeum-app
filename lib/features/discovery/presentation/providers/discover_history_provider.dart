@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:serapeum_app/core/realm/realm_provider.dart';
 import 'package:serapeum_app/features/discovery/data/local/discover_history_item.dart';
@@ -27,25 +28,38 @@ class DiscoverHistory extends _$DiscoverHistory {
   }) {
     if (query.trim().isEmpty) return;
     final realm = ref.read(realmProvider);
-    realm.write(
-      () => realm.add(
-        DiscoverHistoryItem(
-          ObjectId(),
-          query.trim(),
-          timestamp ?? DateTime.now(),
-          resultJson,
+    try {
+      realm.write(
+        () => realm.add(
+          DiscoverHistoryItem(
+            ObjectId(),
+            query.trim(),
+            timestamp ?? DateTime.now(),
+            resultJson,
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      debugPrint('DiscoverHistory: failed to persist query "$query": $e');
+    }
   }
 
   void deleteItem(DiscoverHistoryItem item) {
+    if (!item.isValid) return;
     final realm = ref.read(realmProvider);
-    realm.write(() => realm.delete(item));
+    try {
+      realm.write(() => realm.delete(item));
+    } catch (e) {
+      debugPrint('DiscoverHistory: failed to delete item: $e');
+    }
   }
 
   void clearHistory() {
     final realm = ref.read(realmProvider);
-    realm.write(() => realm.deleteAll<DiscoverHistoryItem>());
+    try {
+      realm.write(() => realm.deleteAll<DiscoverHistoryItem>());
+    } catch (e) {
+      debugPrint('DiscoverHistory: failed to clear history: $e');
+    }
   }
 }
