@@ -97,7 +97,6 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
                             confirmDismiss: (_) async {
                               final confirmed = await _showDeleteDialog(
                                 context,
-                                ref,
                                 l10n,
                               );
                               if (!context.mounted) return false;
@@ -186,7 +185,6 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
                                           final confirmed =
                                               await _showDeleteDialog(
                                                 context,
-                                                ref,
                                                 l10n,
                                               );
                                           if (!context.mounted) return;
@@ -218,7 +216,6 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
 
   Future<bool?> _showDeleteDialog(
     BuildContext context,
-    WidgetRef ref,
     AppLocalizations l10n,
   ) => showDialog<bool>(
     context: context,
@@ -248,7 +245,11 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
     ),
   );
 
-  void _showClearDialog(BuildContext context, WidgetRef ref, dynamic l10n) {
+  void _showClearDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
