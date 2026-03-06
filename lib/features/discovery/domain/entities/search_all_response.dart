@@ -17,4 +17,10 @@ class SearchAllResponse {
     this.errors,
     this.text,
   });
+
+  Map<String, dynamic> toJson() => {
+    'media': media.map((e) => e.toJson()).toList(),
+    'books': books.map((e) => e.toJson()).toList(),
+    'games': games.map((e) => e.toJson()).toList(),
+  };
 }

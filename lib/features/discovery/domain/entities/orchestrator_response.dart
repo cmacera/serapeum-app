@@ -26,6 +26,12 @@ class OrchestratorGeneral extends OrchestratorResponse {
 
   @override
   List<Object?> get props => [text, data];
+
+  Map<String, dynamic> toJson() => {
+    'kind': 'search_results',
+    'message': text,
+    'data': data.toJson(),
+  };
 }
 
 class OrchestratorSelection extends OrchestratorResponse {
@@ -37,6 +43,16 @@ class OrchestratorSelection extends OrchestratorResponse {
 
   @override
   List<Object?> get props => [books, media, games];
+
+  Map<String, dynamic> toJson() => {
+    'kind': 'discovery',
+    'message': '',
+    'data': SearchAllResponse(
+      media: media ?? [],
+      books: books ?? [],
+      games: games ?? [],
+    ).toJson(),
+  };
 }
 
 class OrchestratorError extends OrchestratorResponse {

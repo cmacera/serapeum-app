@@ -2,6 +2,6 @@ targets:
   $default:
     builders:
       realm_generator:
-        enabled: false
+        enabled: true
       realm|realm_generator:
         enabled: false

@@ -164,6 +164,18 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to clear all search history?'**
   String get clearHistoryConfirmation;
 
+  /// No description provided for @deleteHistoryItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteHistoryItem;
+
+  /// No description provided for @deleteHistoryItemConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this history entry?'**
+  String get deleteHistoryItemConfirmation;
+
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:

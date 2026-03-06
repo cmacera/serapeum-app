@@ -21,15 +21,12 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
       builder: (context, scrollController) {
         return Container(
           decoration: const BoxDecoration(
-            color: Color(0xFF06061A), // Dark navy base
+            color: Color(0xFF06061A),
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF16163A), // Slightly lighter top
-                Color(0xFF06061A), // Darker bottom
-              ],
+              colors: [Color(0xFF16163A), Color(0xFF06061A)],
             ),
           ),
           child: Column(
@@ -94,62 +91,71 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
                           final formattedDate =
                               '${DateFormat.yMd(locale).format(item.timestamp)} • ${DateFormat.Hm(locale).format(item.timestamp)}';
 
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 8.0,
+                          return Dismissible(
+                            key: ValueKey(item.id.toString()),
+                            direction: DismissDirection.endToStart,
+                            confirmDismiss: (_) =>
+                                _showDeleteDialog(context, ref, l10n),
+                            onDismissed: (_) => ref
+                                .read(discoverHistoryProvider.notifier)
+                                .deleteItem(item),
+                            background: Container(
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              color: Colors.red.withValues(alpha: 0.8),
+                              child: const Icon(
+                                Icons.delete_outline,
+                                color: Colors.white,
+                              ),
                             ),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.pop(context, item.query);
-                              },
-                              borderRadius: BorderRadius.circular(16),
-                              child: Ink(
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.05),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: AppColors.accent.withValues(
-                                      alpha: 0.2,
-                                    ),
-                                    width: 1,
-                                  ),
-                                ),
-                                padding: const EdgeInsets.all(16.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            item.query,
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              height: 1.3,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            formattedDate,
-                                            style: TextStyle(
-                                              color: Colors.white.withValues(
-                                                alpha: 0.5,
-                                              ),
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 8.0,
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.pop(context, item);
+                                },
+                                borderRadius: BorderRadius.circular(16),
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.05),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: AppColors.accent.withValues(
+                                        alpha: 0.2,
                                       ),
+                                      width: 1,
                                     ),
-                                    const Icon(
-                                      Icons.chevron_right,
-                                      color: Colors.grey,
-                                      size: 20,
-                                    ),
-                                  ],
+                                  ),
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.query,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          height: 1.3,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        formattedDate,
+                                        style: TextStyle(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.5,
+                                          ),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -163,6 +169,38 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
       },
     );
   }
+
+  Future<bool?> _showDeleteDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) => showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      backgroundColor: const Color(0xFF16163A),
+      title: Text(
+        l10n.deleteHistoryItem,
+        style: const TextStyle(color: Colors.white),
+      ),
+      content: Text(
+        l10n.deleteHistoryItemConfirmation,
+        style: const TextStyle(color: Colors.white70),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, false),
+          child: Text(l10n.cancel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, true),
+          child: Text(
+            l10n.deleteHistoryItem,
+            style: const TextStyle(color: Colors.redAccent),
+          ),
+        ),
+      ],
+    ),
+  );
 
   void _showClearDialog(BuildContext context, WidgetRef ref, dynamic l10n) {
     showDialog(

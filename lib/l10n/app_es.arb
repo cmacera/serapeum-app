@@ -11,6 +11,8 @@
   "newConversation": "Nueva Conversación",
   "noHistory": "No hay historial aún",
   "clearHistoryConfirmation": "¿Estás seguro de que quieres borrar todo el historial de búsqueda?",
+  "deleteHistoryItem": "Eliminar",
+  "deleteHistoryItemConfirmation": "¿Estás seguro de que quieres eliminar esta entrada del historial?",
   "cancel": "Cancelar",
   "noResponseFromOracle": "No hay respuesta del Oráculo.",
   "resultIntro": "Esto es lo que he encontrado específicamente para tu petición:",

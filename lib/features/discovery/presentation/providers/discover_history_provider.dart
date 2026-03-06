@@ -1,106 +1,51 @@
-import 'dart:convert';
-import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:serapeum_app/core/realm/realm_provider.dart';
+import 'package:serapeum_app/features/discovery/data/local/discover_history_item.dart';
+import 'package:realm/realm.dart';
 
 part 'discover_history_provider.g.dart';
-
-/// The maximum number of search history items to keep.
-const int kMaxDiscoverHistoryItems = 20;
-
-/// Key used for persisting search history in SharedPreferences.
-const String _kHistoryPrefsKey = 'discover_history';
-
-/// Represents a single discovery query and its timestamp.
-class DiscoverHistoryItem extends Equatable {
-  final String query;
-  final DateTime timestamp;
-
-  const DiscoverHistoryItem({required this.query, required this.timestamp});
-
-  Map<String, dynamic> toJson() => {
-    'query': query,
-    'timestamp': timestamp.toIso8601String(),
-  };
-
-  factory DiscoverHistoryItem.fromJson(Map<String, dynamic> json) =>
-      DiscoverHistoryItem(
-        query: json['query'] as String,
-        timestamp: DateTime.parse(json['timestamp'] as String),
-      );
-
-  @override
-  List<Object?> get props => [query, timestamp];
-
-  @override
-  String toString() =>
-      'DiscoverHistoryItem(query: $query, timestamp: $timestamp)';
-}
 
 @Riverpod(keepAlive: true)
 class DiscoverHistory extends _$DiscoverHistory {
   @override
   List<DiscoverHistoryItem> build() {
-    // Start async loading and return empty list immediately
-    _loadHistory();
-    return [];
+    final realm = ref.read(realmProvider);
+    final results = realm.all<DiscoverHistoryItem>().query(
+      'TRUEPREDICATE SORT(timestamp DESC)',
+    );
+
+    final sub = results.changes.listen((c) => state = c.results.toList());
+    ref.onDispose(sub.cancel);
+
+    return results.toList();
   }
 
-  Future<void> _loadHistory() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final historyJson = prefs.getStringList(_kHistoryPrefsKey);
-
-      if (historyJson == null) return;
-
-      final loadedHistory = historyJson
-          .map((item) => DiscoverHistoryItem.fromJson(jsonDecode(item)))
-          .toList();
-      state = loadedHistory;
-    } catch (e, s) {
-      debugPrint('Error loading search history: $e\n$s');
-      // Fallback stays as empty list
-    }
-  }
-
-  Future<void> addQuery(String query, {DateTime? timestamp}) async {
+  void addQuery(
+    String query, {
+    required String resultJson,
+    DateTime? timestamp,
+  }) {
     if (query.trim().isEmpty) return;
-
-    final normalizedQuery = query.trim();
-    final lowerQuery = normalizedQuery.toLowerCase();
-
-    // In sync Notifier, state is the list itself
-    final filteredHistory = state
-        .where((item) => item.query.toLowerCase() != lowerQuery)
-        .toList();
-
-    final newHistory = [
-      DiscoverHistoryItem(
-        query: normalizedQuery,
-        timestamp: timestamp ?? DateTime.now(),
+    final realm = ref.read(realmProvider);
+    realm.write(
+      () => realm.add(
+        DiscoverHistoryItem(
+          ObjectId(),
+          query.trim(),
+          timestamp ?? DateTime.now(),
+          resultJson,
+        ),
       ),
-      ...filteredHistory,
-    ].take(kMaxDiscoverHistoryItems).toList();
-
-    state = newHistory;
-    await _persist(newHistory);
+    );
   }
 
-  Future<void> clearHistory() async {
-    state = [];
-    await _persist([]);
+  void deleteItem(DiscoverHistoryItem item) {
+    final realm = ref.read(realmProvider);
+    realm.write(() => realm.delete(item));
   }
 
-  Future<void> _persist(List<DiscoverHistoryItem> history) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final historyJson = history
-          .map((item) => jsonEncode(item.toJson()))
-          .toList();
-      await prefs.setStringList(_kHistoryPrefsKey, historyJson);
-    } catch (e, s) {
-      debugPrint('Error persisting search history: $e\n$s');
-    }
+  void clearHistory() {
+    final realm = ref.read(realmProvider);
+    realm.write(() => realm.deleteAll<DiscoverHistoryItem>());
   }
 }

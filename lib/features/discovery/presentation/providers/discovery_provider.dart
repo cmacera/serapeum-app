@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/failure.dart';
 import '../../domain/entities/orchestrator_response.dart';
@@ -11,17 +12,20 @@ class DiscoveryStateData {
   final DiscoverState state;
   final String? currentQuery;
   final int elapsedSeconds;
+  final OrchestratorResponse? cachedResponse;
 
   DiscoveryStateData({
     this.state = DiscoverState.initial,
     this.currentQuery,
     this.elapsedSeconds = 0,
+    this.cachedResponse,
   });
 
   DiscoveryStateData copyWith({
     DiscoverState? state,
     Object? currentQuery = _unset,
     int? elapsedSeconds,
+    Object? cachedResponse = _unset,
   }) {
     return DiscoveryStateData(
       state: state ?? this.state,
@@ -29,6 +33,9 @@ class DiscoveryStateData {
           ? this.currentQuery
           : currentQuery as String?,
       elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
+      cachedResponse: cachedResponse == _unset
+          ? this.cachedResponse
+          : cachedResponse as OrchestratorResponse?,
     );
   }
 
@@ -67,6 +74,15 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
     state = DiscoveryStateData(state: DiscoverState.initial);
   }
 
+  void loadCachedResult(String query, OrchestratorResponse cachedResponse) {
+    _stopTimer();
+    state = DiscoveryStateData(
+      state: DiscoverState.result,
+      currentQuery: query,
+      cachedResponse: cachedResponse,
+    );
+  }
+
   Future<OrchestratorResponse?> executeSearch(String query) async {
     final trimmedQuery = query.trim();
     if (trimmedQuery.isEmpty) {
@@ -77,12 +93,13 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
       return null;
     }
 
-    // 1. Enter searching state (stay on initial screen UX)
+    // 1. Enter searching state — clear any previous cached response
     _startTimer();
     final localEpoch = ++_requestEpoch;
     state = state.copyWith(
       state: DiscoverState.searching,
       currentQuery: trimmedQuery,
+      cachedResponse: null,
     );
 
     try {
@@ -104,8 +121,17 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
       // 3. Handle response states
       if (response is OrchestratorGeneral ||
           response is OrchestratorSelection) {
-        // Happy path: Save to history and show results
-        _ref.read(discoverHistoryProvider.notifier).addQuery(trimmedQuery);
+        // Happy path: Save to history with full JSON and show results
+        final Map<String, dynamic> responseJson;
+        if (response is OrchestratorGeneral) {
+          responseJson = response.toJson();
+        } else {
+          responseJson = (response as OrchestratorSelection).toJson();
+        }
+        final rawJson = jsonEncode(responseJson);
+        _ref
+            .read(discoverHistoryProvider.notifier)
+            .addQuery(trimmedQuery, resultJson: rawJson);
         state = state.copyWith(state: DiscoverState.result);
       } else {
         // Refusal or Error: stay in initial, showing alert is handled by UI

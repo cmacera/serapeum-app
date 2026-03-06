@@ -81,6 +81,7 @@ coverage/
 # Generated files
 *.g.dart
 *.freezed.dart
+*.realm.dart
 
 # OpenAPI reference codegen output (run tools/run-codegen.sh to regenerate)
 lib/generated/

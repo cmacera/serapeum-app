@@ -43,6 +43,13 @@ class AppLocalizationsEs extends AppLocalizations {
       '¿Estás seguro de que quieres borrar todo el historial de búsqueda?';
 
   @override
+  String get deleteHistoryItem => 'Eliminar';
+
+  @override
+  String get deleteHistoryItemConfirmation =>
+      '¿Estás seguro de que quieres eliminar esta entrada del historial?';
+
+  @override
   String get cancel => 'Cancelar';
 
   @override

@@ -3,6 +3,11 @@ class AgeRating {
   final String rating;
 
   const AgeRating({required this.organization, required this.rating});
+
+  Map<String, dynamic> toJson() => {
+    'organization': organization,
+    'rating': rating,
+  };
 }
 
 class SimilarGame {
@@ -10,6 +15,8 @@ class SimilarGame {
   final String name;
 
   const SimilarGame({required this.id, required this.name});
+
+  Map<String, dynamic> toJson() => {'id': id, 'name': name};
 }
 
 class Game {
@@ -52,4 +59,25 @@ class Game {
     this.ageRatings,
     this.similarGames,
   });
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'summary': summary,
+    'rating': rating,
+    'aggregated_rating': aggregatedRating,
+    'released': released,
+    'cover_url': coverUrl,
+    'platforms': platforms,
+    'genres': genres,
+    'developers': developers,
+    'publishers': publishers,
+    'game_type': gameType,
+    'screenshots': screenshots,
+    'videos': videos,
+    'themes': themes,
+    'game_modes': gameModes,
+    'age_ratings': ageRatings?.map((e) => e.toJson()).toList(),
+    'similar_games': similarGames?.map((e) => e.toJson()).toList(),
+  };
 }
