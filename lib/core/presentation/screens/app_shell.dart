@@ -12,17 +12,101 @@ import 'package:serapeum_app/features/discovery/data/local/discover_history_item
 import 'package:serapeum_app/features/discovery/data/models/orchestrator_response_dto.dart';
 import 'package:serapeum_app/features/discovery/presentation/providers/discovery_provider.dart';
 import 'package:serapeum_app/features/discovery/presentation/screens/discovery_history_screen.dart';
+import 'package:serapeum_app/features/library/data/providers/library_filter_provider.dart';
 
-class AppShell extends ConsumerWidget {
+class AppShell extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
 
   const AppShell({super.key, required this.navigationShell});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends ConsumerState<AppShell> {
+  void _showSortSheet(BuildContext context, AppLocalizations l10n) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF12122A),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+          ),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Text(
+                    l10n.sortOptions,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                for (final option in LibrarySortOption.values)
+                  ListTile(
+                    leading: Icon(
+                      _sortOptionIcon(option),
+                      color: AppColors.accent,
+                    ),
+                    title: Text(
+                      _sortOptionLabel(option, l10n),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {
+                      ref.read(librarySortProvider.notifier).state = option;
+                      Navigator.pop(sheetContext);
+                    },
+                  ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  IconData _sortOptionIcon(LibrarySortOption option) => switch (option) {
+    LibrarySortOption.dateDesc => Icons.schedule,
+    LibrarySortOption.dateAsc => Icons.history,
+    LibrarySortOption.titleAsc => Icons.sort_by_alpha,
+    LibrarySortOption.ratingDesc => Icons.star,
+    LibrarySortOption.byType => Icons.category_outlined,
+  };
+
+  String _sortOptionLabel(LibrarySortOption option, AppLocalizations l10n) =>
+      switch (option) {
+        LibrarySortOption.dateDesc => l10n.sortByDateDesc,
+        LibrarySortOption.dateAsc => l10n.sortByDateAsc,
+        LibrarySortOption.titleAsc => l10n.sortByTitle,
+        LibrarySortOption.ratingDesc => l10n.sortByRating,
+        LibrarySortOption.byType => l10n.sortByType,
+      };
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    final String subtitle = switch (navigationShell.currentIndex) {
+    final String subtitle = switch (widget.navigationShell.currentIndex) {
       0 => l10n.myLibraryTitle,
       1 => l10n.discoverTitle,
       2 => l10n.controlCenterTitle,
@@ -72,7 +156,14 @@ class AppShell extends ConsumerWidget {
           elevation: 0,
           surfaceTintColor: Colors.transparent,
           actions: [
-            if (navigationShell.currentIndex == 1) ...[
+            if (widget.navigationShell.currentIndex == 0) ...[
+              IconButton(
+                icon: const Icon(Icons.sort, color: Colors.white),
+                onPressed: () => _showSortSheet(context, l10n),
+                tooltip: l10n.sortOptions,
+              ),
+            ],
+            if (widget.navigationShell.currentIndex == 1) ...[
               IconButton(
                 icon: const Icon(Icons.add, color: Colors.white),
                 onPressed: () {
@@ -119,7 +210,7 @@ class AppShell extends ConsumerWidget {
         body: Stack(
           children: [
             const Positioned.fill(child: ParticleBackground()),
-            navigationShell,
+            widget.navigationShell,
           ],
         ),
         extendBody: true,
@@ -144,11 +235,12 @@ class AppShell extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(32),
                 child: NavigationBar(
                   height: 60,
-                  selectedIndex: navigationShell.currentIndex,
+                  selectedIndex: widget.navigationShell.currentIndex,
                   onDestinationSelected: (index) {
-                    navigationShell.goBranch(
+                    widget.navigationShell.goBranch(
                       index,
-                      initialLocation: index == navigationShell.currentIndex,
+                      initialLocation:
+                          index == widget.navigationShell.currentIndex,
                     );
                   },
                   labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,

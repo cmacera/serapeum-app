@@ -351,4 +351,32 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get saveToLibrary => 'Save to Library';
+
+  @override
+  String get removeFromLibrary => 'Remove from Library';
+
+  @override
+  String get libraryEmpty =>
+      'Your vault is empty.\nSave items from the Oracle to get started.';
+
+  @override
+  String get sortOptions => 'Sort by';
+
+  @override
+  String get sortByDateDesc => 'Newest first';
+
+  @override
+  String get sortByDateAsc => 'Oldest first';
+
+  @override
+  String get sortByTitle => 'Title (A–Z)';
+
+  @override
+  String get sortByRating => 'Highest rated';
+
+  @override
+  String get sortByType => 'By type';
 }

@@ -10,6 +10,8 @@ class MediaResultCard extends StatelessWidget {
   final String? imageUrl;
   final MediaCardType mediaType;
   final VoidCallback? onTap;
+  final bool? isSaved;
+  final VoidCallback? onSave;
 
   const MediaResultCard({
     super.key,
@@ -18,6 +20,8 @@ class MediaResultCard extends StatelessWidget {
     this.subtitle,
     this.imageUrl,
     this.onTap,
+    this.isSaved,
+    this.onSave,
   });
 
   @override
@@ -68,6 +72,22 @@ class MediaResultCard extends StatelessWidget {
                     left: 8,
                     child: _TypeBadge(icon: _typeIcon, color: _badgeColor),
                   ),
+                  if (isSaved != null)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: onSave,
+                        child: Icon(
+                          isSaved! ? Icons.bookmark : Icons.bookmark_border,
+                          color: isSaved! ? AppColors.accent : Colors.white,
+                          size: 24,
+                          shadows: const [
+                            Shadow(blurRadius: 4, color: Colors.black54),
+                          ],
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
