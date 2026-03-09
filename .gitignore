@@ -75,6 +75,11 @@ local.properties
 # Project specific
 coverage/
 
+# Realm runtime database files (created at runtime, not source)
+*.realm
+*.realm.lock
+*.realm.management/
+
 # Proguard
 /android/app/proguard-rules.pro
 

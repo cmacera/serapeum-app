@@ -7,7 +7,32 @@ import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/orchestrator_response.dart';
 import 'package:serapeum_app/features/discovery/presentation/providers/discover_query_provider.dart';
 import 'package:serapeum_app/features/discovery/presentation/widgets/discover_result_view.dart';
+import 'package:serapeum_app/features/library/data/local/library_item.dart';
+import 'package:serapeum_app/features/library/data/providers/library_provider.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
+
+class _FakeLibrary extends Library {
+  @override
+  List<LibraryItem> build() => const [];
+
+  @override
+  void addItem({
+    required String externalId,
+    required String mediaType,
+    required String title,
+    String? subtitle,
+    String? imageUrl,
+    String? backdropImageUrl,
+    double? rating,
+    required String itemJson,
+  }) {}
+
+  @override
+  void removeItem(String externalId, String mediaType) {}
+
+  @override
+  bool isInLibrary(String externalId, String mediaType) => false;
+}
 
 void main() {
   Widget createWidgetUnderTest({required OrchestratorResponse? response}) {
@@ -16,6 +41,7 @@ void main() {
         discoverQueryProvider(
           'test query',
         ).overrideWith((ref) async => response),
+        libraryProvider.overrideWith(_FakeLibrary.new),
       ],
       child: const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,

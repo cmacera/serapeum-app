@@ -1,16 +1,23 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../../core/constants/api_constants.dart';
+import '../../domain/entities/book.dart';
 import '../../domain/entities/discover_category.dart';
+import '../../domain/entities/game.dart';
 import '../../domain/entities/media.dart';
 import '../../domain/entities/search_all_response.dart';
+import '../../../library/data/local/library_item.dart';
+import '../../../library/data/providers/library_provider.dart';
 import 'category_tab_bar.dart';
 import 'chat_message_bubble.dart';
 import 'discover_detail_modal.dart';
 import 'media_result_card.dart';
 
-class DiscoverResultList extends StatefulWidget {
+class DiscoverResultList extends ConsumerStatefulWidget {
   final String query;
   final String assistantText;
   final SearchAllResponse response;
@@ -23,10 +30,10 @@ class DiscoverResultList extends StatefulWidget {
   });
 
   @override
-  State<DiscoverResultList> createState() => _DiscoverResultListState();
+  ConsumerState<DiscoverResultList> createState() => _DiscoverResultListState();
 }
 
-class _DiscoverResultListState extends State<DiscoverResultList> {
+class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
   DiscoverCategory? _selectedCategory;
 
   @override
@@ -52,10 +59,122 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
     }
   }
 
+  void _confirmRemove(
+    BuildContext context,
+    String itemTitle,
+    VoidCallback onConfirmed,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.removeFromLibrary),
+        content: Text(itemTitle),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(l10n.removeFromLibrary),
+          ),
+        ],
+      ),
+    ).then((confirmed) {
+      if (mounted && confirmed == true) onConfirmed();
+    });
+  }
+
+  String _persistedMediaType(MediaType type) =>
+      type == MediaType.tv ? 'tv' : 'movie';
+
+  void _toggleSaveMedia(BuildContext context, Media media) {
+    final externalId = media.id.toString();
+    final persistedType = _persistedMediaType(media.mediaType);
+    final library = ref.read(libraryProvider.notifier);
+    if (library.isInLibrary(externalId, persistedType)) {
+      _confirmRemove(context, media.title ?? media.name ?? '', () {
+        library.removeItem(externalId, persistedType);
+      });
+    } else {
+      final resolvedImage = media.posterPath != null
+          ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
+          : null;
+      final resolvedBackdrop = media.backdropPath != null
+          ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW780}${media.backdropPath}'
+          : null;
+      library.addItem(
+        externalId: externalId,
+        mediaType: persistedType,
+        title: media.title ?? media.name ?? '',
+        subtitle: _buildSubtitle(
+          _extractYear(media.releaseDate),
+          _formatRating(media.voteAverage),
+        ),
+        imageUrl: resolvedImage,
+        backdropImageUrl: resolvedBackdrop,
+        rating: media.voteAverage?.toDouble(),
+        itemJson: jsonEncode(media.toJson()),
+      );
+    }
+  }
+
+  void _toggleSaveBook(BuildContext context, Book book) {
+    final externalId = book.id;
+    const mediaType = 'book';
+    final library = ref.read(libraryProvider.notifier);
+    if (library.isInLibrary(externalId, mediaType)) {
+      _confirmRemove(context, book.title, () {
+        library.removeItem(externalId, mediaType);
+      });
+    } else {
+      final imageUrl =
+          book.imageLinks?['thumbnail'] ?? book.imageLinks?['smallThumbnail'];
+      library.addItem(
+        externalId: externalId,
+        mediaType: mediaType,
+        title: book.title,
+        subtitle: _buildSubtitle(_extractYear(book.publishedDate), null),
+        imageUrl: imageUrl,
+        backdropImageUrl: imageUrl,
+        rating: book.averageRating?.toDouble(),
+        itemJson: jsonEncode(book.toJson()),
+      );
+    }
+  }
+
+  void _toggleSaveGame(BuildContext context, Game game) {
+    final externalId = game.id.toString();
+    const mediaType = 'game';
+    final library = ref.read(libraryProvider.notifier);
+    if (library.isInLibrary(externalId, mediaType)) {
+      _confirmRemove(context, game.name, () {
+        library.removeItem(externalId, mediaType);
+      });
+    } else {
+      library.addItem(
+        externalId: externalId,
+        mediaType: mediaType,
+        title: game.name,
+        subtitle: _buildSubtitle(
+          _extractYear(game.released),
+          _formatRating(game.rating ?? game.aggregatedRating),
+        ),
+        imageUrl: game.coverUrl,
+        backdropImageUrl: game.screenshots?.firstOrNull,
+        rating: (game.rating ?? game.aggregatedRating)?.toDouble(),
+        itemJson: jsonEncode(game.toJson()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final data = widget.response;
+    final libraryItems = ref.watch(libraryProvider);
 
     final hasMedia = data.media.isNotEmpty;
     final hasBooks = data.books.isNotEmpty;
@@ -63,7 +182,6 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
 
     final hasResults = hasMedia || hasBooks || hasGames;
 
-    // Check how many categories have results
     int categoriesWithResults = 0;
     if (hasMedia) categoriesWithResults++;
     if (hasBooks) categoriesWithResults++;
@@ -71,7 +189,7 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
 
     final showTabs = categoriesWithResults >= 2;
 
-    List<Widget> cards = _buildFilteredCards(context, l10n, data);
+    List<Widget> cards = _buildFilteredCards(context, l10n, data, libraryItems);
 
     return CustomScrollView(
       slivers: [
@@ -163,7 +281,12 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
     BuildContext context,
     AppLocalizations l10n,
     SearchAllResponse data,
+    List<LibraryItem> libraryItems,
   ) {
+    bool saved(String externalId, String mediaType) => libraryItems.any(
+      (i) => i.externalId == externalId && i.mediaType == mediaType,
+    );
+
     List<Widget> cards = [];
 
     if (_selectedCategory == null ||
@@ -183,6 +306,11 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
                 ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
                 : null,
             onTap: () => _showDetails(context, media),
+            isSaved: saved(
+              media.id.toString(),
+              _persistedMediaType(media.mediaType),
+            ),
+            onSave: () => _toggleSaveMedia(context, media),
           ),
       ]);
     }
@@ -199,6 +327,8 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
                 book.imageLinks?['thumbnail'] ??
                 book.imageLinks?['smallThumbnail'],
             onTap: () => _showDetails(context, book),
+            isSaved: saved(book.id, 'book'),
+            onSave: () => _toggleSaveBook(context, book),
           ),
       ]);
     }
@@ -216,6 +346,8 @@ class _DiscoverResultListState extends State<DiscoverResultList> {
             ),
             imageUrl: game.coverUrl,
             onTap: () => _showDetails(context, game),
+            isSaved: saved(game.id.toString(), 'game'),
+            onSave: () => _toggleSaveGame(context, game),
           ),
       ]);
     }

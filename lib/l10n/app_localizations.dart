@@ -733,6 +733,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 episode} other{{count} episodes}}'**
   String detailEpisodes(int count);
+
+  /// No description provided for @saveToLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to Library'**
+  String get saveToLibrary;
+
+  /// No description provided for @removeFromLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from Library'**
+  String get removeFromLibrary;
+
+  /// No description provided for @libraryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vault is empty.\nSave items from the Oracle to get started.'**
+  String get libraryEmpty;
+
+  /// No description provided for @sortOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get sortOptions;
+
+  /// No description provided for @sortByDateDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest first'**
+  String get sortByDateDesc;
+
+  /// No description provided for @sortByDateAsc.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest first'**
+  String get sortByDateAsc;
+
+  /// No description provided for @sortByTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (A–Z)'**
+  String get sortByTitle;
+
+  /// No description provided for @sortByRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest rated'**
+  String get sortByRating;
+
+  /// No description provided for @sortByType.
+  ///
+  /// In en, this message translates to:
+  /// **'By type'**
+  String get sortByType;
 }
 
 class _AppLocalizationsDelegate

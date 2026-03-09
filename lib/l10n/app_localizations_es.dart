@@ -353,4 +353,32 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get saveToLibrary => 'Guardar en Biblioteca';
+
+  @override
+  String get removeFromLibrary => 'Eliminar de Biblioteca';
+
+  @override
+  String get libraryEmpty =>
+      'Tu colección está vacía.\nGuarda elementos desde el Oráculo para empezar.';
+
+  @override
+  String get sortOptions => 'Ordenar por';
+
+  @override
+  String get sortByDateDesc => 'Más recientes primero';
+
+  @override
+  String get sortByDateAsc => 'Más antiguos primero';
+
+  @override
+  String get sortByTitle => 'Título (A–Z)';
+
+  @override
+  String get sortByRating => 'Mejor valorados';
+
+  @override
+  String get sortByType => 'Por tipo';
 }
