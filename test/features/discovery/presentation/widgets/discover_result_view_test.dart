@@ -14,6 +14,24 @@ import 'package:serapeum_app/l10n/app_localizations.dart';
 class _FakeLibrary extends Library {
   @override
   List<LibraryItem> build() => const [];
+
+  @override
+  void addItem({
+    required String externalId,
+    required String mediaType,
+    required String title,
+    String? subtitle,
+    String? imageUrl,
+    String? backdropImageUrl,
+    double? rating,
+    required String itemJson,
+  }) {}
+
+  @override
+  void removeItem(String externalId, String mediaType) {}
+
+  @override
+  bool isInLibrary(String externalId, String mediaType) => false;
 }
 
 void main() {

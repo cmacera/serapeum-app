@@ -10,6 +10,7 @@ import '../../domain/entities/discover_category.dart';
 import '../../domain/entities/game.dart';
 import '../../domain/entities/media.dart';
 import '../../domain/entities/search_all_response.dart';
+import '../../../library/data/local/library_item.dart';
 import '../../../library/data/providers/library_provider.dart';
 import 'category_tab_bar.dart';
 import 'chat_message_bubble.dart';
@@ -280,7 +281,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     BuildContext context,
     AppLocalizations l10n,
     SearchAllResponse data,
-    List<dynamic> libraryItems,
+    List<LibraryItem> libraryItems,
   ) {
     bool saved(String externalId, String mediaType) => libraryItems.any(
       (i) => i.externalId == externalId && i.mediaType == mediaType,
