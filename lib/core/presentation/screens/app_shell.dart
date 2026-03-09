@@ -24,6 +24,18 @@ class AppShell extends ConsumerStatefulWidget {
 }
 
 class _AppShellState extends ConsumerState<AppShell> {
+  bool _isSearchActive = false;
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+  int _previousIndex = -1;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
   void _showSortSheet(BuildContext context, AppLocalizations l10n) {
     showModalBottomSheet<void>(
       context: context,
@@ -105,13 +117,31 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final currentIndex = widget.navigationShell.currentIndex;
 
-    final String subtitle = switch (widget.navigationShell.currentIndex) {
+    // Reset search when switching away from Library tab
+    if (_previousIndex != currentIndex) {
+      if (_previousIndex == 0 && _isSearchActive) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          setState(() {
+            _isSearchActive = false;
+          });
+          _searchController.clear();
+          ref.read(librarySearchQueryProvider.notifier).state = '';
+        });
+      }
+      _previousIndex = currentIndex;
+    }
+
+    final String subtitle = switch (currentIndex) {
       0 => l10n.myLibraryTitle,
       1 => l10n.discoverTitle,
       2 => l10n.controlCenterTitle,
       _ => '',
     };
+
+    final bool showSearchField = currentIndex == 0 && _isSearchActive;
 
     return Container(
       decoration: const BoxDecoration(
@@ -130,38 +160,79 @@ class _AppShellState extends ConsumerState<AppShell> {
         backgroundColor: Colors.transparent, // Let the gradient shine through
         appBar: AppBar(
           centerTitle: false,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.appName,
-                style: GoogleFonts.cinzel(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  letterSpacing: 2.0,
+          title: showSearchField
+              ? TextField(
+                  controller: _searchController,
+                  focusNode: _searchFocusNode,
+                  style: const TextStyle(color: Colors.white),
+                  cursorColor: AppColors.accent,
+                  decoration: InputDecoration(
+                    hintText: l10n.searchLibraryHint,
+                    hintStyle: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.5),
+                    ),
+                    border: InputBorder.none,
+                    isDense: true,
+                  ),
+                  onChanged: (value) {
+                    ref.read(librarySearchQueryProvider.notifier).state = value;
+                  },
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.appName,
+                      style: GoogleFonts.cinzel(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.inter(
+                        color: AppColors.accent,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                subtitle,
-                style: GoogleFonts.inter(
-                  color: AppColors.accent,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
           backgroundColor: Colors.transparent, // Let gradient shine through
           elevation: 0,
           surfaceTintColor: Colors.transparent,
           actions: [
-            if (widget.navigationShell.currentIndex == 0) ...[
-              IconButton(
-                icon: const Icon(Icons.sort, color: Colors.white),
-                onPressed: () => _showSortSheet(context, l10n),
-                tooltip: l10n.sortOptions,
-              ),
+            if (currentIndex == 0) ...[
+              if (_isSearchActive)
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white),
+                  onPressed: () {
+                    setState(() {
+                      _isSearchActive = false;
+                    });
+                    _searchController.clear();
+                    ref.read(librarySearchQueryProvider.notifier).state = '';
+                  },
+                )
+              else ...[
+                IconButton(
+                  icon: const Icon(Icons.search, color: Colors.white),
+                  onPressed: () {
+                    setState(() {
+                      _isSearchActive = true;
+                    });
+                    _searchFocusNode.requestFocus();
+                  },
+                  tooltip: l10n.searchLibraryTooltip,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.sort, color: Colors.white),
+                  onPressed: () => _showSortSheet(context, l10n),
+                  tooltip: l10n.sortOptions,
+                ),
+              ],
             ],
             if (widget.navigationShell.currentIndex == 1) ...[
               IconButton(

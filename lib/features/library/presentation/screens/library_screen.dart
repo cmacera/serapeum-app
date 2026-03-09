@@ -25,6 +25,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     final l10n = AppLocalizations.of(context)!;
     final allItems = ref.watch(libraryProvider);
     final sortOption = ref.watch(librarySortProvider);
+    final searchQuery = ref.watch(librarySearchQueryProvider);
 
     final hasMedia = allItems.any(
       (i) => i.mediaType == 'movie' || i.mediaType == 'tv',
@@ -53,7 +54,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     }
 
     final filtered = _filterItems(allItems);
-    final sorted = _sortItems(filtered, sortOption);
+    final searched = _searchItems(filtered, searchQuery);
+    final sorted = _sortItems(searched, sortOption);
     final cards = _buildCards(context, sorted);
 
     return CustomScrollView(
@@ -108,10 +110,28 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(32.0),
-                child: Icon(
-                  Icons.filter_list_off,
-                  size: 48,
-                  color: AppColors.subtitle,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      searchQuery.isNotEmpty
+                          ? Icons.search_off
+                          : Icons.filter_list_off,
+                      size: 48,
+                      color: AppColors.subtitle,
+                    ),
+                    if (searchQuery.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.libraryNoSearchResults,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.subtitle,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ),
@@ -126,6 +146,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           ),
       ],
     );
+  }
+
+  List<LibraryItem> _searchItems(List<LibraryItem> items, String query) {
+    if (query.isEmpty) return items;
+    final q = query.toLowerCase();
+    return items.where((i) {
+      return i.title.toLowerCase().contains(q) ||
+          (i.subtitle?.toLowerCase().contains(q) ?? false);
+    }).toList();
   }
 
   List<LibraryItem> _filterItems(List<LibraryItem> items) {

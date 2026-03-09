@@ -749,7 +749,7 @@ abstract class AppLocalizations {
   /// No description provided for @libraryEmpty.
   ///
   /// In en, this message translates to:
-  /// **'Your vault is empty.\nSave items from the Oracle to get started.'**
+  /// **'Your Library is empty.\nSave items from the Oracle to get started.'**
   String get libraryEmpty;
 
   /// No description provided for @sortOptions.
@@ -787,6 +787,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'By type'**
   String get sortByType;
+
+  /// Placeholder hint text inside the library search input field
+  ///
+  /// In en, this message translates to:
+  /// **'Search library...'**
+  String get searchLibraryHint;
+
+  /// Tooltip for the library search icon button
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchLibraryTooltip;
+
+  /// Message shown when library search returns no results
+  ///
+  /// In en, this message translates to:
+  /// **'No items match your search.'**
+  String get libraryNoSearchResults;
 }
 
 class _AppLocalizationsDelegate
