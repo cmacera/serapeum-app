@@ -31,6 +31,7 @@ class Library extends _$Library {
     double? rating,
     required String itemJson,
   }) {
+    if (isInLibrary(externalId, mediaType)) return;
     final realm = ref.read(realmProvider);
     try {
       realm.write(
@@ -54,19 +55,22 @@ class Library extends _$Library {
     }
   }
 
-  void removeItem(String externalId) {
+  void removeItem(String externalId, String mediaType) {
     final realm = ref.read(realmProvider);
     try {
-      final items = realm.all<LibraryItem>().query(r'externalId == $0', [
-        externalId,
-      ]);
+      final items = realm.all<LibraryItem>().query(
+        r'externalId == $0 AND mediaType == $1',
+        [externalId, mediaType],
+      );
       realm.write(() => realm.deleteMany(items));
     } catch (e) {
       debugPrint('Library: failed to remove item — $e');
     }
   }
 
-  bool isInLibrary(String externalId) {
-    return state.any((item) => item.externalId == externalId);
+  bool isInLibrary(String externalId, String mediaType) {
+    return state.any(
+      (item) => item.externalId == externalId && item.mediaType == mediaType,
+    );
   }
 }

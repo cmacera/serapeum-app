@@ -12,6 +12,7 @@ class MediaResultCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool? isSaved;
   final VoidCallback? onSave;
+  final String? saveTooltip;
 
   const MediaResultCard({
     super.key,
@@ -22,6 +23,7 @@ class MediaResultCard extends StatelessWidget {
     this.onTap,
     this.isSaved,
     this.onSave,
+    this.saveTooltip,
   });
 
   @override
@@ -74,11 +76,14 @@ class MediaResultCard extends StatelessWidget {
                   ),
                   if (isSaved != null)
                     Positioned(
-                      top: 8,
-                      right: 8,
-                      child: GestureDetector(
-                        onTap: onSave,
-                        child: Icon(
+                      top: 4,
+                      right: 4,
+                      child: IconButton(
+                        onPressed: onSave,
+                        tooltip: saveTooltip,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        icon: Icon(
                           isSaved! ? Icons.bookmark : Icons.bookmark_border,
                           color: isSaved! ? AppColors.accent : Colors.white,
                           size: 24,

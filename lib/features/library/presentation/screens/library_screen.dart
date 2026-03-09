@@ -46,9 +46,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         DiscoverCategory.games => hasGames,
       };
       if (!stillValid) {
-        WidgetsBinding.instance.addPostFrameCallback(
-          (_) => setState(() => _selectedCategory = null),
-        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) setState(() => _selectedCategory = null);
+        });
       }
     }
 
@@ -189,7 +189,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         ],
       ),
     ).then((confirmed) {
-      if (confirmed == true) onConfirmed();
+      if (mounted && confirmed == true) onConfirmed();
     });
   }
 
@@ -210,7 +210,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         onSave: () => _confirmRemove(
           context,
           item.title,
-          () => ref.read(libraryProvider.notifier).removeItem(item.externalId),
+          () => ref
+              .read(libraryProvider.notifier)
+              .removeItem(item.externalId, item.mediaType),
         ),
       );
     }).toList();

@@ -187,7 +187,7 @@
   },
   "saveToLibrary": "Save to Library",
   "removeFromLibrary": "Remove from Library",
-  "libraryEmpty": "Your vault is empty.\nSave items from the Oracle to get started.",
+  "libraryEmpty": "Your Library is empty.\nSave items from the Oracle to get started.",
   "sortOptions": "Sort by",
   "sortByDateDesc": "Newest first",
   "sortByDateAsc": "Oldest first",

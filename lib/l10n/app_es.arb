@@ -124,7 +124,7 @@
   },
   "saveToLibrary": "Guardar en Biblioteca",
   "removeFromLibrary": "Eliminar de Biblioteca",
-  "libraryEmpty": "Tu colección está vacía.\nGuarda elementos desde el Oráculo para empezar.",
+  "libraryEmpty": "Tu Biblioteca está vacía.\nGuarda elementos desde el Oráculo para empezar.",
   "sortOptions": "Ordenar por",
   "sortByDateDesc": "Más recientes primero",
   "sortByDateAsc": "Más antiguos primero",

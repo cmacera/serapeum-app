@@ -82,16 +82,20 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
         ],
       ),
     ).then((confirmed) {
-      if (confirmed == true) onConfirmed();
+      if (mounted && confirmed == true) onConfirmed();
     });
   }
 
+  String _persistedMediaType(MediaType type) =>
+      type == MediaType.tv ? 'tv' : 'movie';
+
   void _toggleSaveMedia(BuildContext context, Media media) {
     final externalId = media.id.toString();
+    final persistedType = _persistedMediaType(media.mediaType);
     final library = ref.read(libraryProvider.notifier);
-    if (library.isInLibrary(externalId)) {
+    if (library.isInLibrary(externalId, persistedType)) {
       _confirmRemove(context, media.title ?? media.name ?? '', () {
-        library.removeItem(externalId);
+        library.removeItem(externalId, persistedType);
       });
     } else {
       final resolvedImage = media.posterPath != null
@@ -102,7 +106,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
           : null;
       library.addItem(
         externalId: externalId,
-        mediaType: media.mediaType == MediaType.tv ? 'tv' : 'movie',
+        mediaType: persistedType,
         title: media.title ?? media.name ?? '',
         subtitle: _buildSubtitle(
           _extractYear(media.releaseDate),
@@ -118,17 +122,18 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
 
   void _toggleSaveBook(BuildContext context, Book book) {
     final externalId = book.id;
+    const mediaType = 'book';
     final library = ref.read(libraryProvider.notifier);
-    if (library.isInLibrary(externalId)) {
+    if (library.isInLibrary(externalId, mediaType)) {
       _confirmRemove(context, book.title, () {
-        library.removeItem(externalId);
+        library.removeItem(externalId, mediaType);
       });
     } else {
       final imageUrl =
           book.imageLinks?['thumbnail'] ?? book.imageLinks?['smallThumbnail'];
       library.addItem(
         externalId: externalId,
-        mediaType: 'book',
+        mediaType: mediaType,
         title: book.title,
         subtitle: _buildSubtitle(_extractYear(book.publishedDate), null),
         imageUrl: imageUrl,
@@ -141,15 +146,16 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
 
   void _toggleSaveGame(BuildContext context, Game game) {
     final externalId = game.id.toString();
+    const mediaType = 'game';
     final library = ref.read(libraryProvider.notifier);
-    if (library.isInLibrary(externalId)) {
+    if (library.isInLibrary(externalId, mediaType)) {
       _confirmRemove(context, game.name, () {
-        library.removeItem(externalId);
+        library.removeItem(externalId, mediaType);
       });
     } else {
       library.addItem(
         externalId: externalId,
-        mediaType: 'game',
+        mediaType: mediaType,
         title: game.name,
         subtitle: _buildSubtitle(
           _extractYear(game.released),
@@ -276,8 +282,9 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     SearchAllResponse data,
     List<dynamic> libraryItems,
   ) {
-    bool saved(String externalId) =>
-        libraryItems.any((i) => i.externalId == externalId);
+    bool saved(String externalId, String mediaType) => libraryItems.any(
+      (i) => i.externalId == externalId && i.mediaType == mediaType,
+    );
 
     List<Widget> cards = [];
 
@@ -298,7 +305,10 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
                 ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
                 : null,
             onTap: () => _showDetails(context, media),
-            isSaved: saved(media.id.toString()),
+            isSaved: saved(
+              media.id.toString(),
+              _persistedMediaType(media.mediaType),
+            ),
             onSave: () => _toggleSaveMedia(context, media),
           ),
       ]);
@@ -316,7 +326,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
                 book.imageLinks?['thumbnail'] ??
                 book.imageLinks?['smallThumbnail'],
             onTap: () => _showDetails(context, book),
-            isSaved: saved(book.id),
+            isSaved: saved(book.id, 'book'),
             onSave: () => _toggleSaveBook(context, book),
           ),
       ]);
@@ -335,7 +345,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
             ),
             imageUrl: game.coverUrl,
             onTap: () => _showDetails(context, game),
-            isSaved: saved(game.id.toString()),
+            isSaved: saved(game.id.toString(), 'game'),
             onSave: () => _toggleSaveGame(context, game),
           ),
       ]);
