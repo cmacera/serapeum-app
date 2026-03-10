@@ -805,6 +805,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No items match your search.'**
   String get libraryNoSearchResults;
+
+  /// Tooltip for close/dismiss buttons
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
 }
 
 class _AppLocalizationsDelegate

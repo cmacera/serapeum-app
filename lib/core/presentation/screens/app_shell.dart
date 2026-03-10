@@ -208,6 +208,7 @@ class _AppShellState extends ConsumerState<AppShell> {
               if (_isSearchActive)
                 IconButton(
                   icon: const Icon(Icons.close, color: Colors.white),
+                  tooltip: l10n.close,
                   onPressed: () {
                     setState(() {
                       _isSearchActive = false;

@@ -149,8 +149,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   }
 
   List<LibraryItem> _searchItems(List<LibraryItem> items, String query) {
-    if (query.isEmpty) return items;
-    final q = query.toLowerCase();
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) return items;
+    final q = trimmed.toLowerCase();
     return items.where((i) {
       return i.title.toLowerCase().contains(q) ||
           (i.subtitle?.toLowerCase().contains(q) ?? false);

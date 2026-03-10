@@ -391,4 +391,7 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get libraryNoSearchResults =>
       'Ningún elemento coincide con tu búsqueda.';
+
+  @override
+  String get close => 'Cerrar';
 }

@@ -205,5 +205,9 @@
   "libraryNoSearchResults": "No items match your search.",
   "@libraryNoSearchResults": {
     "description": "Message shown when library search returns no results"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Tooltip for close/dismiss buttons"
   }
 }

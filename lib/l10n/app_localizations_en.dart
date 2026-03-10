@@ -388,4 +388,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get libraryNoSearchResults => 'No items match your search.';
+
+  @override
+  String get close => 'Close';
 }
