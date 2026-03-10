@@ -362,7 +362,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get libraryEmpty =>
-      'Tu colección está vacía.\nGuarda elementos desde el Oráculo para empezar.';
+      'Tu Biblioteca está vacía.\nGuarda elementos desde el Oráculo para empezar.';
 
   @override
   String get sortOptions => 'Ordenar por';
@@ -381,4 +381,17 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get sortByType => 'Por tipo';
+
+  @override
+  String get searchLibraryHint => 'Buscar en biblioteca...';
+
+  @override
+  String get searchLibraryTooltip => 'Buscar';
+
+  @override
+  String get libraryNoSearchResults =>
+      'Ningún elemento coincide con tu búsqueda.';
+
+  @override
+  String get close => 'Cerrar';
 }

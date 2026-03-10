@@ -193,5 +193,21 @@
   "sortByDateAsc": "Oldest first",
   "sortByTitle": "Title (A–Z)",
   "sortByRating": "Highest rated",
-  "sortByType": "By type"
+  "sortByType": "By type",
+  "searchLibraryHint": "Search library...",
+  "@searchLibraryHint": {
+    "description": "Placeholder hint text inside the library search input field"
+  },
+  "searchLibraryTooltip": "Search",
+  "@searchLibraryTooltip": {
+    "description": "Tooltip for the library search icon button"
+  },
+  "libraryNoSearchResults": "No items match your search.",
+  "@libraryNoSearchResults": {
+    "description": "Message shown when library search returns no results"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Tooltip for close/dismiss buttons"
+  }
 }

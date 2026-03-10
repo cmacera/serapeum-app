@@ -130,5 +130,9 @@
   "sortByDateAsc": "Más antiguos primero",
   "sortByTitle": "Título (A–Z)",
   "sortByRating": "Mejor valorados",
-  "sortByType": "Por tipo"
+  "sortByType": "Por tipo",
+  "searchLibraryHint": "Buscar en biblioteca...",
+  "searchLibraryTooltip": "Buscar",
+  "libraryNoSearchResults": "Ningún elemento coincide con tu búsqueda.",
+  "close": "Cerrar"
 }

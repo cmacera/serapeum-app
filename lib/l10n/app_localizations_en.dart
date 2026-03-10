@@ -360,7 +360,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get libraryEmpty =>
-      'Your vault is empty.\nSave items from the Oracle to get started.';
+      'Your Library is empty.\nSave items from the Oracle to get started.';
 
   @override
   String get sortOptions => 'Sort by';
@@ -379,4 +379,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sortByType => 'By type';
+
+  @override
+  String get searchLibraryHint => 'Search library...';
+
+  @override
+  String get searchLibraryTooltip => 'Search';
+
+  @override
+  String get libraryNoSearchResults => 'No items match your search.';
+
+  @override
+  String get close => 'Close';
 }
