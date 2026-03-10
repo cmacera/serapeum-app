@@ -149,10 +149,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     );
   }
 
+  // Expects a pre-trimmed query; callers are responsible for trimming.
   List<LibraryItem> _searchItems(List<LibraryItem> items, String query) {
-    final trimmed = query.trim();
-    if (trimmed.isEmpty) return items;
-    final q = trimmed.toLowerCase();
+    if (query.isEmpty) return items;
+    final q = query.toLowerCase();
     return items.where((i) {
       return i.title.toLowerCase().contains(q) ||
           (i.subtitle?.toLowerCase().contains(q) ?? false);

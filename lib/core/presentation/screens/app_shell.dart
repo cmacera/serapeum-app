@@ -211,13 +211,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                 IconButton(
                   icon: const Icon(Icons.close, color: Colors.white),
                   tooltip: l10n.close,
-                  onPressed: () {
-                    setState(() {
-                      _isSearchActive = false;
-                    });
-                    _searchController.clear();
-                    ref.read(librarySearchQueryProvider.notifier).state = '';
-                  },
+                  onPressed: _resetSearchState,
                 )
               else ...[
                 IconButton(
@@ -226,7 +220,9 @@ class _AppShellState extends ConsumerState<AppShell> {
                     setState(() {
                       _isSearchActive = true;
                     });
-                    _searchFocusNode.requestFocus();
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _searchFocusNode.requestFocus();
+                    });
                   },
                   tooltip: l10n.searchLibraryTooltip,
                 ),
