@@ -209,5 +209,29 @@
   "close": "Close",
   "@close": {
     "description": "Tooltip for close/dismiss buttons"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Generic save button label"
+  },
+  "libraryUserRatingLabel": "Your Rating",
+  "@libraryUserRatingLabel": {
+    "description": "Label for the user's personal rating section in the library detail view"
+  },
+  "libraryRatingClear": "Clear rating",
+  "@libraryRatingClear": {
+    "description": "Button to remove the user's personal rating"
+  },
+  "libraryUserReviewLabel": "Your Review",
+  "@libraryUserReviewLabel": {
+    "description": "Label for the user's personal review/notes section in the library detail view"
+  },
+  "libraryAddNoteButton": "Add a note",
+  "@libraryAddNoteButton": {
+    "description": "Button shown when no personal note exists, prompting the user to add one"
+  },
+  "libraryRateAction": "Rate",
+  "@libraryRateAction": {
+    "description": "CTA label on the rating card when no user rating exists"
   }
 }

@@ -31,6 +31,24 @@ class Book {
     this.maturityRating,
   });
 
+  factory Book.fromJson(Map<String, dynamic> json) => Book(
+    id: json['id'] as String,
+    title: json['title'] as String,
+    authors: (json['authors'] as List<dynamic>?)?.cast<String>(),
+    publisher: json['publisher'] as String?,
+    publishedDate: json['publishedDate'] as String?,
+    description: json['description'] as String?,
+    isbn: json['isbn'] as String?,
+    pageCount: json['pageCount'] as int?,
+    categories: (json['categories'] as List<dynamic>?)?.cast<String>(),
+    imageLinks: (json['imageLinks'] as Map<String, dynamic>?)
+        ?.cast<String, String>(),
+    language: json['language'] as String?,
+    previewLink: json['previewLink'] as String?,
+    averageRating: json['averageRating'] as num?,
+    maturityRating: json['maturityRating'] as String?,
+  );
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'title': title,

@@ -29,6 +29,24 @@ class Media {
     this.originalLanguage,
   });
 
+  factory Media.fromJson(Map<String, dynamic> json) => Media(
+    id: json['id'] as int,
+    title: json['title'] as String?,
+    name: json['name'] as String?,
+    mediaType: MediaType.values.firstWhere(
+      (t) => t.name == json['media_type'],
+      orElse: () => MediaType.unknown,
+    ),
+    releaseDate: json['release_date'] as String?,
+    posterPath: json['poster_path'] as String?,
+    backdropPath: json['backdrop_path'] as String?,
+    overview: json['overview'] as String?,
+    voteAverage: json['vote_average'] as num?,
+    popularity: json['popularity'] as num?,
+    genreIds: (json['genre_ids'] as List<dynamic>?)?.cast<int>(),
+    originalLanguage: json['original_language'] as String?,
+  );
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'title': title,

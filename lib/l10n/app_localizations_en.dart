@@ -391,4 +391,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get close => 'Close';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get libraryUserRatingLabel => 'Your Rating';
+
+  @override
+  String get libraryRatingClear => 'Clear rating';
+
+  @override
+  String get libraryUserReviewLabel => 'Your Review';
+
+  @override
+  String get libraryAddNoteButton => 'Add a note';
+
+  @override
+  String get libraryRateAction => 'Rate';
 }
