@@ -27,13 +27,30 @@ class _AppShellState extends ConsumerState<AppShell> {
   bool _isSearchActive = false;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
-  int _previousIndex = -1;
 
   @override
   void dispose() {
     _searchController.dispose();
     _searchFocusNode.dispose();
     super.dispose();
+  }
+
+  void _resetSearchState() {
+    setState(() => _isSearchActive = false);
+    _searchController.clear();
+    _searchFocusNode.unfocus();
+    ref.read(librarySearchQueryProvider.notifier).state = '';
+  }
+
+  @override
+  void didUpdateWidget(AppShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.navigationShell.currentIndex !=
+            widget.navigationShell.currentIndex &&
+        oldWidget.navigationShell.currentIndex == 0 &&
+        _isSearchActive) {
+      _resetSearchState();
+    }
   }
 
   void _showSortSheet(BuildContext context, AppLocalizations l10n) {
@@ -118,21 +135,6 @@ class _AppShellState extends ConsumerState<AppShell> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final currentIndex = widget.navigationShell.currentIndex;
-
-    // Reset search when switching away from Library tab
-    if (_previousIndex != currentIndex) {
-      if (_previousIndex == 0 && _isSearchActive) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
-          setState(() {
-            _isSearchActive = false;
-          });
-          _searchController.clear();
-          ref.read(librarySearchQueryProvider.notifier).state = '';
-        });
-      }
-      _previousIndex = currentIndex;
-    }
 
     final String subtitle = switch (currentIndex) {
       0 => l10n.myLibraryTitle,
@@ -309,6 +311,11 @@ class _AppShellState extends ConsumerState<AppShell> {
                   height: 60,
                   selectedIndex: widget.navigationShell.currentIndex,
                   onDestinationSelected: (index) {
+                    if (widget.navigationShell.currentIndex == 0 &&
+                        index != 0 &&
+                        _isSearchActive) {
+                      _resetSearchState();
+                    }
                     widget.navigationShell.goBranch(
                       index,
                       initialLocation:

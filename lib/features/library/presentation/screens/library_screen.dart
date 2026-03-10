@@ -53,8 +53,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       }
     }
 
+    final trimmedQuery = searchQuery.trim();
+    final hasSearchTerm = trimmedQuery.isNotEmpty;
+
     final filtered = _filterItems(allItems);
-    final searched = _searchItems(filtered, searchQuery);
+    final searched = _searchItems(filtered, trimmedQuery);
     final sorted = _sortItems(searched, sortOption);
     final cards = _buildCards(context, sorted);
 
@@ -114,13 +117,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      searchQuery.isNotEmpty
-                          ? Icons.search_off
-                          : Icons.filter_list_off,
+                      hasSearchTerm ? Icons.search_off : Icons.filter_list_off,
                       size: 48,
                       color: AppColors.subtitle,
                     ),
-                    if (searchQuery.isNotEmpty) ...[
+                    if (hasSearchTerm) ...[
                       const SizedBox(height: 16),
                       Text(
                         l10n.libraryNoSearchResults,
