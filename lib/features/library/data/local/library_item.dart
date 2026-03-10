@@ -154,8 +154,16 @@ class LibraryItem with RealmEntity, RealmObjectBase, RealmObject {
       'LibraryItem',
       [
         SchemaProperty('id', RealmPropertyType.objectid, primaryKey: true),
-        SchemaProperty('externalId', RealmPropertyType.string),
-        SchemaProperty('mediaType', RealmPropertyType.string),
+        SchemaProperty(
+          'externalId',
+          RealmPropertyType.string,
+          indexType: RealmIndexType.regular,
+        ),
+        SchemaProperty(
+          'mediaType',
+          RealmPropertyType.string,
+          indexType: RealmIndexType.regular,
+        ),
         SchemaProperty('title', RealmPropertyType.string),
         SchemaProperty('subtitle', RealmPropertyType.string, optional: true),
         SchemaProperty('imageUrl', RealmPropertyType.string, optional: true),

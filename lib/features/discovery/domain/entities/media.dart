@@ -33,10 +33,12 @@ class Media {
     id: json['id'] as int,
     title: json['title'] as String?,
     name: json['name'] as String?,
-    mediaType: MediaType.values.firstWhere(
-      (t) => t.name == json['media_type'],
-      orElse: () => MediaType.unknown,
-    ),
+    mediaType: json['media_type'] != null
+        ? MediaType.values.firstWhere(
+            (t) => t.name == json['media_type'],
+            orElse: () => MediaType.unknown,
+          )
+        : MediaType.unknown,
     releaseDate: json['release_date'] as String?,
     posterPath: json['poster_path'] as String?,
     backdropPath: json['backdrop_path'] as String?,
