@@ -1,14 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../discovery/domain/entities/book.dart';
 import '../../../discovery/domain/entities/discover_category.dart';
+import '../../../discovery/domain/entities/game.dart';
+import '../../../discovery/domain/entities/media.dart';
 import '../../../discovery/presentation/widgets/category_tab_bar.dart';
+import '../../../discovery/presentation/widgets/discover_detail_modal.dart';
 import '../../../discovery/presentation/widgets/media_result_card.dart';
 import '../../data/local/library_item.dart';
 import '../../data/providers/library_filter_provider.dart';
 import '../../data/providers/library_provider.dart';
+import '../widgets/library_user_sections.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -196,6 +203,51 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     return copy;
   }
 
+  Object? _reconstructEntity(LibraryItem item) {
+    try {
+      final json = jsonDecode(item.itemJson) as Map<String, dynamic>;
+      return switch (item.mediaType) {
+        'movie' || 'tv' => Media.fromJson(json),
+        'book' => Book.fromJson(json),
+        'game' => Game.fromJson(json),
+        _ => null,
+      };
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void _showLibraryDetails(BuildContext context, LibraryItem item) {
+    final entity = _reconstructEntity(item);
+    if (entity == null) return;
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.4,
+        maxChildSize: 0.95,
+        snap: true,
+        snapSizes: const [0.9],
+        shouldCloseOnMinExtent: true,
+        builder: (_, controller) => DiscoverDetailModal(
+          entity: entity,
+          scrollController: controller,
+          libraryExtras: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              UserRatingSection(libraryItem: item),
+              const SizedBox(height: 8),
+              UserReviewSection(libraryItem: item),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _confirmRemove(
     BuildContext context,
     String itemTitle,
@@ -237,6 +289,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         mediaType: cardType,
         subtitle: item.subtitle,
         imageUrl: item.imageUrl,
+        onTap: () => _showLibraryDetails(context, item),
         isSaved: true,
         onSave: () => _confirmRemove(
           context,

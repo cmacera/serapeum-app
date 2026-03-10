@@ -68,6 +68,41 @@ class Library extends _$Library {
     }
   }
 
+  void updateUserRating(String externalId, String mediaType, double? rating) {
+    final realm = ref.read(realmProvider);
+    try {
+      final items = realm.all<LibraryItem>().query(
+        r'externalId == $0 AND mediaType == $1',
+        [externalId, mediaType],
+      );
+      realm.write(() {
+        for (final item in items) {
+          item.userRating = rating;
+        }
+      });
+    } catch (e) {
+      debugPrint('Library: failed to update rating — $e');
+    }
+  }
+
+  void updateUserNote(String externalId, String mediaType, String? note) {
+    final realm = ref.read(realmProvider);
+    try {
+      final trimmed = note?.trim();
+      final items = realm.all<LibraryItem>().query(
+        r'externalId == $0 AND mediaType == $1',
+        [externalId, mediaType],
+      );
+      realm.write(() {
+        for (final item in items) {
+          item.userNote = (trimmed == null || trimmed.isEmpty) ? null : trimmed;
+        }
+      });
+    } catch (e) {
+      debugPrint('Library: failed to update note — $e');
+    }
+  }
+
   bool isInLibrary(String externalId, String mediaType) {
     return state.any(
       (item) => item.externalId == externalId && item.mediaType == mediaType,

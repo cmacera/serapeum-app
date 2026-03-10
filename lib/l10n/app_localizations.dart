@@ -811,6 +811,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
+
+  /// Generic save button label
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// Label for the user's personal rating section in the library detail view
+  ///
+  /// In en, this message translates to:
+  /// **'Your Rating'**
+  String get libraryUserRatingLabel;
+
+  /// Button to remove the user's personal rating
+  ///
+  /// In en, this message translates to:
+  /// **'Clear rating'**
+  String get libraryRatingClear;
+
+  /// Label for the user's personal review/notes section in the library detail view
+  ///
+  /// In en, this message translates to:
+  /// **'Your Review'**
+  String get libraryUserReviewLabel;
+
+  /// Button shown when no personal note exists, prompting the user to add one
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note'**
+  String get libraryAddNoteButton;
+
+  /// CTA label on the rating card when no user rating exists
+  ///
+  /// In en, this message translates to:
+  /// **'Rate'**
+  String get libraryRateAction;
 }
 
 class _AppLocalizationsDelegate

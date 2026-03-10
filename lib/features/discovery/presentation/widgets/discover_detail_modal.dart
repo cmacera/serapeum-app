@@ -16,10 +16,16 @@ class DiscoverDetailModal extends StatelessWidget {
   final Object entity;
   final ScrollController? scrollController;
 
+  /// Optional widget injected at the top of the content area (before meta
+  /// chips). Used by the library feature to show user rating and review
+  /// sections without creating a cross-feature dependency.
+  final Widget? libraryExtras;
+
   const DiscoverDetailModal({
     super.key,
     required this.entity,
     this.scrollController,
+    this.libraryExtras,
   }) : assert(entity is Media || entity is Book || entity is Game);
 
   @override
@@ -41,6 +47,10 @@ class DiscoverDetailModal extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (libraryExtras != null) ...[
+                      libraryExtras!,
+                      const SizedBox(height: 24.0),
+                    ],
                     _MetaStatsRow(entity: entity),
                     const SizedBox(height: 24.0),
                     _buildSynopsis(context),

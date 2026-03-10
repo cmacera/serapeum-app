@@ -134,5 +134,11 @@
   "searchLibraryHint": "Buscar en biblioteca...",
   "searchLibraryTooltip": "Buscar",
   "libraryNoSearchResults": "Ningún elemento coincide con tu búsqueda.",
-  "close": "Cerrar"
+  "close": "Cerrar",
+  "save": "Guardar",
+  "libraryUserRatingLabel": "Tu valoración",
+  "libraryRatingClear": "Borrar valoración",
+  "libraryUserReviewLabel": "Tu reseña",
+  "libraryAddNoteButton": "Añadir nota",
+  "libraryRateAction": "Valorar"
 }
