@@ -7,6 +7,7 @@ import 'package:serapeum_app/l10n/app_localizations.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../domain/entities/book.dart';
 import '../../domain/entities/discover_category.dart';
+import '../../domain/entities/featured_item.dart';
 import '../../domain/entities/game.dart';
 import '../../domain/entities/media.dart';
 import '../../domain/entities/search_all_response.dart';
@@ -211,6 +212,17 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
                       style: const TextStyle(fontStyle: FontStyle.italic),
                     ),
                   ),
+                if (data.featured != null) ...[
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: _buildFeaturedCard(
+                      context,
+                      data.featured!,
+                      libraryItems,
+                    ),
+                  ),
+                ],
                 if (showTabs && hasResults) ...[
                   const SizedBox(height: 24),
                   CategoryTabBar(
@@ -277,16 +289,20 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     );
   }
 
+  bool _isSaved(
+    List<LibraryItem> libraryItems,
+    String externalId,
+    String mediaType,
+  ) => libraryItems.any(
+    (i) => i.externalId == externalId && i.mediaType == mediaType,
+  );
+
   List<Widget> _buildFilteredCards(
     BuildContext context,
     AppLocalizations l10n,
     SearchAllResponse data,
     List<LibraryItem> libraryItems,
   ) {
-    bool saved(String externalId, String mediaType) => libraryItems.any(
-      (i) => i.externalId == externalId && i.mediaType == mediaType,
-    );
-
     List<Widget> cards = [];
 
     if (_selectedCategory == null ||
@@ -306,7 +322,8 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
                 ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
                 : null,
             onTap: () => _showDetails(context, media),
-            isSaved: saved(
+            isSaved: _isSaved(
+              libraryItems,
               media.id.toString(),
               _persistedMediaType(media.mediaType),
             ),
@@ -327,7 +344,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
                 book.imageLinks?['thumbnail'] ??
                 book.imageLinks?['smallThumbnail'],
             onTap: () => _showDetails(context, book),
-            isSaved: saved(book.id, 'book'),
+            isSaved: _isSaved(libraryItems, book.id, 'book'),
             onSave: () => _toggleSaveBook(context, book),
           ),
       ]);
@@ -346,13 +363,64 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
             ),
             imageUrl: game.coverUrl,
             onTap: () => _showDetails(context, game),
-            isSaved: saved(game.id.toString(), 'game'),
+            isSaved: _isSaved(libraryItems, game.id.toString(), 'game'),
             onSave: () => _toggleSaveGame(context, game),
           ),
       ]);
     }
 
     return cards;
+  }
+
+  Widget _buildFeaturedCard(
+    BuildContext context,
+    FeaturedItem featured,
+    List<LibraryItem> libraryItems,
+  ) {
+    return switch (featured) {
+      FeaturedMedia(:final media) => MediaResultCard(
+        title: media.title ?? media.name ?? '',
+        mediaType: media.mediaType == MediaType.tv
+            ? MediaCardType.tv
+            : MediaCardType.movie,
+        subtitle: _buildSubtitle(
+          _extractYear(media.releaseDate),
+          _formatRating(media.voteAverage),
+        ),
+        imageUrl: media.posterPath != null
+            ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
+            : null,
+        onTap: () => _showDetails(context, media),
+        isSaved: _isSaved(
+          libraryItems,
+          media.id.toString(),
+          _persistedMediaType(media.mediaType),
+        ),
+        onSave: () => _toggleSaveMedia(context, media),
+      ),
+      FeaturedBook(:final book) => MediaResultCard(
+        title: book.title,
+        mediaType: MediaCardType.book,
+        subtitle: _buildSubtitle(_extractYear(book.publishedDate), null),
+        imageUrl:
+            book.imageLinks?['thumbnail'] ?? book.imageLinks?['smallThumbnail'],
+        onTap: () => _showDetails(context, book),
+        isSaved: _isSaved(libraryItems, book.id, 'book'),
+        onSave: () => _toggleSaveBook(context, book),
+      ),
+      FeaturedGame(:final game) => MediaResultCard(
+        title: game.name,
+        mediaType: MediaCardType.game,
+        subtitle: _buildSubtitle(
+          _extractYear(game.released),
+          _formatRating(game.rating ?? game.aggregatedRating),
+        ),
+        imageUrl: game.coverUrl,
+        onTap: () => _showDetails(context, game),
+        isSaved: _isSaved(libraryItems, game.id.toString(), 'game'),
+        onSave: () => _toggleSaveGame(context, game),
+      ),
+    };
   }
 
   Widget _buildMasonryGrid(List<Widget> cards) {

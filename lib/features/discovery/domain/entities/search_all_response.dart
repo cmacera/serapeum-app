@@ -1,4 +1,5 @@
 import 'book.dart';
+import 'featured_item.dart';
 import 'game.dart';
 import 'media.dart';
 import 'search_error.dart';
@@ -9,6 +10,7 @@ class SearchAllResponse {
   final List<Game> games;
   final List<SearchError>? errors;
   final String? text;
+  final FeaturedItem? featured;
 
   const SearchAllResponse({
     required this.media,
@@ -16,6 +18,7 @@ class SearchAllResponse {
     required this.games,
     this.errors,
     this.text,
+    this.featured,
   });
 
   Map<String, dynamic> toJson() => {
@@ -26,5 +29,6 @@ class SearchAllResponse {
         ?.map((e) => {'source': e.source, 'message': e.message})
         .toList(),
     'text': text,
+    if (featured != null) 'featured': featured!.toJson(),
   };
 }

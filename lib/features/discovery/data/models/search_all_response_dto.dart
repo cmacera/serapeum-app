@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:serapeum_app/features/discovery/data/models/book_dto.dart';
 import 'package:serapeum_app/features/discovery/data/models/game_dto.dart';
 import 'package:serapeum_app/features/discovery/data/models/media_dto.dart';
+import 'package:serapeum_app/features/discovery/domain/entities/featured_item.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/search_all_response.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/search_error.dart';
 
@@ -17,6 +18,8 @@ class SearchAllResponseDto {
   final List<GameDto> games;
   final List<SearchErrorDto>? errors;
   final String? text;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final FeaturedItem? featured;
 
   const SearchAllResponseDto({
     this.media = const [],
@@ -24,6 +27,7 @@ class SearchAllResponseDto {
     this.games = const [],
     this.errors,
     this.text,
+    this.featured,
   });
 
   factory SearchAllResponseDto.fromJson(Map<String, dynamic> json) {
@@ -34,7 +38,31 @@ class SearchAllResponseDto {
       games: dto.games,
       errors: dto.errors,
       text: json['text'] as String?,
+      featured: _parseFeatured(json['featured']),
     );
+  }
+
+  static const _kTypeMedia = 'media';
+  static const _kTypeBook = 'book';
+  static const _kTypeGame = 'game';
+
+  // The featured object is AI-generated and may omit required fields (e.g. id).
+  // Any parse failure returns null so the rest of the response is unaffected.
+  static FeaturedItem? _parseFeatured(dynamic raw) {
+    if (raw is! Map<String, dynamic>) return null;
+    final type = raw['type'] as String?;
+    final item = raw['item'];
+    if (item is! Map<String, dynamic>) return null;
+    try {
+      return switch (type) {
+        _kTypeMedia => FeaturedMedia(MediaDto.fromJson(item).toDomain()),
+        _kTypeBook => FeaturedBook(BookDto.fromJson(item).toDomain()),
+        _kTypeGame => FeaturedGame(GameDto.fromJson(item).toDomain()),
+        _ => null,
+      };
+    } on Object {
+      return null;
+    }
   }
 
   Map<String, dynamic> toJson() => _$SearchAllResponseDtoToJson(this);
@@ -45,6 +73,7 @@ class SearchAllResponseDto {
     games: games.map((e) => e.toDomain()).toList(),
     errors: errors?.map((e) => e.toDomain()).toList(),
     text: text,
+    featured: featured,
   );
 }
 
