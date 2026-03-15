@@ -1,4 +1,6 @@
 class Book {
+  static const maturityNotMature = 'NOT_MATURE';
+
   final String id;
   final String title;
   final List<String>? authors;

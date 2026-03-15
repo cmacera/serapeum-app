@@ -355,7 +355,7 @@ class _MetaStatsRow extends ConsumerWidget {
         chips.add(
           chip(
             Icons.shield_outlined,
-            maturity == 'NOT_MATURE'
+            maturity == Book.maturityNotMature
                 ? l10n.maturityRatingForAll
                 : l10n.maturityRatingMature,
           ),

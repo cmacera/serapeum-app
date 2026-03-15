@@ -379,7 +379,11 @@ void main() {
     testWidgets('renders Book NOT_MATURE maturity rating chip in header row', (
       WidgetTester tester,
     ) async {
-      const book = Book(id: '1', title: '1984', maturityRating: 'NOT_MATURE');
+      const book = Book(
+        id: '1',
+        title: '1984',
+        maturityRating: Book.maturityNotMature,
+      );
 
       await tester.pumpWidget(createWidgetUnderTest(book));
       await tester.pumpAndSettle();
