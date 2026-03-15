@@ -376,6 +376,56 @@ void main() {
       expect(find.text('4.5'), findsOneWidget);
     });
 
+    testWidgets('renders Book NOT_MATURE maturity rating chip in header row', (
+      WidgetTester tester,
+    ) async {
+      const book = Book(id: '1', title: '1984', maturityRating: 'NOT_MATURE');
+
+      await tester.pumpWidget(createWidgetUnderTest(book));
+      await tester.pumpAndSettle();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverDetailModal)),
+      )!;
+
+      expect(find.text(l10n.maturityRatingForAll), findsOneWidget);
+      expect(find.text(l10n.maturityRatingMature), findsNothing);
+      expect(find.text(l10n.detailMaturityRating), findsNothing);
+    });
+
+    testWidgets('renders Book MATURE maturity rating chip in header row', (
+      WidgetTester tester,
+    ) async {
+      const book = Book(id: '1', title: '1984', maturityRating: 'MATURE');
+
+      await tester.pumpWidget(createWidgetUnderTest(book));
+      await tester.pumpAndSettle();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverDetailModal)),
+      )!;
+
+      expect(find.text(l10n.maturityRatingMature), findsOneWidget);
+      expect(find.text(l10n.maturityRatingForAll), findsNothing);
+      expect(find.text(l10n.detailMaturityRating), findsNothing);
+    });
+
+    testWidgets('hides Book maturity rating chip when maturityRating is null', (
+      WidgetTester tester,
+    ) async {
+      const book = Book(id: '1', title: '1984');
+
+      await tester.pumpWidget(createWidgetUnderTest(book));
+      await tester.pumpAndSettle();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(DiscoverDetailModal)),
+      )!;
+
+      expect(find.text(l10n.maturityRatingForAll), findsNothing);
+      expect(find.text(l10n.maturityRatingMature), findsNothing);
+    });
+
     testWidgets('renders Game enriched metadata fields', (
       WidgetTester tester,
     ) async {

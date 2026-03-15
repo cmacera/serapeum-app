@@ -338,6 +338,7 @@ class _MetaStatsRow extends ConsumerWidget {
       }
     } else if (entity is Book) {
       final book = entity as Book;
+      final l10n = AppLocalizations.of(context)!;
       if (book.publishedDate != null && book.publishedDate!.length >= 4) {
         chips.add(
           chip(Icons.calendar_today, book.publishedDate!.substring(0, 4)),
@@ -348,6 +349,17 @@ class _MetaStatsRow extends ConsumerWidget {
       }
       if (book.averageRating != null && book.averageRating! > 0) {
         chips.add(chip(Icons.star, book.averageRating!.toStringAsFixed(1)));
+      }
+      final maturity = book.maturityRating?.trim() ?? '';
+      if (maturity.isNotEmpty) {
+        chips.add(
+          chip(
+            Icons.shield_outlined,
+            maturity == 'NOT_MATURE'
+                ? l10n.maturityRatingForAll
+                : l10n.maturityRatingMature,
+          ),
+        );
       }
     } else if (entity is Game) {
       final game = entity as Game;
