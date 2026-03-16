@@ -86,6 +86,9 @@ class LibraryItem with RealmEntity, RealmObjectBase, RealmObject {
       RealmObjectBase.get<String>(this, 'userNote') as String?;
   set userNote(String? value) => RealmObjectBase.set(this, 'userNote', value);
 
+  bool get hasUserData =>
+      userRating != null || (userNote?.trim().isNotEmpty ?? false);
+
   @override
   Stream<RealmObjectChanges<LibraryItem>> get changes =>
       RealmObjectBase.getChanges<LibraryItem>(this);

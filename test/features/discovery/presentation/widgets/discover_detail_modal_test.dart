@@ -3,12 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:realm/realm.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/book.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/game.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/media_detail.dart';
 import 'package:serapeum_app/features/discovery/presentation/providers/media_detail_provider.dart';
 import 'package:serapeum_app/features/discovery/presentation/widgets/discover_detail_modal.dart';
+import 'package:serapeum_app/features/library/data/local/library_item.dart';
+import 'package:serapeum_app/features/library/data/providers/library_provider.dart';
+import 'package:serapeum_app/features/library/presentation/widgets/library_user_sections.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
 const _testMovieDetail = MovieDetail(
@@ -61,13 +65,42 @@ const _testTvDetailWithCert = TvDetail(
   certification: 'TV-14',
 );
 
+class _FakeLibrary extends Library {
+  final List<LibraryItem> _items;
+  _FakeLibrary([this._items = const []]);
+
+  @override
+  List<LibraryItem> build() => _items;
+}
+
+LibraryItem _makeLibraryItem({
+  required String externalId,
+  required String mediaType,
+  required String title,
+  double? userRating,
+  String? userNote,
+}) => LibraryItem(
+  ObjectId(),
+  externalId,
+  mediaType,
+  title,
+  DateTime.now(),
+  '{}',
+  userRating: userRating,
+  userNote: userNote,
+);
+
 void main() {
   Widget createWidgetUnderTest(
     Object entity, {
+    List<LibraryItem> savedItems = const [],
     List<Override> overrides = const [],
   }) {
     return ProviderScope(
-      overrides: overrides,
+      overrides: [
+        libraryProvider.overrideWith(() => _FakeLibrary(savedItems)),
+        ...overrides,
+      ],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
@@ -721,5 +754,121 @@ void main() {
         expect(find.text('   '), findsNothing);
       },
     );
+
+    group('bookmark button', () {
+      testWidgets('shows bookmark_border when entity is not saved', (
+        WidgetTester tester,
+      ) async {
+        const media = Media(
+          id: 1,
+          title: 'Inception',
+          mediaType: MediaType.movie,
+        );
+
+        await tester.pumpWidget(
+          createWidgetUnderTest(
+            media,
+            overrides: [
+              movieDetailProvider(
+                1,
+              ).overrideWith((ref) async => _testMovieDetail),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byIcon(Icons.bookmark_border), findsOneWidget);
+        expect(find.byIcon(Icons.bookmark), findsNothing);
+      });
+
+      testWidgets('shows bookmark when entity is saved', (
+        WidgetTester tester,
+      ) async {
+        const media = Media(
+          id: 1,
+          title: 'Inception',
+          mediaType: MediaType.movie,
+        );
+        final savedItem = _makeLibraryItem(
+          externalId: '1',
+          mediaType: 'movie',
+          title: 'Inception',
+        );
+
+        await tester.pumpWidget(
+          createWidgetUnderTest(
+            media,
+            savedItems: [savedItem],
+            overrides: [
+              movieDetailProvider(
+                1,
+              ).overrideWith((ref) async => _testMovieDetail),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byIcon(Icons.bookmark), findsOneWidget);
+        expect(find.byIcon(Icons.bookmark_border), findsNothing);
+      });
+
+      testWidgets('shows user sections when entity is saved', (
+        WidgetTester tester,
+      ) async {
+        const media = Media(
+          id: 1,
+          title: 'Inception',
+          mediaType: MediaType.movie,
+        );
+        final savedItem = _makeLibraryItem(
+          externalId: '1',
+          mediaType: 'movie',
+          title: 'Inception',
+          userRating: 8.5,
+          userNote: 'Great film',
+        );
+
+        await tester.pumpWidget(
+          createWidgetUnderTest(
+            media,
+            savedItems: [savedItem],
+            overrides: [
+              movieDetailProvider(
+                1,
+              ).overrideWith((ref) async => _testMovieDetail),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byType(UserRatingSection), findsOneWidget);
+        expect(find.byType(UserReviewSection), findsOneWidget);
+      });
+
+      testWidgets('hides user sections when entity is not saved', (
+        WidgetTester tester,
+      ) async {
+        const media = Media(
+          id: 1,
+          title: 'Inception',
+          mediaType: MediaType.movie,
+        );
+
+        await tester.pumpWidget(
+          createWidgetUnderTest(
+            media,
+            overrides: [
+              movieDetailProvider(
+                1,
+              ).overrideWith((ref) async => _testMovieDetail),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byType(UserRatingSection), findsNothing);
+        expect(find.byType(UserReviewSection), findsNothing);
+      });
+    });
   });
 }

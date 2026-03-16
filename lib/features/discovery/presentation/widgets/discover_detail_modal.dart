@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -8,29 +9,38 @@ import '../../domain/entities/game.dart';
 import '../../domain/entities/book.dart';
 import '../../domain/entities/media.dart';
 import '../providers/media_detail_provider.dart';
+import '../../../library/data/local/library_item.dart';
+import '../../../library/data/providers/library_provider.dart';
+import '../../../library/presentation/widgets/library_user_sections.dart';
 import 'detail_sections/book_info_section.dart';
 import 'detail_sections/game_info_section.dart';
 import 'detail_sections/media_info_section.dart';
 
-class DiscoverDetailModal extends StatelessWidget {
+class DiscoverDetailModal extends ConsumerWidget {
   final Object entity;
   final ScrollController? scrollController;
-
-  /// Optional widget injected at the top of the content area (before meta
-  /// chips). Used by the library feature to show user rating and review
-  /// sections without creating a cross-feature dependency.
-  final Widget? libraryExtras;
 
   const DiscoverDetailModal({
     super.key,
     required this.entity,
     this.scrollController,
-    this.libraryExtras,
   }) : assert(entity is Media || entity is Book || entity is Game);
 
+  (String externalId, String mediaType) get _entityKey => switch (entity) {
+    Media m => (m.id.toString(), m.mediaType == MediaType.tv ? 'tv' : 'movie'),
+    Book b => (b.id, 'book'),
+    Game g => (g.id.toString(), 'game'),
+    _ => throw ArgumentError('Unknown entity type: $entity'),
+  };
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final (externalId, mediaType) = _entityKey;
+    final libraryItems = ref.watch(libraryProvider);
+    final savedItem = libraryItems
+        .where((i) => i.externalId == externalId && i.mediaType == mediaType)
+        .firstOrNull;
 
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
@@ -40,15 +50,22 @@ class DiscoverDetailModal extends StatelessWidget {
           controller: scrollController,
           physics: const ClampingScrollPhysics(),
           slivers: [
-            _buildImmersiveHeader(context),
+            _buildImmersiveHeader(context, ref, savedItem),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (libraryExtras != null) ...[
-                      libraryExtras!,
+                    if (savedItem != null) ...[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          UserRatingSection(libraryItem: savedItem),
+                          const SizedBox(height: 8),
+                          UserReviewSection(libraryItem: savedItem),
+                        ],
+                      ),
                       const SizedBox(height: 24.0),
                     ],
                     _MetaStatsRow(entity: entity),
@@ -103,7 +120,11 @@ class DiscoverDetailModal extends StatelessWidget {
     return null;
   }
 
-  Widget _buildImmersiveHeader(BuildContext context) {
+  Widget _buildImmersiveHeader(
+    BuildContext context,
+    WidgetRef ref,
+    LibraryItem? savedItem,
+  ) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final title = _getTitle(l10n);
@@ -154,19 +175,40 @@ class DiscoverDetailModal extends StatelessWidget {
             ),
           ),
 
-          // Title
+          // Title + Bookmark button
           Positioned(
             left: 16,
-            right: 16,
-            bottom: 16,
-            child: Text(
-              title,
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
+            right: 8,
+            bottom: 8,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.black26,
+                    padding: const EdgeInsets.all(4),
+                    minimumSize: const Size(32, 32),
+                  ),
+                  icon: Icon(
+                    savedItem != null ? Icons.bookmark : Icons.bookmark_border,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  onPressed: () => _handleBookmarkTap(context, ref, savedItem),
+                ),
+              ],
             ),
           ),
 
@@ -204,6 +246,113 @@ class DiscoverDetailModal extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _handleBookmarkTap(
+    BuildContext context,
+    WidgetRef ref,
+    LibraryItem? savedItem,
+  ) {
+    if (savedItem != null) {
+      _doRemove(context, ref, savedItem);
+    } else {
+      _doSave(ref);
+    }
+  }
+
+  void _doSave(WidgetRef ref) {
+    final (externalId, mediaType) = _entityKey;
+    switch (entity) {
+      case Media m:
+        ref
+            .read(libraryProvider.notifier)
+            .addItem(
+              externalId: externalId,
+              mediaType: mediaType,
+              title: m.title ?? m.name ?? '',
+              subtitle: _buildSubtitle(
+                _extractYear(m.releaseDate),
+                _formatRating(m.voteAverage),
+              ),
+              imageUrl: _tmdbPosterUrl(m.posterPath),
+              backdropImageUrl: _tmdbBackdropUrl(m.backdropPath),
+              rating: m.voteAverage?.toDouble(),
+              itemJson: jsonEncode(m.toJson()),
+            );
+      case Book b:
+        final imageUrl =
+            b.imageLinks?['thumbnail'] ?? b.imageLinks?['smallThumbnail'];
+        ref
+            .read(libraryProvider.notifier)
+            .addItem(
+              externalId: externalId,
+              mediaType: mediaType,
+              title: b.title,
+              subtitle: _buildSubtitle(_extractYear(b.publishedDate), null),
+              imageUrl: imageUrl,
+              backdropImageUrl: imageUrl,
+              rating: b.averageRating?.toDouble(),
+              itemJson: jsonEncode(b.toJson()),
+            );
+      case Game g:
+        ref
+            .read(libraryProvider.notifier)
+            .addItem(
+              externalId: externalId,
+              mediaType: mediaType,
+              title: g.name,
+              subtitle: _buildSubtitle(
+                _extractYear(g.released),
+                _formatRating(g.rating ?? g.aggregatedRating),
+              ),
+              imageUrl: g.coverUrl,
+              backdropImageUrl: g.screenshots?.firstOrNull,
+              rating: (g.rating ?? g.aggregatedRating)?.toDouble(),
+              itemJson: jsonEncode(g.toJson()),
+            );
+    }
+  }
+
+  void _doRemove(BuildContext context, WidgetRef ref, LibraryItem savedItem) {
+    if (savedItem.hasUserData) {
+      _showRemoveDialog(context, savedItem.title, () {
+        ref
+            .read(libraryProvider.notifier)
+            .removeItem(savedItem.externalId, savedItem.mediaType);
+      });
+    } else {
+      ref
+          .read(libraryProvider.notifier)
+          .removeItem(savedItem.externalId, savedItem.mediaType);
+    }
+  }
+
+  void _showRemoveDialog(
+    BuildContext context,
+    String itemTitle,
+    VoidCallback onConfirmed,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.removeFromLibrary),
+        content: Text(itemTitle),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(l10n.removeFromLibrary),
+          ),
+        ],
+      ),
+    ).then((confirmed) {
+      if (confirmed == true) onConfirmed();
+    });
   }
 
   Widget _buildSynopsis(BuildContext context) {
@@ -245,6 +394,33 @@ class DiscoverDetailModal extends StatelessWidget {
     if (entity is Book) return BookInfoSection(book: entity as Book);
     if (entity is Game) return GameInfoSection(game: entity as Game);
     return const SizedBox.shrink();
+  }
+
+  // --- Private helpers for building LibraryItem data ---
+
+  String? _tmdbPosterUrl(String? path) => path != null
+      ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}$path'
+      : null;
+
+  String? _tmdbBackdropUrl(String? path) => path != null
+      ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW780}$path'
+      : null;
+
+  String? _extractYear(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return null;
+    final match = RegExp(r'\d{4}').firstMatch(dateStr);
+    return match?.group(0);
+  }
+
+  String? _formatRating(num? rating) {
+    if (rating == null || rating == 0) return null;
+    return '★ ${rating.toStringAsFixed(1)}';
+  }
+
+  String? _buildSubtitle(String? year, String? rating) {
+    final parts = [year, rating].whereType<String>().toList();
+    if (parts.isEmpty) return null;
+    return parts.join('  ·  ');
   }
 }
 
