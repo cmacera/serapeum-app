@@ -122,6 +122,11 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String searchElapsedSeconds(int seconds) {
+    return '${seconds}s';
+  }
+
+  @override
   String get filterAll => 'Todo';
 
   @override

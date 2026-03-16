@@ -100,6 +100,15 @@
       }
     }
   },
+  "searchElapsedSeconds": "{seconds}s",
+  "@searchElapsedSeconds": {
+    "description": "Compact elapsed time counter shown below the floating query text during search",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "filterAll": "All",
   "filterMedia": "Media",
   "filterBooks": "Books",
