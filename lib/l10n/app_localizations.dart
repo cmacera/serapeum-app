@@ -290,6 +290,12 @@ abstract class AppLocalizations {
   /// **'{seconds}s elapsed'**
   String elapsedSecondsLabel(int seconds);
 
+  /// Compact elapsed time counter shown below the floating query text during search
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s'**
+  String searchElapsedSeconds(int seconds);
+
   /// No description provided for @filterAll.
   ///
   /// In en, this message translates to:

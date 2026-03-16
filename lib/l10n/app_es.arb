@@ -37,6 +37,15 @@
   },
   "consultingOracle": "Consultando al Oráculo...",
   "elapsedSecondsLabel": "{seconds}s transcurridos",
+  "searchElapsedSeconds": "{seconds}s",
+  "@searchElapsedSeconds": {
+    "description": "Contador de tiempo transcurrido mostrado bajo el texto de la consulta durante la búsqueda",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "filterAll": "Todo",
   "filterMedia": "Cine y TV",
   "filterBooks": "Libros",

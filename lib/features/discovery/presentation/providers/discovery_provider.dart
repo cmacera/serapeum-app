@@ -46,6 +46,9 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
   final Ref _ref;
   Timer? _timer;
   int _requestEpoch = 0;
+  bool _wasCancelled = false;
+
+  bool get lastSearchWasCancelled => _wasCancelled;
 
   DiscoveryNotifier(this._ref) : super(DiscoveryStateData());
 
@@ -66,6 +69,13 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
   void _stopTimer() {
     _timer?.cancel();
     _timer = null;
+  }
+
+  void cancelSearch() {
+    _wasCancelled = true;
+    _requestEpoch++;
+    _stopTimer();
+    state = DiscoveryStateData();
   }
 
   void startNewConversation() {
@@ -93,6 +103,8 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
     if (state.state == DiscoverState.searching) {
       return null;
     }
+
+    _wasCancelled = false;
 
     // 1. Enter searching state — clear any previous cached response
     _startTimer();
