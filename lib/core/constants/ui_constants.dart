@@ -9,4 +9,5 @@ class UiConstants {
   static const String askOracleTooltip = 'Ask Oracle';
   static const String appTitle = 'Serapeum App';
   static const String fontFamily = 'Space Grotesk';
+  static const String monospaceFontFamily = 'monospace';
 }

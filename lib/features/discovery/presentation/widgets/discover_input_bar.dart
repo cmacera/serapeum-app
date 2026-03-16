@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -19,6 +20,9 @@ class DiscoverInputBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    // bottom: false because we apply the bottom inset manually via
+    // MediaQuery.padding.bottom so the AnimatedContainer can animate
+    // its width without the SafeArea interfering with the layout bounds.
     return SafeArea(
       bottom: false,
       child: Padding(
@@ -106,34 +110,44 @@ class DiscoverInputBar extends ConsumerWidget {
     return Semantics(
       label: isSearching ? l10n.cancel : l10n.askOracleTooltip,
       button: true,
-      child: GestureDetector(
-        onTap: isSearching
-            ? () => ref.read(discoveryProvider.notifier).cancelSearch()
-            : () => onSearch(controller.text),
-        child: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isSearching ? Colors.grey.shade800 : AppColors.accent,
-            boxShadow: isSearching
-                ? []
-                : [
-                    BoxShadow(
-                      color: AppColors.accent.withValues(alpha: 0.5),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                    ),
-                  ],
-          ),
-          child: Center(
-            child: isSearching
-                ? const Icon(Icons.close, color: Colors.white, size: 20)
-                : const Icon(
-                    Icons.arrow_upward_rounded,
-                    color: Colors.white,
-                    size: 20,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: isSearching
+              ? []
+              : [
+                  BoxShadow(
+                    color: AppColors.accent.withValues(alpha: 0.5),
+                    blurRadius: 10,
+                    spreadRadius: 2,
                   ),
+                ],
+        ),
+        child: Material(
+          color: isSearching ? Colors.grey.shade800 : AppColors.accent,
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: isSearching
+                ? () {
+                    HapticFeedback.selectionClick();
+                    ref.read(discoveryProvider.notifier).cancelSearch();
+                  }
+                : () {
+                    HapticFeedback.selectionClick();
+                    onSearch(controller.text);
+                  },
+            child: Center(
+              child: isSearching
+                  ? const Icon(Icons.close, color: Colors.white, size: 20)
+                  : const Icon(
+                      Icons.arrow_upward_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+            ),
           ),
         ),
       ),

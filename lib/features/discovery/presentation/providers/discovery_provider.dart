@@ -72,6 +72,7 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
   }
 
   void cancelSearch() {
+    if (state.state != DiscoverState.searching) return;
     _wasCancelled = true;
     _requestEpoch++;
     _stopTimer();

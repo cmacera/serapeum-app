@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
+import '../../../../core/constants/ui_constants.dart';
 
 class DiscoverQueryOverlay extends StatelessWidget {
   final String query;
@@ -70,7 +71,7 @@ class DiscoverQueryOverlay extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.white54,
                     fontSize: 12,
-                    fontFamily: 'monospace',
+                    fontFamily: UiConstants.monospaceFontFamily,
                   ),
                 ),
               ),

@@ -72,7 +72,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             child: isResult
                 ? DiscoverResultView(
                     key: const ValueKey('result'),
-                    query: discoveryState.currentQuery!,
+                    query: discoveryState.currentQuery ?? '',
                   )
                 : Center(
                     key: const ValueKey('oracle'),
