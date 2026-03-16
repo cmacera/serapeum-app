@@ -71,6 +71,27 @@ class _FakeLibrary extends Library {
 
   @override
   List<LibraryItem> build() => _items;
+
+  @override
+  void addItem({
+    required String externalId,
+    required String mediaType,
+    required String title,
+    String? subtitle,
+    String? imageUrl,
+    String? backdropImageUrl,
+    double? rating,
+    required String itemJson,
+  }) {}
+
+  @override
+  void removeItem(String externalId, String mediaType) {}
+
+  @override
+  void updateUserRating(String externalId, String mediaType, double? rating) {}
+
+  @override
+  void updateUserNote(String externalId, String mediaType, String? note) {}
 }
 
 LibraryItem _makeLibraryItem({
