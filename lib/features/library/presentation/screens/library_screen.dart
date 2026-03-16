@@ -15,7 +15,6 @@ import '../../../discovery/presentation/widgets/media_result_card.dart';
 import '../../data/local/library_item.dart';
 import '../../data/providers/library_filter_provider.dart';
 import '../../data/providers/library_provider.dart';
-import '../widgets/library_user_sections.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -232,18 +231,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         snap: true,
         snapSizes: const [0.9],
         shouldCloseOnMinExtent: true,
-        builder: (_, controller) => DiscoverDetailModal(
-          entity: entity,
-          scrollController: controller,
-          libraryExtras: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              UserRatingSection(libraryItem: item),
-              const SizedBox(height: 8),
-              UserReviewSection(libraryItem: item),
-            ],
-          ),
-        ),
+        builder: (_, controller) =>
+            DiscoverDetailModal(entity: entity, scrollController: controller),
       ),
     );
   }
@@ -291,13 +280,21 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         imageUrl: item.imageUrl,
         onTap: () => _showLibraryDetails(context, item),
         isSaved: true,
-        onSave: () => _confirmRemove(
-          context,
-          item.title,
-          () => ref
-              .read(libraryProvider.notifier)
-              .removeItem(item.externalId, item.mediaType),
-        ),
+        onSave: () {
+          if (item.hasUserData) {
+            _confirmRemove(
+              context,
+              item.title,
+              () => ref
+                  .read(libraryProvider.notifier)
+                  .removeItem(item.externalId, item.mediaType),
+            );
+          } else {
+            ref
+                .read(libraryProvider.notifier)
+                .removeItem(item.externalId, item.mediaType);
+          }
+        },
       );
     }).toList();
   }

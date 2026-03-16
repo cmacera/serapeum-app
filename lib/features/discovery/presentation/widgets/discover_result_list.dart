@@ -49,18 +49,16 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     if (_selectedCategory == null) return;
 
     final data = widget.response;
-    bool isValid = switch (_selectedCategory!) {
+    final isValid = switch (_selectedCategory!) {
       DiscoverCategory.media => data.media.isNotEmpty,
       DiscoverCategory.books => data.books.isNotEmpty,
       DiscoverCategory.games => data.games.isNotEmpty,
     };
 
-    if (!isValid) {
-      _selectedCategory = null;
-    }
+    if (!isValid) _selectedCategory = null;
   }
 
-  void _confirmRemove(
+  void _showRemoveDialog(
     BuildContext context,
     String itemTitle,
     VoidCallback onConfirmed,
@@ -91,21 +89,50 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
   String _persistedMediaType(MediaType type) =>
       type == MediaType.tv ? 'tv' : 'movie';
 
+  String? _tmdbPosterUrl(String? path) => path != null
+      ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}$path'
+      : null;
+
+  String? _tmdbBackdropUrl(String? path) => path != null
+      ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW780}$path'
+      : null;
+
+  (String externalId, String mediaType) _entityKey(Object entity) =>
+      switch (entity) {
+        Media m => (m.id.toString(), _persistedMediaType(m.mediaType)),
+        Book b => (b.id, 'book'),
+        Game g => (g.id.toString(), 'game'),
+        _ => throw ArgumentError('Unknown entity type: $entity'),
+      };
+
+  bool _isSavedEntity(List<LibraryItem> items, Object entity) {
+    final (externalId, mediaType) = _entityKey(entity);
+    return items.any(
+      (i) => i.externalId == externalId && i.mediaType == mediaType,
+    );
+  }
+
   void _toggleSaveMedia(BuildContext context, Media media) {
     final externalId = media.id.toString();
     final persistedType = _persistedMediaType(media.mediaType);
     final library = ref.read(libraryProvider.notifier);
     if (library.isInLibrary(externalId, persistedType)) {
-      _confirmRemove(context, media.title ?? media.name ?? '', () {
+      final item = ref
+          .read(libraryProvider)
+          .where(
+            (i) => i.externalId == externalId && i.mediaType == persistedType,
+          )
+          .firstOrNull;
+      if (item?.hasUserData ?? false) {
+        _showRemoveDialog(
+          context,
+          item!.title,
+          () => library.removeItem(externalId, persistedType),
+        );
+      } else {
         library.removeItem(externalId, persistedType);
-      });
+      }
     } else {
-      final resolvedImage = media.posterPath != null
-          ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
-          : null;
-      final resolvedBackdrop = media.backdropPath != null
-          ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW780}${media.backdropPath}'
-          : null;
       library.addItem(
         externalId: externalId,
         mediaType: persistedType,
@@ -114,8 +141,8 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
           _extractYear(media.releaseDate),
           _formatRating(media.voteAverage),
         ),
-        imageUrl: resolvedImage,
-        backdropImageUrl: resolvedBackdrop,
+        imageUrl: _tmdbPosterUrl(media.posterPath),
+        backdropImageUrl: _tmdbBackdropUrl(media.backdropPath),
         rating: media.voteAverage?.toDouble(),
         itemJson: jsonEncode(media.toJson()),
       );
@@ -127,9 +154,19 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     const mediaType = 'book';
     final library = ref.read(libraryProvider.notifier);
     if (library.isInLibrary(externalId, mediaType)) {
-      _confirmRemove(context, book.title, () {
+      final item = ref
+          .read(libraryProvider)
+          .where((i) => i.externalId == externalId && i.mediaType == mediaType)
+          .firstOrNull;
+      if (item?.hasUserData ?? false) {
+        _showRemoveDialog(
+          context,
+          item!.title,
+          () => library.removeItem(externalId, mediaType),
+        );
+      } else {
         library.removeItem(externalId, mediaType);
-      });
+      }
     } else {
       final imageUrl =
           book.imageLinks?['thumbnail'] ?? book.imageLinks?['smallThumbnail'];
@@ -151,9 +188,19 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     const mediaType = 'game';
     final library = ref.read(libraryProvider.notifier);
     if (library.isInLibrary(externalId, mediaType)) {
-      _confirmRemove(context, game.name, () {
+      final item = ref
+          .read(libraryProvider)
+          .where((i) => i.externalId == externalId && i.mediaType == mediaType)
+          .firstOrNull;
+      if (item?.hasUserData ?? false) {
+        _showRemoveDialog(
+          context,
+          item!.title,
+          () => library.removeItem(externalId, mediaType),
+        );
+      } else {
         library.removeItem(externalId, mediaType);
-      });
+      }
     } else {
       library.addItem(
         externalId: externalId,
@@ -182,15 +229,9 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     final hasGames = data.games.isNotEmpty;
 
     final hasResults = hasMedia || hasBooks || hasGames;
+    final showTabs = [hasMedia, hasBooks, hasGames].where((b) => b).length >= 2;
 
-    int categoriesWithResults = 0;
-    if (hasMedia) categoriesWithResults++;
-    if (hasBooks) categoriesWithResults++;
-    if (hasGames) categoriesWithResults++;
-
-    final showTabs = categoriesWithResults >= 2;
-
-    List<Widget> cards = _buildFilteredCards(context, l10n, data, libraryItems);
+    final cards = _buildFilteredCards(context, l10n, data, libraryItems);
 
     return CustomScrollView(
       slivers: [
@@ -220,6 +261,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
                       context,
                       data.featured!,
                       libraryItems,
+                      l10n,
                     ),
                   ),
                 ],
@@ -289,12 +331,56 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     );
   }
 
-  bool _isSaved(
+  MediaResultCard _buildMediaCard(
+    BuildContext context,
+    Media media,
     List<LibraryItem> libraryItems,
-    String externalId,
-    String mediaType,
-  ) => libraryItems.any(
-    (i) => i.externalId == externalId && i.mediaType == mediaType,
+    AppLocalizations l10n,
+  ) => MediaResultCard(
+    title: media.title ?? media.name ?? l10n.unknownMedia,
+    mediaType: media.mediaType == MediaType.tv
+        ? MediaCardType.tv
+        : MediaCardType.movie,
+    subtitle: _buildSubtitle(
+      _extractYear(media.releaseDate),
+      _formatRating(media.voteAverage),
+    ),
+    imageUrl: _tmdbPosterUrl(media.posterPath),
+    onTap: () => _showDetails(context, media),
+    isSaved: _isSavedEntity(libraryItems, media),
+    onSave: () => _toggleSaveMedia(context, media),
+  );
+
+  MediaResultCard _buildBookCard(
+    BuildContext context,
+    Book book,
+    List<LibraryItem> libraryItems,
+  ) => MediaResultCard(
+    title: book.title,
+    mediaType: MediaCardType.book,
+    subtitle: _buildSubtitle(_extractYear(book.publishedDate), null),
+    imageUrl:
+        book.imageLinks?['thumbnail'] ?? book.imageLinks?['smallThumbnail'],
+    onTap: () => _showDetails(context, book),
+    isSaved: _isSavedEntity(libraryItems, book),
+    onSave: () => _toggleSaveBook(context, book),
+  );
+
+  MediaResultCard _buildGameCard(
+    BuildContext context,
+    Game game,
+    List<LibraryItem> libraryItems,
+  ) => MediaResultCard(
+    title: game.name,
+    mediaType: MediaCardType.game,
+    subtitle: _buildSubtitle(
+      _extractYear(game.released),
+      _formatRating(game.rating ?? game.aggregatedRating),
+    ),
+    imageUrl: game.coverUrl,
+    onTap: () => _showDetails(context, game),
+    isSaved: _isSavedEntity(libraryItems, game),
+    onSave: () => _toggleSaveGame(context, game),
   );
 
   List<Widget> _buildFilteredCards(
@@ -302,126 +388,36 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     AppLocalizations l10n,
     SearchAllResponse data,
     List<LibraryItem> libraryItems,
-  ) {
-    List<Widget> cards = [];
-
+  ) => [
     if (_selectedCategory == null ||
-        _selectedCategory == DiscoverCategory.media) {
-      cards.addAll([
-        for (final media in data.media)
-          MediaResultCard(
-            title: media.title ?? media.name ?? l10n.unknownMedia,
-            mediaType: media.mediaType == MediaType.tv
-                ? MediaCardType.tv
-                : MediaCardType.movie,
-            subtitle: _buildSubtitle(
-              _extractYear(media.releaseDate),
-              _formatRating(media.voteAverage),
-            ),
-            imageUrl: media.posterPath != null
-                ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
-                : null,
-            onTap: () => _showDetails(context, media),
-            isSaved: _isSaved(
-              libraryItems,
-              media.id.toString(),
-              _persistedMediaType(media.mediaType),
-            ),
-            onSave: () => _toggleSaveMedia(context, media),
-          ),
-      ]);
-    }
-
+        _selectedCategory == DiscoverCategory.media)
+      for (final media in data.media)
+        _buildMediaCard(context, media, libraryItems, l10n),
     if (_selectedCategory == null ||
-        _selectedCategory == DiscoverCategory.books) {
-      cards.addAll([
-        for (final book in data.books)
-          MediaResultCard(
-            title: book.title,
-            mediaType: MediaCardType.book,
-            subtitle: _buildSubtitle(_extractYear(book.publishedDate), null),
-            imageUrl:
-                book.imageLinks?['thumbnail'] ??
-                book.imageLinks?['smallThumbnail'],
-            onTap: () => _showDetails(context, book),
-            isSaved: _isSaved(libraryItems, book.id, 'book'),
-            onSave: () => _toggleSaveBook(context, book),
-          ),
-      ]);
-    }
-
+        _selectedCategory == DiscoverCategory.books)
+      for (final book in data.books)
+        _buildBookCard(context, book, libraryItems),
     if (_selectedCategory == null ||
-        _selectedCategory == DiscoverCategory.games) {
-      cards.addAll([
-        for (final game in data.games)
-          MediaResultCard(
-            title: game.name,
-            mediaType: MediaCardType.game,
-            subtitle: _buildSubtitle(
-              _extractYear(game.released),
-              _formatRating(game.rating ?? game.aggregatedRating),
-            ),
-            imageUrl: game.coverUrl,
-            onTap: () => _showDetails(context, game),
-            isSaved: _isSaved(libraryItems, game.id.toString(), 'game'),
-            onSave: () => _toggleSaveGame(context, game),
-          ),
-      ]);
-    }
-
-    return cards;
-  }
+        _selectedCategory == DiscoverCategory.games)
+      for (final game in data.games)
+        _buildGameCard(context, game, libraryItems),
+  ];
 
   Widget _buildFeaturedCard(
     BuildContext context,
     FeaturedItem featured,
     List<LibraryItem> libraryItems,
-  ) {
-    return switch (featured) {
-      FeaturedMedia(:final media) => MediaResultCard(
-        title: media.title ?? media.name ?? '',
-        mediaType: media.mediaType == MediaType.tv
-            ? MediaCardType.tv
-            : MediaCardType.movie,
-        subtitle: _buildSubtitle(
-          _extractYear(media.releaseDate),
-          _formatRating(media.voteAverage),
-        ),
-        imageUrl: media.posterPath != null
-            ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}${media.posterPath}'
-            : null,
-        onTap: () => _showDetails(context, media),
-        isSaved: _isSaved(
-          libraryItems,
-          media.id.toString(),
-          _persistedMediaType(media.mediaType),
-        ),
-        onSave: () => _toggleSaveMedia(context, media),
-      ),
-      FeaturedBook(:final book) => MediaResultCard(
-        title: book.title,
-        mediaType: MediaCardType.book,
-        subtitle: _buildSubtitle(_extractYear(book.publishedDate), null),
-        imageUrl:
-            book.imageLinks?['thumbnail'] ?? book.imageLinks?['smallThumbnail'],
-        onTap: () => _showDetails(context, book),
-        isSaved: _isSaved(libraryItems, book.id, 'book'),
-        onSave: () => _toggleSaveBook(context, book),
-      ),
-      FeaturedGame(:final game) => MediaResultCard(
-        title: game.name,
-        mediaType: MediaCardType.game,
-        subtitle: _buildSubtitle(
-          _extractYear(game.released),
-          _formatRating(game.rating ?? game.aggregatedRating),
-        ),
-        imageUrl: game.coverUrl,
-        onTap: () => _showDetails(context, game),
-        isSaved: _isSaved(libraryItems, game.id.toString(), 'game'),
-        onSave: () => _toggleSaveGame(context, game),
-      ),
-    };
-  }
+    AppLocalizations l10n,
+  ) => switch (featured) {
+    FeaturedMedia(:final media) => _buildMediaCard(
+      context,
+      media,
+      libraryItems,
+      l10n,
+    ),
+    FeaturedBook(:final book) => _buildBookCard(context, book, libraryItems),
+    FeaturedGame(:final game) => _buildGameCard(context, game, libraryItems),
+  };
 
   Widget _buildMasonryGrid(List<Widget> cards) {
     final leftCards = <Widget>[];
