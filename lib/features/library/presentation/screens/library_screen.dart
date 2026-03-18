@@ -280,6 +280,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         imageUrl: item.imageUrl,
         onTap: () => _showLibraryDetails(context, item),
         isSaved: true,
+        isConsumed: item.isConsumed,
         onSave: () {
           if (item.hasUserData) {
             _confirmRemove(

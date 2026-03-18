@@ -13,6 +13,7 @@ class MediaResultCard extends StatelessWidget {
   final bool? isSaved;
   final VoidCallback? onSave;
   final String? saveTooltip;
+  final bool? isConsumed;
 
   const MediaResultCard({
     super.key,
@@ -24,6 +25,7 @@ class MediaResultCard extends StatelessWidget {
     this.isSaved,
     this.onSave,
     this.saveTooltip,
+    this.isConsumed,
   });
 
   @override
@@ -90,6 +92,23 @@ class MediaResultCard extends StatelessWidget {
                           shadows: const [
                             Shadow(blurRadius: 4, color: Colors.black54),
                           ],
+                        ),
+                      ),
+                    ),
+                  if (isConsumed == true)
+                    Positioned(
+                      bottom: 6,
+                      left: 6,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.check_circle,
+                          size: 16,
+                          color: Colors.greenAccent,
                         ),
                       ),
                     ),

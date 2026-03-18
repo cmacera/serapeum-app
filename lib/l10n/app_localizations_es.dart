@@ -417,4 +417,22 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get libraryRateAction => 'Valorar';
+
+  @override
+  String get libraryWatched => 'Visto';
+
+  @override
+  String get libraryRead => 'Leído';
+
+  @override
+  String get libraryPlayed => 'Jugado';
+
+  @override
+  String get libraryMarkAsWatched => 'Marcar como visto';
+
+  @override
+  String get libraryMarkAsRead => 'Marcar como leído';
+
+  @override
+  String get libraryMarkAsPlayed => 'Marcar como jugado';
 }

@@ -414,4 +414,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get libraryRateAction => 'Rate';
+
+  @override
+  String get libraryWatched => 'Watched';
+
+  @override
+  String get libraryRead => 'Read';
+
+  @override
+  String get libraryPlayed => 'Played';
+
+  @override
+  String get libraryMarkAsWatched => 'Mark as watched';
+
+  @override
+  String get libraryMarkAsRead => 'Mark as read';
+
+  @override
+  String get libraryMarkAsPlayed => 'Mark as played';
 }

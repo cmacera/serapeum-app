@@ -853,6 +853,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rate'**
   String get libraryRateAction;
+
+  /// Label shown when a movie or TV show is marked as consumed
+  ///
+  /// In en, this message translates to:
+  /// **'Watched'**
+  String get libraryWatched;
+
+  /// Label shown when a book is marked as consumed
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get libraryRead;
+
+  /// Label shown when a game is marked as consumed
+  ///
+  /// In en, this message translates to:
+  /// **'Played'**
+  String get libraryPlayed;
+
+  /// CTA label to mark a movie or TV show as watched
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as watched'**
+  String get libraryMarkAsWatched;
+
+  /// CTA label to mark a book as read
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as read'**
+  String get libraryMarkAsRead;
+
+  /// CTA label to mark a game as played
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as played'**
+  String get libraryMarkAsPlayed;
 }
 
 class _AppLocalizationsDelegate

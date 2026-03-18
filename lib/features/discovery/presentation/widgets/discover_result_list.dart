@@ -112,6 +112,13 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     );
   }
 
+  LibraryItem? _savedItemForEntity(List<LibraryItem> items, Object entity) {
+    final (externalId, mediaType) = _entityKey(entity);
+    return items
+        .where((i) => i.externalId == externalId && i.mediaType == mediaType)
+        .firstOrNull;
+  }
+
   void _toggleSaveMedia(BuildContext context, Media media) {
     final externalId = media.id.toString();
     final persistedType = _persistedMediaType(media.mediaType);
@@ -348,6 +355,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     imageUrl: _tmdbPosterUrl(media.posterPath),
     onTap: () => _showDetails(context, media),
     isSaved: _isSavedEntity(libraryItems, media),
+    isConsumed: _savedItemForEntity(libraryItems, media)?.isConsumed,
     onSave: () => _toggleSaveMedia(context, media),
   );
 
@@ -363,6 +371,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
         book.imageLinks?['thumbnail'] ?? book.imageLinks?['smallThumbnail'],
     onTap: () => _showDetails(context, book),
     isSaved: _isSavedEntity(libraryItems, book),
+    isConsumed: _savedItemForEntity(libraryItems, book)?.isConsumed,
     onSave: () => _toggleSaveBook(context, book),
   );
 
@@ -380,6 +389,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     imageUrl: game.coverUrl,
     onTap: () => _showDetails(context, game),
     isSaved: _isSavedEntity(libraryItems, game),
+    isConsumed: _savedItemForEntity(libraryItems, game)?.isConsumed,
     onSave: () => _toggleSaveGame(context, game),
   );
 

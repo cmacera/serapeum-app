@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../discovery/presentation/widgets/media_result_card.dart';
 import '../../data/local/library_item.dart';
 import '../../data/providers/library_provider.dart';
 
@@ -411,6 +412,105 @@ class _RatingDialogState extends State<_RatingDialog> {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UserConsumedSection
+// ─────────────────────────────────────────────────────────────────────────────
+
+class UserConsumedSection extends ConsumerWidget {
+  final LibraryItem libraryItem;
+  final MediaCardType mediaType;
+
+  const UserConsumedSection({
+    super.key,
+    required this.libraryItem,
+    required this.mediaType,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final liveItem = ref
+        .watch(libraryProvider)
+        .where(
+          (i) =>
+              i.externalId == libraryItem.externalId &&
+              i.mediaType == libraryItem.mediaType,
+        )
+        .firstOrNull;
+    final consumed = liveItem?.isConsumed ?? false;
+    final l10n = AppLocalizations.of(context)!;
+
+    final (
+      IconData icon,
+      String labelConsumed,
+      String labelMark,
+    ) = switch (mediaType) {
+      MediaCardType.movie || MediaCardType.tv => (
+        Icons.visibility,
+        l10n.libraryWatched,
+        l10n.libraryMarkAsWatched,
+      ),
+      MediaCardType.book => (
+        Icons.menu_book_outlined,
+        l10n.libraryRead,
+        l10n.libraryMarkAsRead,
+      ),
+      MediaCardType.game => (
+        Icons.sports_esports_outlined,
+        l10n.libraryPlayed,
+        l10n.libraryMarkAsPlayed,
+      ),
+    };
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => ref
+            .read(libraryProvider.notifier)
+            .updateIsConsumed(
+              libraryItem.externalId,
+              libraryItem.mediaType,
+              !consumed,
+            ),
+        borderRadius: BorderRadius.circular(12),
+        child: Ink(
+          decoration: BoxDecoration(
+            color: consumed
+                ? Colors.green.shade600
+                : theme.colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Icon(
+                  consumed ? Icons.check_circle : icon,
+                  color: consumed
+                      ? Colors.white
+                      : theme.colorScheme.onSurfaceVariant,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  consumed ? labelConsumed : labelMark,
+                  style: TextStyle(
+                    color: consumed
+                        ? Colors.white
+                        : theme.colorScheme.onSurfaceVariant,
+                    fontSize: 15,
+                    fontWeight: consumed ? FontWeight.bold : FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

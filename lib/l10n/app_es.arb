@@ -149,5 +149,11 @@
   "libraryRatingClear": "Borrar valoración",
   "libraryUserReviewLabel": "Tu reseña",
   "libraryAddNoteButton": "Añadir nota",
-  "libraryRateAction": "Valorar"
+  "libraryRateAction": "Valorar",
+  "libraryWatched": "Visto",
+  "libraryRead": "Le\u00eddo",
+  "libraryPlayed": "Jugado",
+  "libraryMarkAsWatched": "Marcar como visto",
+  "libraryMarkAsRead": "Marcar como le\u00eddo",
+  "libraryMarkAsPlayed": "Marcar como jugado"
 }

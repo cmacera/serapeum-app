@@ -78,10 +78,28 @@ class Library extends _$Library {
       realm.write(() {
         for (final item in items) {
           item.userRating = rating;
+          if (rating != null && !item.isConsumed) item.isConsumed = true;
         }
       });
     } catch (e) {
       debugPrint('Library: failed to update rating — $e');
+    }
+  }
+
+  void updateIsConsumed(String externalId, String mediaType, bool value) {
+    final realm = ref.read(realmProvider);
+    try {
+      final items = realm.all<LibraryItem>().query(
+        r'externalId == $0 AND mediaType == $1',
+        [externalId, mediaType],
+      );
+      realm.write(() {
+        for (final item in items) {
+          item.isConsumed = value;
+        }
+      });
+    } catch (e) {
+      debugPrint('Library: failed to update consumed status — $e');
     }
   }
 
