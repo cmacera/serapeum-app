@@ -21,6 +21,7 @@ class LibraryItem with RealmEntity, RealmObjectBase, RealmObject {
     double? rating,
     double? userRating,
     String? userNote,
+    bool isConsumed = false,
   }) {
     RealmObjectBase.set(this, 'id', id);
     RealmObjectBase.set(this, 'externalId', externalId);
@@ -34,6 +35,7 @@ class LibraryItem with RealmEntity, RealmObjectBase, RealmObject {
     RealmObjectBase.set(this, 'rating', rating);
     RealmObjectBase.set(this, 'userRating', userRating);
     RealmObjectBase.set(this, 'userNote', userNote);
+    RealmObjectBase.set(this, 'isConsumed', isConsumed);
   }
 
   LibraryItem._();
@@ -86,8 +88,13 @@ class LibraryItem with RealmEntity, RealmObjectBase, RealmObject {
       RealmObjectBase.get<String>(this, 'userNote') as String?;
   set userNote(String? value) => RealmObjectBase.set(this, 'userNote', value);
 
+  bool get isConsumed => RealmObjectBase.get<bool>(this, 'isConsumed') as bool;
+  set isConsumed(bool value) => RealmObjectBase.set(this, 'isConsumed', value);
+
   bool get hasUserData =>
-      userRating != null || (userNote?.trim().isNotEmpty ?? false);
+      isConsumed ||
+      userRating != null ||
+      (userNote?.trim().isNotEmpty ?? false);
 
   @override
   Stream<RealmObjectChanges<LibraryItem>> get changes =>
@@ -115,6 +122,7 @@ class LibraryItem with RealmEntity, RealmObjectBase, RealmObject {
       'itemJson': itemJson.toEJson(),
       'userRating': userRating.toEJson(),
       'userNote': userNote.toEJson(),
+      'isConsumed': isConsumed.toEJson(),
     };
   }
 
@@ -143,6 +151,7 @@ class LibraryItem with RealmEntity, RealmObjectBase, RealmObject {
           rating: fromEJson(ejson['rating']),
           userRating: fromEJson(ejson['userRating']),
           userNote: fromEJson(ejson['userNote']),
+          isConsumed: fromEJson(ejson['isConsumed'] ?? false),
         ),
       _ => raiseInvalidEJson(ejson),
     };
@@ -180,6 +189,7 @@ class LibraryItem with RealmEntity, RealmObjectBase, RealmObject {
         SchemaProperty('itemJson', RealmPropertyType.string),
         SchemaProperty('userRating', RealmPropertyType.double, optional: true),
         SchemaProperty('userNote', RealmPropertyType.string, optional: true),
+        SchemaProperty('isConsumed', RealmPropertyType.bool),
       ],
     );
   }();

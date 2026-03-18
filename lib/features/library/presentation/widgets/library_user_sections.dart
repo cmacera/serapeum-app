@@ -7,8 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/enums/media_card_type.dart';
 import '../../data/local/library_item.dart';
 import '../../data/providers/library_provider.dart';
+
+const _kEmDash = '—';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // UserRatingSection
@@ -44,48 +47,56 @@ class UserRatingSection extends ConsumerWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (currentRating == null) ...[
-                  const Text(
-                    '—',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.star, color: Colors.white, size: 20),
-                  const SizedBox(width: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (currentRating == null) ...[
+                      const Text(
+                        _kEmDash,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.star, color: Colors.white, size: 20),
+                    ] else ...[
+                      Text(
+                        currentRating.toStringAsFixed(1),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.star, color: Colors.white, size: 20),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 6),
+                if (currentRating == null)
                   Text(
                     l10n.libraryRateAction,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 15,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
                     ),
-                  ),
-                ] else ...[
-                  Text(
-                    currentRating.toStringAsFixed(1),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.star, color: Colors.white, size: 20),
-                  if (globalRating != null) ...[
-                    const SizedBox(width: 12),
-                    _DiffBadge(
-                      userRating: currentRating,
-                      globalRating: globalRating,
-                    ),
-                  ],
-                ],
+                  )
+                else if (globalRating != null)
+                  _DiffBadge(
+                    userRating: currentRating,
+                    globalRating: globalRating,
+                  )
+                else
+                  const SizedBox.shrink(),
               ],
             ),
           ),
@@ -411,6 +422,107 @@ class _RatingDialogState extends State<_RatingDialog> {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UserConsumedSection
+// ─────────────────────────────────────────────────────────────────────────────
+
+class UserConsumedSection extends ConsumerWidget {
+  final LibraryItem libraryItem;
+  final MediaCardType mediaType;
+
+  const UserConsumedSection({
+    super.key,
+    required this.libraryItem,
+    required this.mediaType,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final liveItem = ref
+        .watch(libraryProvider)
+        .where(
+          (i) =>
+              i.externalId == libraryItem.externalId &&
+              i.mediaType == libraryItem.mediaType,
+        )
+        .firstOrNull;
+    final consumed = liveItem?.isConsumed ?? false;
+    final l10n = AppLocalizations.of(context)!;
+
+    final (
+      IconData icon,
+      String labelConsumed,
+      String labelMark,
+    ) = switch (mediaType) {
+      MediaCardType.movie || MediaCardType.tv => (
+        Icons.visibility,
+        l10n.libraryWatched,
+        l10n.libraryMarkAsWatched,
+      ),
+      MediaCardType.book => (
+        Icons.menu_book_outlined,
+        l10n.libraryRead,
+        l10n.libraryMarkAsRead,
+      ),
+      MediaCardType.game => (
+        Icons.sports_esports_outlined,
+        l10n.libraryPlayed,
+        l10n.libraryMarkAsPlayed,
+      ),
+    };
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => ref
+            .read(libraryProvider.notifier)
+            .updateIsConsumed(
+              libraryItem.externalId,
+              libraryItem.mediaType,
+              !consumed,
+            ),
+        borderRadius: BorderRadius.circular(12),
+        child: Ink(
+          decoration: BoxDecoration(
+            color: consumed
+                ? Colors.green.shade600
+                : theme.colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  consumed ? Icons.check_circle : icon,
+                  color: consumed
+                      ? Colors.white
+                      : theme.colorScheme.onSurfaceVariant,
+                  size: 22,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  consumed ? labelConsumed : labelMark,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: consumed
+                        ? Colors.white
+                        : theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                    fontWeight: consumed ? FontWeight.bold : FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

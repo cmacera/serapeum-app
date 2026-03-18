@@ -1,8 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
-
-enum MediaCardType { movie, tv, book, game }
+import '../../../../core/enums/media_card_type.dart';
 
 class MediaResultCard extends StatelessWidget {
   final String title;
@@ -13,6 +12,7 @@ class MediaResultCard extends StatelessWidget {
   final bool? isSaved;
   final VoidCallback? onSave;
   final String? saveTooltip;
+  final bool? isConsumed;
 
   const MediaResultCard({
     super.key,
@@ -24,6 +24,7 @@ class MediaResultCard extends StatelessWidget {
     this.isSaved,
     this.onSave,
     this.saveTooltip,
+    this.isConsumed,
   });
 
   @override

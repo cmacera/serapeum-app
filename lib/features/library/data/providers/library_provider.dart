@@ -55,13 +55,19 @@ class Library extends _$Library {
     }
   }
 
+  RealmResults<LibraryItem> _queryItems(
+    Realm realm,
+    String externalId,
+    String mediaType,
+  ) => realm.all<LibraryItem>().query(r'externalId == $0 AND mediaType == $1', [
+    externalId,
+    mediaType,
+  ]);
+
   void removeItem(String externalId, String mediaType) {
     final realm = ref.read(realmProvider);
     try {
-      final items = realm.all<LibraryItem>().query(
-        r'externalId == $0 AND mediaType == $1',
-        [externalId, mediaType],
-      );
+      final items = _queryItems(realm, externalId, mediaType);
       realm.write(() => realm.deleteMany(items));
     } catch (e) {
       debugPrint('Library: failed to remove item — $e');
@@ -71,13 +77,11 @@ class Library extends _$Library {
   void updateUserRating(String externalId, String mediaType, double? rating) {
     final realm = ref.read(realmProvider);
     try {
-      final items = realm.all<LibraryItem>().query(
-        r'externalId == $0 AND mediaType == $1',
-        [externalId, mediaType],
-      );
+      final items = _queryItems(realm, externalId, mediaType);
       realm.write(() {
         for (final item in items) {
           item.userRating = rating;
+          if (rating != null && !item.isConsumed) item.isConsumed = true;
         }
       });
     } catch (e) {
@@ -85,14 +89,25 @@ class Library extends _$Library {
     }
   }
 
+  void updateIsConsumed(String externalId, String mediaType, bool value) {
+    final realm = ref.read(realmProvider);
+    try {
+      final items = _queryItems(realm, externalId, mediaType);
+      realm.write(() {
+        for (final item in items) {
+          item.isConsumed = value;
+        }
+      });
+    } catch (e) {
+      debugPrint('Library: failed to update consumed status — $e');
+    }
+  }
+
   void updateUserNote(String externalId, String mediaType, String? note) {
     final realm = ref.read(realmProvider);
     try {
       final trimmed = note?.trim();
-      final items = realm.all<LibraryItem>().query(
-        r'externalId == $0 AND mediaType == $1',
-        [externalId, mediaType],
-      );
+      final items = _queryItems(realm, externalId, mediaType);
       realm.write(() {
         for (final item in items) {
           item.userNote = (trimmed == null || trimmed.isEmpty) ? null : trimmed;

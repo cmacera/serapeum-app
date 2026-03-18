@@ -13,6 +13,7 @@ import '../../../library/data/local/library_item.dart';
 import '../../../library/data/providers/library_provider.dart';
 import '../../../library/presentation/widgets/library_user_sections.dart';
 import 'detail_sections/book_info_section.dart';
+import '../../../../core/enums/media_card_type.dart';
 import 'detail_sections/game_info_section.dart';
 import 'detail_sections/media_info_section.dart';
 
@@ -31,6 +32,14 @@ class DiscoverDetailModal extends ConsumerWidget {
     Book b => (b.id, 'book'),
     Game g => (g.id.toString(), 'game'),
     _ => throw ArgumentError('Unknown entity type: $entity'),
+  };
+
+  MediaCardType get _mediaCardType => switch (entity) {
+    Media m when m.mediaType == MediaType.tv => MediaCardType.tv,
+    Media _ => MediaCardType.movie,
+    Book _ => MediaCardType.book,
+    Game _ => MediaCardType.game,
+    _ => MediaCardType.movie,
   };
 
   @override
@@ -61,7 +70,25 @@ class DiscoverDetailModal extends ConsumerWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          UserRatingSection(libraryItem: savedItem),
+                          IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  child: UserRatingSection(
+                                    libraryItem: savedItem,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: UserConsumedSection(
+                                    libraryItem: savedItem,
+                                    mediaType: _mediaCardType,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           UserReviewSection(libraryItem: savedItem),
                         ],
