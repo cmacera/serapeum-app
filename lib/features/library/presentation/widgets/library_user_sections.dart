@@ -7,9 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../discovery/presentation/widgets/media_result_card.dart';
+import '../../../../core/enums/media_card_type.dart';
 import '../../data/local/library_item.dart';
 import '../../data/providers/library_provider.dart';
+
+const _kEmDash = '—';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // UserRatingSection
@@ -54,7 +56,7 @@ class UserRatingSection extends ConsumerWidget {
                   children: [
                     if (currentRating == null) ...[
                       const Text(
-                        '—',
+                        _kEmDash,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,

@@ -16,6 +16,7 @@ import '../../../library/data/providers/library_provider.dart';
 import 'category_tab_bar.dart';
 import 'chat_message_bubble.dart';
 import 'discover_detail_modal.dart';
+import '../../../../core/enums/media_card_type.dart';
 import 'media_result_card.dart';
 
 class DiscoverResultList extends ConsumerStatefulWidget {
@@ -104,13 +105,6 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
         Game g => (g.id.toString(), 'game'),
         _ => throw ArgumentError('Unknown entity type: $entity'),
       };
-
-  bool _isSavedEntity(List<LibraryItem> items, Object entity) {
-    final (externalId, mediaType) = _entityKey(entity);
-    return items.any(
-      (i) => i.externalId == externalId && i.mediaType == mediaType,
-    );
-  }
 
   LibraryItem? _savedItemForEntity(List<LibraryItem> items, Object entity) {
     final (externalId, mediaType) = _entityKey(entity);
@@ -343,55 +337,64 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     Media media,
     List<LibraryItem> libraryItems,
     AppLocalizations l10n,
-  ) => MediaResultCard(
-    title: media.title ?? media.name ?? l10n.unknownMedia,
-    mediaType: media.mediaType == MediaType.tv
-        ? MediaCardType.tv
-        : MediaCardType.movie,
-    subtitle: _buildSubtitle(
-      _extractYear(media.releaseDate),
-      _formatRating(media.voteAverage),
-    ),
-    imageUrl: _tmdbPosterUrl(media.posterPath),
-    onTap: () => _showDetails(context, media),
-    isSaved: _isSavedEntity(libraryItems, media),
-    isConsumed: _savedItemForEntity(libraryItems, media)?.isConsumed,
-    onSave: () => _toggleSaveMedia(context, media),
-  );
+  ) {
+    final savedItem = _savedItemForEntity(libraryItems, media);
+    return MediaResultCard(
+      title: media.title ?? media.name ?? l10n.unknownMedia,
+      mediaType: media.mediaType == MediaType.tv
+          ? MediaCardType.tv
+          : MediaCardType.movie,
+      subtitle: _buildSubtitle(
+        _extractYear(media.releaseDate),
+        _formatRating(media.voteAverage),
+      ),
+      imageUrl: _tmdbPosterUrl(media.posterPath),
+      onTap: () => _showDetails(context, media),
+      isSaved: savedItem != null,
+      isConsumed: savedItem?.isConsumed,
+      onSave: () => _toggleSaveMedia(context, media),
+    );
+  }
 
   MediaResultCard _buildBookCard(
     BuildContext context,
     Book book,
     List<LibraryItem> libraryItems,
-  ) => MediaResultCard(
-    title: book.title,
-    mediaType: MediaCardType.book,
-    subtitle: _buildSubtitle(_extractYear(book.publishedDate), null),
-    imageUrl:
-        book.imageLinks?['thumbnail'] ?? book.imageLinks?['smallThumbnail'],
-    onTap: () => _showDetails(context, book),
-    isSaved: _isSavedEntity(libraryItems, book),
-    isConsumed: _savedItemForEntity(libraryItems, book)?.isConsumed,
-    onSave: () => _toggleSaveBook(context, book),
-  );
+  ) {
+    final savedItem = _savedItemForEntity(libraryItems, book);
+    return MediaResultCard(
+      title: book.title,
+      mediaType: MediaCardType.book,
+      subtitle: _buildSubtitle(_extractYear(book.publishedDate), null),
+      imageUrl:
+          book.imageLinks?['thumbnail'] ?? book.imageLinks?['smallThumbnail'],
+      onTap: () => _showDetails(context, book),
+      isSaved: savedItem != null,
+      isConsumed: savedItem?.isConsumed,
+      onSave: () => _toggleSaveBook(context, book),
+    );
+  }
 
   MediaResultCard _buildGameCard(
     BuildContext context,
     Game game,
     List<LibraryItem> libraryItems,
-  ) => MediaResultCard(
-    title: game.name,
-    mediaType: MediaCardType.game,
-    subtitle: _buildSubtitle(
-      _extractYear(game.released),
-      _formatRating(game.rating ?? game.aggregatedRating),
-    ),
-    imageUrl: game.coverUrl,
-    onTap: () => _showDetails(context, game),
-    isSaved: _isSavedEntity(libraryItems, game),
-    isConsumed: _savedItemForEntity(libraryItems, game)?.isConsumed,
-    onSave: () => _toggleSaveGame(context, game),
-  );
+  ) {
+    final savedItem = _savedItemForEntity(libraryItems, game);
+    return MediaResultCard(
+      title: game.name,
+      mediaType: MediaCardType.game,
+      subtitle: _buildSubtitle(
+        _extractYear(game.released),
+        _formatRating(game.rating ?? game.aggregatedRating),
+      ),
+      imageUrl: game.coverUrl,
+      onTap: () => _showDetails(context, game),
+      isSaved: savedItem != null,
+      isConsumed: savedItem?.isConsumed,
+      onSave: () => _toggleSaveGame(context, game),
+    );
+  }
 
   List<Widget> _buildFilteredCards(
     BuildContext context,

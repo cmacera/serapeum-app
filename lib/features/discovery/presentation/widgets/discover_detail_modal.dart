@@ -13,7 +13,7 @@ import '../../../library/data/local/library_item.dart';
 import '../../../library/data/providers/library_provider.dart';
 import '../../../library/presentation/widgets/library_user_sections.dart';
 import 'detail_sections/book_info_section.dart';
-import 'media_result_card.dart';
+import '../../../../core/enums/media_card_type.dart';
 import 'detail_sections/game_info_section.dart';
 import 'detail_sections/media_info_section.dart';
 

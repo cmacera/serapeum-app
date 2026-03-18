@@ -151,9 +151,27 @@
   "libraryAddNoteButton": "Añadir nota",
   "libraryRateAction": "Valorar",
   "libraryWatched": "Visto",
+  "@libraryWatched": {
+    "description": "Label shown when a movie or TV show is marked as consumed"
+  },
   "libraryRead": "Le\u00eddo",
+  "@libraryRead": {
+    "description": "Label shown when a book is marked as consumed"
+  },
   "libraryPlayed": "Jugado",
+  "@libraryPlayed": {
+    "description": "Label shown when a game is marked as consumed"
+  },
   "libraryMarkAsWatched": "Marcar como visto",
+  "@libraryMarkAsWatched": {
+    "description": "CTA label to mark a movie or TV show as watched"
+  },
   "libraryMarkAsRead": "Marcar como le\u00eddo",
-  "libraryMarkAsPlayed": "Marcar como jugado"
+  "@libraryMarkAsRead": {
+    "description": "CTA label to mark a book as read"
+  },
+  "libraryMarkAsPlayed": "Marcar como jugado",
+  "@libraryMarkAsPlayed": {
+    "description": "CTA label to mark a game as played"
+  }
 }

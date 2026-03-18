@@ -11,6 +11,7 @@ import '../../../discovery/domain/entities/game.dart';
 import '../../../discovery/domain/entities/media.dart';
 import '../../../discovery/presentation/widgets/category_tab_bar.dart';
 import '../../../discovery/presentation/widgets/discover_detail_modal.dart';
+import '../../../../core/enums/media_card_type.dart';
 import '../../../discovery/presentation/widgets/media_result_card.dart';
 import '../../data/local/library_item.dart';
 import '../../data/providers/library_filter_provider.dart';
