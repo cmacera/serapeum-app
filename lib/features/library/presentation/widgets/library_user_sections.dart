@@ -45,48 +45,56 @@ class UserRatingSection extends ConsumerWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (currentRating == null) ...[
-                  const Text(
-                    '—',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.star, color: Colors.white, size: 20),
-                  const SizedBox(width: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (currentRating == null) ...[
+                      const Text(
+                        '—',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.star, color: Colors.white, size: 20),
+                    ] else ...[
+                      Text(
+                        currentRating.toStringAsFixed(1),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.star, color: Colors.white, size: 20),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 6),
+                if (currentRating == null)
                   Text(
                     l10n.libraryRateAction,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 15,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
                     ),
-                  ),
-                ] else ...[
-                  Text(
-                    currentRating.toStringAsFixed(1),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.star, color: Colors.white, size: 20),
-                  if (globalRating != null) ...[
-                    const SizedBox(width: 12),
-                    _DiffBadge(
-                      userRating: currentRating,
-                      globalRating: globalRating,
-                    ),
-                  ],
-                ],
+                  )
+                else if (globalRating != null)
+                  _DiffBadge(
+                    userRating: currentRating,
+                    globalRating: globalRating,
+                  )
+                else
+                  const SizedBox.shrink(),
               ],
             ),
           ),
@@ -486,24 +494,26 @@ class UserConsumedSection extends ConsumerWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   consumed ? Icons.check_circle : icon,
                   color: consumed
                       ? Colors.white
                       : theme.colorScheme.onSurfaceVariant,
-                  size: 20,
+                  size: 22,
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(height: 6),
                 Text(
                   consumed ? labelConsumed : labelMark,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: consumed
                         ? Colors.white
                         : theme.colorScheme.onSurfaceVariant,
-                    fontSize: 15,
+                    fontSize: 13,
                     fontWeight: consumed ? FontWeight.bold : FontWeight.w500,
                   ),
                 ),

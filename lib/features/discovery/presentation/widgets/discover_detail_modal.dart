@@ -70,12 +70,25 @@ class DiscoverDetailModal extends ConsumerWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          UserConsumedSection(
-                            libraryItem: savedItem,
-                            mediaType: _mediaCardType,
+                          IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  child: UserRatingSection(
+                                    libraryItem: savedItem,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: UserConsumedSection(
+                                    libraryItem: savedItem,
+                                    mediaType: _mediaCardType,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 8),
-                          UserRatingSection(libraryItem: savedItem),
                           const SizedBox(height: 8),
                           UserReviewSection(libraryItem: savedItem),
                         ],
