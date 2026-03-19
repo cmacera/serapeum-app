@@ -322,9 +322,9 @@ class _AppShellState extends ConsumerState<AppShell> {
                   indicatorColor: Colors.transparent, // Removed overlay
                   destinations: [
                     NavigationDestination(
-                      icon: const Icon(Icons.library_books_outlined),
+                      icon: const Icon(Icons.bookmarks_outlined),
                       selectedIcon: const Icon(
-                        Icons.library_books,
+                        Icons.bookmarks,
                         color: AppColors.accent,
                       ),
                       label: l10n.myLibraryTitle,

@@ -1,7 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/enums/media_card_type.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/enums/media_card_type.dart';
+import 'bookmark_button.dart';
 
 class MediaResultCard extends StatelessWidget {
   final String title;
@@ -29,7 +30,7 @@ class MediaResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    final card = Card(
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.antiAlias,
@@ -71,29 +72,10 @@ class MediaResultCard extends StatelessWidget {
                           ),
                   ),
                   Positioned(
-                    top: 8,
-                    left: 8,
+                    top: 6,
+                    left: 6,
                     child: _TypeBadge(icon: _typeIcon, color: _badgeColor),
                   ),
-                  if (isSaved != null)
-                    Positioned(
-                      top: 4,
-                      right: 4,
-                      child: IconButton(
-                        onPressed: onSave,
-                        tooltip: saveTooltip,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        icon: Icon(
-                          isSaved! ? Icons.bookmark : Icons.bookmark_border,
-                          color: isSaved! ? AppColors.accent : Colors.white,
-                          size: 24,
-                          shadows: const [
-                            Shadow(blurRadius: 4, color: Colors.black54),
-                          ],
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),
@@ -127,6 +109,19 @@ class MediaResultCard extends StatelessWidget {
         ),
       ),
     );
+
+    if (isSaved == null) return card;
+
+    return Stack(
+      children: [
+        card,
+        Positioned(
+          top: 4,
+          right: 4,
+          child: BookmarkButton(isSaved: isSaved!, onTap: onSave),
+        ),
+      ],
+    );
   }
 
   double get _imageAspectRatio => switch (mediaType) {
@@ -137,15 +132,15 @@ class MediaResultCard extends StatelessWidget {
   };
 
   IconData get _typeIcon => switch (mediaType) {
-    MediaCardType.movie => Icons.movie_outlined,
-    MediaCardType.tv => Icons.tv_outlined,
-    MediaCardType.book => Icons.menu_book_outlined,
-    MediaCardType.game => Icons.sports_esports_outlined,
+    MediaCardType.movie => Icons.movie,
+    MediaCardType.tv => Icons.tv,
+    MediaCardType.book => Icons.import_contacts,
+    MediaCardType.game => Icons.sports_esports,
   };
 
   Color get _badgeColor => switch (mediaType) {
-    MediaCardType.movie => AppColors.accent,
-    MediaCardType.tv => AppColors.badgeTv,
+    MediaCardType.movie => AppColors.badgeMedia,
+    MediaCardType.tv => AppColors.badgeMedia,
     MediaCardType.book => AppColors.badgeBook,
     MediaCardType.game => AppColors.badgeGame,
   };
@@ -160,12 +155,12 @@ class _TypeBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(6),
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Icon(icon, size: 14, color: Colors.white),
+      child: Icon(icon, size: 22, color: Colors.white),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:serapeum_app/features/discovery/presentation/widgets/fullscreen_image_viewer.dart';
+import 'package:serapeum_app/shared/widgets/fullscreen_image_viewer.dart';
 
 const _urls = [
   'https://example.com/img1.jpg',

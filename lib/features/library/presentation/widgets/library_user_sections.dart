@@ -441,6 +441,12 @@ class UserConsumedSection extends ConsumerWidget {
     required this.mediaType,
   });
 
+  Color get _consumedColor => switch (mediaType) {
+    MediaCardType.movie || MediaCardType.tv => AppColors.badgeMedia,
+    MediaCardType.book => AppColors.badgeBook,
+    MediaCardType.game => AppColors.badgeGame,
+  };
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -491,7 +497,7 @@ class UserConsumedSection extends ConsumerWidget {
         child: Ink(
           decoration: BoxDecoration(
             color: consumed
-                ? Colors.green.shade600
+                ? _consumedColor
                 : theme.colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(12),
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/discover_category.dart';
+import '../../core/enums/discover_category.dart';
 
 class CategoryTabItem extends StatelessWidget {
   final String label;
@@ -84,11 +84,16 @@ class CategoryTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final availableWidth = MediaQuery.of(context).size.width - 32;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        children: [
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minWidth: availableWidth),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
           CategoryTabItem(
             label: filterAllLabel,
             isSelected: selectedCategory == null,
@@ -119,6 +124,7 @@ class CategoryTabBar extends StatelessWidget {
             ),
           ],
         ],
+        ),
       ),
     );
   }
