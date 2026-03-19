@@ -12,7 +12,6 @@ class MediaResultCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool? isSaved;
   final VoidCallback? onSave;
-  final String? saveTooltip;
   final bool? isConsumed;
 
   const MediaResultCard({
@@ -24,7 +23,6 @@ class MediaResultCard extends StatelessWidget {
     this.onTap,
     this.isSaved,
     this.onSave,
-    this.saveTooltip,
     this.isConsumed,
   });
 

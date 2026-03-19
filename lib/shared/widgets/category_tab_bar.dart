@@ -94,36 +94,36 @@ class CategoryTabBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-          CategoryTabItem(
-            label: filterAllLabel,
-            isSelected: selectedCategory == null,
-            onTap: () => onCategorySelected(null),
-          ),
-          if (hasMedia) ...[
-            const SizedBox(width: 8),
             CategoryTabItem(
-              label: filterMediaLabel,
-              isSelected: selectedCategory == DiscoverCategory.media,
-              onTap: () => onCategorySelected(DiscoverCategory.media),
+              label: filterAllLabel,
+              isSelected: selectedCategory == null,
+              onTap: () => onCategorySelected(null),
             ),
+            if (hasMedia) ...[
+              const SizedBox(width: 8),
+              CategoryTabItem(
+                label: filterMediaLabel,
+                isSelected: selectedCategory == DiscoverCategory.media,
+                onTap: () => onCategorySelected(DiscoverCategory.media),
+              ),
+            ],
+            if (hasBooks) ...[
+              const SizedBox(width: 8),
+              CategoryTabItem(
+                label: filterBooksLabel,
+                isSelected: selectedCategory == DiscoverCategory.books,
+                onTap: () => onCategorySelected(DiscoverCategory.books),
+              ),
+            ],
+            if (hasGames) ...[
+              const SizedBox(width: 8),
+              CategoryTabItem(
+                label: filterGamesLabel,
+                isSelected: selectedCategory == DiscoverCategory.games,
+                onTap: () => onCategorySelected(DiscoverCategory.games),
+              ),
+            ],
           ],
-          if (hasBooks) ...[
-            const SizedBox(width: 8),
-            CategoryTabItem(
-              label: filterBooksLabel,
-              isSelected: selectedCategory == DiscoverCategory.books,
-              onTap: () => onCategorySelected(DiscoverCategory.books),
-            ),
-          ],
-          if (hasGames) ...[
-            const SizedBox(width: 8),
-            CategoryTabItem(
-              label: filterGamesLabel,
-              isSelected: selectedCategory == DiscoverCategory.games,
-              onTap: () => onCategorySelected(DiscoverCategory.games),
-            ),
-          ],
-        ],
         ),
       ),
     );
