@@ -110,8 +110,18 @@ class _ProviderLogo extends StatelessWidget {
       message: provider.providerName,
       child: InkWell(
         onTap: () async {
-          final uri = Uri.parse(link);
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+          final uri = Uri.tryParse(link);
+          if (uri == null || !uri.hasScheme || !uri.hasAuthority) {
+            debugPrint('WatchProvidersSection: invalid watch link "$link"');
+            return;
+          }
+          final launched = await launchUrl(
+            uri,
+            mode: LaunchMode.externalApplication,
+          );
+          if (!launched) {
+            debugPrint('WatchProvidersSection: could not launch "$link"');
+          }
         },
         borderRadius: BorderRadius.circular(8),
         child: ClipRRect(

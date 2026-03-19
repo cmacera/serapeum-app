@@ -158,7 +158,7 @@ class _TypeBadge extends StatelessWidget {
         color: color.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Icon(icon, size: 22, color: Colors.white),
+      child: Icon(icon, size: 24, color: Colors.white),
     );
   }
 }

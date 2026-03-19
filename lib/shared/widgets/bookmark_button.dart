@@ -15,13 +15,17 @@ class BookmarkButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Icon(
-        isSaved ? Icons.bookmark_added : Icons.bookmark_add,
-        color: isSaved ? AppColors.accent : Colors.white,
-        size: size,
-        shadows: const [Shadow(blurRadius: 4, color: Colors.black54)],
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Icon(
+          isSaved ? Icons.bookmark_added : Icons.bookmark_add,
+          semanticLabel: isSaved ? 'Remove bookmark' : 'Save bookmark',
+          color: isSaved ? AppColors.accent : Colors.white,
+          size: size,
+          shadows: const [Shadow(blurRadius: 4, color: Colors.black54)],
+        ),
       ),
     );
   }

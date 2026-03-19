@@ -142,5 +142,31 @@ void main() {
       );
       expect(find.byIcon(Icons.import_contacts), findsAtLeastNWidgets(1));
     });
+
+    testWidgets('shows tv icon badge for tv type', (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          const MediaResultCard(
+            title: 'Breaking Bad',
+            mediaType: MediaCardType.tv,
+          ),
+        ),
+      );
+      expect(find.byIcon(Icons.tv), findsAtLeastNWidgets(1));
+    });
+
+    testWidgets('shows sports_esports icon badge for game type', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          const MediaResultCard(
+            title: 'The Witcher 3',
+            mediaType: MediaCardType.game,
+          ),
+        ),
+      );
+      expect(find.byIcon(Icons.sports_esports), findsAtLeastNWidgets(1));
+    });
   });
 }
