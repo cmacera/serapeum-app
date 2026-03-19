@@ -6,13 +6,13 @@ import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../discovery/domain/entities/book.dart';
-import '../../../discovery/domain/entities/discover_category.dart';
 import '../../../discovery/domain/entities/game.dart';
 import '../../../discovery/domain/entities/media.dart';
-import '../../../discovery/presentation/widgets/category_tab_bar.dart';
-import '../../../discovery/presentation/widgets/discover_detail_modal.dart';
+import '../../../../core/enums/discover_category.dart';
 import '../../../../core/enums/media_card_type.dart';
-import '../../../discovery/presentation/widgets/media_result_card.dart';
+import '../../../../shared/widgets/category_tab_bar.dart';
+import '../../../../shared/widgets/media_detail_modal.dart';
+import '../../../../shared/widgets/media_result_card.dart';
 import '../../data/local/library_item.dart';
 import '../../data/providers/library_filter_provider.dart';
 import '../../data/providers/library_provider.dart';
@@ -99,7 +99,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.library_books_outlined,
+                      Icons.bookmark_add_outlined,
                       size: 64,
                       color: AppColors.subtitle,
                     ),
@@ -233,37 +233,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         snapSizes: const [0.9],
         shouldCloseOnMinExtent: true,
         builder: (_, controller) =>
-            DiscoverDetailModal(entity: entity, scrollController: controller),
+            MediaDetailModal(entity: entity, scrollController: controller),
       ),
     );
-  }
-
-  void _confirmRemove(
-    BuildContext context,
-    String itemTitle,
-    VoidCallback onConfirmed,
-  ) {
-    final l10n = AppLocalizations.of(context)!;
-    showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.removeFromLibrary),
-        content: Text(itemTitle),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(l10n.removeFromLibrary),
-          ),
-        ],
-      ),
-    ).then((confirmed) {
-      if (mounted && confirmed == true) onConfirmed();
-    });
   }
 
   List<Widget> _buildCards(BuildContext context, List<LibraryItem> items) {
@@ -280,23 +252,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         subtitle: item.subtitle,
         imageUrl: item.imageUrl,
         onTap: () => _showLibraryDetails(context, item),
-        isSaved: true,
         isConsumed: item.isConsumed,
-        onSave: () {
-          if (item.hasUserData) {
-            _confirmRemove(
-              context,
-              item.title,
-              () => ref
-                  .read(libraryProvider.notifier)
-                  .removeItem(item.externalId, item.mediaType),
-            );
-          } else {
-            ref
-                .read(libraryProvider.notifier)
-                .removeItem(item.externalId, item.mediaType);
-          }
-        },
       );
     }).toList();
   }

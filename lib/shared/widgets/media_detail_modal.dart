@@ -4,24 +4,26 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
-import '../../../../core/constants/api_constants.dart';
-import '../../domain/entities/game.dart';
-import '../../domain/entities/book.dart';
-import '../../domain/entities/media.dart';
-import '../providers/media_detail_provider.dart';
-import '../../../library/data/local/library_item.dart';
-import '../../../library/data/providers/library_provider.dart';
-import '../../../library/presentation/widgets/library_user_sections.dart';
-import 'detail_sections/book_info_section.dart';
-import '../../../../core/enums/media_card_type.dart';
-import 'detail_sections/game_info_section.dart';
-import 'detail_sections/media_info_section.dart';
+import '../../core/enums/media_card_type.dart';
+import '../../core/utils/tmdb_image_utils.dart';
+import '../utils/remove_from_library_dialog.dart';
+import '../../features/discovery/domain/entities/book.dart';
+import '../../features/discovery/domain/entities/game.dart';
+import '../../features/discovery/domain/entities/media.dart';
+import '../../features/discovery/presentation/providers/media_detail_provider.dart';
+import 'bookmark_button.dart';
+import '../../features/discovery/presentation/widgets/detail_sections/book_info_section.dart';
+import '../../features/discovery/presentation/widgets/detail_sections/game_info_section.dart';
+import '../../features/discovery/presentation/widgets/detail_sections/media_info_section.dart';
+import '../../features/library/data/local/library_item.dart';
+import '../../features/library/data/providers/library_provider.dart';
+import '../../features/library/presentation/widgets/library_user_sections.dart';
 
-class DiscoverDetailModal extends ConsumerWidget {
+class MediaDetailModal extends ConsumerWidget {
   final Object entity;
   final ScrollController? scrollController;
 
-  const DiscoverDetailModal({
+  const MediaDetailModal({
     super.key,
     required this.entity,
     this.scrollController,
@@ -129,11 +131,11 @@ class DiscoverDetailModal extends ConsumerWidget {
       final m = entity as Media;
       final backdrop = m.backdropPath?.trim();
       if (backdrop != null && backdrop.isNotEmpty) {
-        return '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW780}$backdrop';
+        return tmdbBackdropUrl(backdrop);
       }
       final poster = m.posterPath?.trim();
       if (poster != null && poster.isNotEmpty) {
-        return '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}$poster';
+        return tmdbPosterUrl(poster);
       }
       return null;
     }
@@ -202,40 +204,19 @@ class DiscoverDetailModal extends ConsumerWidget {
             ),
           ),
 
-          // Title + Bookmark button
+          // Title
           Positioned(
             left: 16,
-            right: 8,
-            bottom: 8,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                IconButton(
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.black26,
-                    padding: const EdgeInsets.all(4),
-                    minimumSize: const Size(32, 32),
-                  ),
-                  icon: Icon(
-                    savedItem != null ? Icons.bookmark : Icons.bookmark_border,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                  onPressed: () => _handleBookmarkTap(context, ref, savedItem),
-                ),
-              ],
+            right: 16,
+            bottom: 4,
+            child: Text(
+              title,
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
 
@@ -270,6 +251,16 @@ class DiscoverDetailModal extends ConsumerWidget {
               onPressed: () => Navigator.pop(context),
             ),
           ),
+
+          // Bookmark button
+          Positioned(
+            top: topInset + 10,
+            right: 12,
+            child: BookmarkButton(
+              isSaved: savedItem != null,
+              onTap: () => _handleBookmarkTap(context, ref, savedItem),
+            ),
+          ),
         ],
       ),
     );
@@ -301,8 +292,8 @@ class DiscoverDetailModal extends ConsumerWidget {
                 _extractYear(m.releaseDate),
                 _formatRating(m.voteAverage),
               ),
-              imageUrl: _tmdbPosterUrl(m.posterPath),
-              backdropImageUrl: _tmdbBackdropUrl(m.backdropPath),
+              imageUrl: tmdbPosterUrl(m.posterPath),
+              backdropImageUrl: tmdbBackdropUrl(m.backdropPath),
               rating: m.voteAverage?.toDouble(),
               itemJson: jsonEncode(m.toJson()),
             );
@@ -342,7 +333,7 @@ class DiscoverDetailModal extends ConsumerWidget {
 
   void _doRemove(BuildContext context, WidgetRef ref, LibraryItem savedItem) {
     if (savedItem.hasUserData) {
-      _showRemoveDialog(context, savedItem.title, () {
+      showRemoveFromLibraryDialog(context, savedItem.title, () {
         ref
             .read(libraryProvider.notifier)
             .removeItem(savedItem.externalId, savedItem.mediaType);
@@ -352,34 +343,6 @@ class DiscoverDetailModal extends ConsumerWidget {
           .read(libraryProvider.notifier)
           .removeItem(savedItem.externalId, savedItem.mediaType);
     }
-  }
-
-  void _showRemoveDialog(
-    BuildContext context,
-    String itemTitle,
-    VoidCallback onConfirmed,
-  ) {
-    final l10n = AppLocalizations.of(context)!;
-    showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.removeFromLibrary),
-        content: Text(itemTitle),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(l10n.removeFromLibrary),
-          ),
-        ],
-      ),
-    ).then((confirmed) {
-      if (confirmed == true) onConfirmed();
-    });
   }
 
   Widget _buildSynopsis(BuildContext context) {
@@ -424,14 +387,6 @@ class DiscoverDetailModal extends ConsumerWidget {
   }
 
   // --- Private helpers for building LibraryItem data ---
-
-  String? _tmdbPosterUrl(String? path) => path != null
-      ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}$path'
-      : null;
-
-  String? _tmdbBackdropUrl(String? path) => path != null
-      ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW780}$path'
-      : null;
 
   String? _extractYear(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return null;

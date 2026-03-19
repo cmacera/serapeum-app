@@ -4,20 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
-import '../../../../core/constants/api_constants.dart';
 import '../../domain/entities/book.dart';
-import '../../domain/entities/discover_category.dart';
 import '../../domain/entities/featured_item.dart';
 import '../../domain/entities/game.dart';
 import '../../domain/entities/media.dart';
 import '../../domain/entities/search_all_response.dart';
 import '../../../library/data/local/library_item.dart';
 import '../../../library/data/providers/library_provider.dart';
-import 'category_tab_bar.dart';
-import 'chat_message_bubble.dart';
-import 'discover_detail_modal.dart';
+import '../../../../core/enums/discover_category.dart';
 import '../../../../core/enums/media_card_type.dart';
-import 'media_result_card.dart';
+import '../../../../core/utils/tmdb_image_utils.dart';
+import '../../../../shared/utils/remove_from_library_dialog.dart';
+import '../../../../shared/widgets/category_tab_bar.dart';
+import '../../../../shared/widgets/media_detail_modal.dart';
+import '../../../../shared/widgets/media_result_card.dart';
+import 'chat_message_bubble.dart';
 
 class DiscoverResultList extends ConsumerStatefulWidget {
   final String query;
@@ -59,44 +60,8 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     if (!isValid) _selectedCategory = null;
   }
 
-  void _showRemoveDialog(
-    BuildContext context,
-    String itemTitle,
-    VoidCallback onConfirmed,
-  ) {
-    final l10n = AppLocalizations.of(context)!;
-    showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.removeFromLibrary),
-        content: Text(itemTitle),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(l10n.removeFromLibrary),
-          ),
-        ],
-      ),
-    ).then((confirmed) {
-      if (mounted && confirmed == true) onConfirmed();
-    });
-  }
-
   String _persistedMediaType(MediaType type) =>
       type == MediaType.tv ? 'tv' : 'movie';
-
-  String? _tmdbPosterUrl(String? path) => path != null
-      ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW500}$path'
-      : null;
-
-  String? _tmdbBackdropUrl(String? path) => path != null
-      ? '${ApiConstants.tmdbImageBaseUrl}${ApiConstants.tmdbImageTierW780}$path'
-      : null;
 
   (String externalId, String mediaType) _entityKey(Object entity) =>
       switch (entity) {
@@ -125,7 +90,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
           )
           .firstOrNull;
       if (item?.hasUserData ?? false) {
-        _showRemoveDialog(
+        showRemoveFromLibraryDialog(
           context,
           item!.title,
           () => library.removeItem(externalId, persistedType),
@@ -142,8 +107,8 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
           _extractYear(media.releaseDate),
           _formatRating(media.voteAverage),
         ),
-        imageUrl: _tmdbPosterUrl(media.posterPath),
-        backdropImageUrl: _tmdbBackdropUrl(media.backdropPath),
+        imageUrl: tmdbPosterUrl(media.posterPath),
+        backdropImageUrl: tmdbBackdropUrl(media.backdropPath),
         rating: media.voteAverage?.toDouble(),
         itemJson: jsonEncode(media.toJson()),
       );
@@ -160,7 +125,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
           .where((i) => i.externalId == externalId && i.mediaType == mediaType)
           .firstOrNull;
       if (item?.hasUserData ?? false) {
-        _showRemoveDialog(
+        showRemoveFromLibraryDialog(
           context,
           item!.title,
           () => library.removeItem(externalId, mediaType),
@@ -194,7 +159,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
           .where((i) => i.externalId == externalId && i.mediaType == mediaType)
           .firstOrNull;
       if (item?.hasUserData ?? false) {
-        _showRemoveDialog(
+        showRemoveFromLibraryDialog(
           context,
           item!.title,
           () => library.removeItem(externalId, mediaType),
@@ -322,10 +287,8 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
             snap: true,
             snapSizes: const [0.9],
             shouldCloseOnMinExtent: true,
-            builder: (_, controller) => DiscoverDetailModal(
-              entity: entity,
-              scrollController: controller,
-            ),
+            builder: (_, controller) =>
+                MediaDetailModal(entity: entity, scrollController: controller),
           ),
         );
       },
@@ -348,7 +311,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
         _extractYear(media.releaseDate),
         _formatRating(media.voteAverage),
       ),
-      imageUrl: _tmdbPosterUrl(media.posterPath),
+      imageUrl: tmdbPosterUrl(media.posterPath),
       onTap: () => _showDetails(context, media),
       isSaved: savedItem != null,
       isConsumed: savedItem?.isConsumed,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../domain/entities/game.dart';
-import '../fullscreen_image_viewer.dart';
+import 'package:serapeum_app/shared/widgets/fullscreen_image_viewer.dart';
 import 'detail_section_widgets.dart';
 
 const _kStripHeight = 140.0;

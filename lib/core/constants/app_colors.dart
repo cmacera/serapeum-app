@@ -13,7 +13,7 @@ class AppColors {
   static const Color iconFallback = Colors.grey;
 
   // Media type badge colors
-  static const Color badgeTv = Color(0xFF1E88E5);
+  static const Color badgeMedia = Color(0xFF1E88E5);
   static const Color badgeBook = Color(0xFF00897B);
   static const Color badgeGame = Color(0xFFFFB300);
 }

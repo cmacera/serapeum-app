@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/discover_category.dart';
+import '../../core/enums/discover_category.dart';
 
 class CategoryTabItem extends StatelessWidget {
   final String label;
@@ -84,41 +84,47 @@ class CategoryTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final availableWidth = MediaQuery.of(context).size.width - 32;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        children: [
-          CategoryTabItem(
-            label: filterAllLabel,
-            isSelected: selectedCategory == null,
-            onTap: () => onCategorySelected(null),
-          ),
-          if (hasMedia) ...[
-            const SizedBox(width: 8),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minWidth: availableWidth),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
             CategoryTabItem(
-              label: filterMediaLabel,
-              isSelected: selectedCategory == DiscoverCategory.media,
-              onTap: () => onCategorySelected(DiscoverCategory.media),
+              label: filterAllLabel,
+              isSelected: selectedCategory == null,
+              onTap: () => onCategorySelected(null),
             ),
+            if (hasMedia) ...[
+              const SizedBox(width: 8),
+              CategoryTabItem(
+                label: filterMediaLabel,
+                isSelected: selectedCategory == DiscoverCategory.media,
+                onTap: () => onCategorySelected(DiscoverCategory.media),
+              ),
+            ],
+            if (hasBooks) ...[
+              const SizedBox(width: 8),
+              CategoryTabItem(
+                label: filterBooksLabel,
+                isSelected: selectedCategory == DiscoverCategory.books,
+                onTap: () => onCategorySelected(DiscoverCategory.books),
+              ),
+            ],
+            if (hasGames) ...[
+              const SizedBox(width: 8),
+              CategoryTabItem(
+                label: filterGamesLabel,
+                isSelected: selectedCategory == DiscoverCategory.games,
+                onTap: () => onCategorySelected(DiscoverCategory.games),
+              ),
+            ],
           ],
-          if (hasBooks) ...[
-            const SizedBox(width: 8),
-            CategoryTabItem(
-              label: filterBooksLabel,
-              isSelected: selectedCategory == DiscoverCategory.books,
-              onTap: () => onCategorySelected(DiscoverCategory.books),
-            ),
-          ],
-          if (hasGames) ...[
-            const SizedBox(width: 8),
-            CategoryTabItem(
-              label: filterGamesLabel,
-              isSelected: selectedCategory == DiscoverCategory.games,
-              onTap: () => onCategorySelected(DiscoverCategory.games),
-            ),
-          ],
-        ],
+        ),
       ),
     );
   }

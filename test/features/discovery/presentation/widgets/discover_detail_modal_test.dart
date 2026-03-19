@@ -9,7 +9,7 @@ import 'package:serapeum_app/features/discovery/domain/entities/game.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/media_detail.dart';
 import 'package:serapeum_app/features/discovery/presentation/providers/media_detail_provider.dart';
-import 'package:serapeum_app/features/discovery/presentation/widgets/discover_detail_modal.dart';
+import 'package:serapeum_app/shared/widgets/media_detail_modal.dart';
 import 'package:serapeum_app/features/library/data/local/library_item.dart';
 import 'package:serapeum_app/features/library/data/providers/library_provider.dart';
 import 'package:serapeum_app/features/library/presentation/widgets/library_user_sections.dart';
@@ -126,12 +126,12 @@ void main() {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: const Locale('en'),
-        home: Scaffold(body: DiscoverDetailModal(entity: entity)),
+        home: Scaffold(body: MediaDetailModal(entity: entity)),
       ),
     );
   }
 
-  group('DiscoverDetailModal', () {
+  group('MediaDetailModal', () {
     testWidgets('renders Media entity correctly', (WidgetTester tester) async {
       const media = Media(
         id: 1,
@@ -155,7 +155,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(DiscoverDetailModal)),
+        tester.element(find.byType(MediaDetailModal)),
       )!;
 
       expect(find.text('Inception'), findsWidgets);
@@ -184,7 +184,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(DiscoverDetailModal)),
+        tester.element(find.byType(MediaDetailModal)),
       )!;
 
       expect(find.text('1984'), findsOneWidget);
@@ -227,7 +227,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(DiscoverDetailModal)),
+        tester.element(find.byType(MediaDetailModal)),
       )!;
 
       expect(find.text('The Witcher 3: Wild Hunt'), findsOneWidget);
@@ -277,7 +277,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(DiscoverDetailModal)),
+        tester.element(find.byType(MediaDetailModal)),
       )!;
 
       expect(find.text('Unknown Title'), findsOneWidget);
@@ -306,7 +306,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(DiscoverDetailModal)),
+        tester.element(find.byType(MediaDetailModal)),
       )!;
 
       expect(find.text(l10n.detailGenres), findsOneWidget);
@@ -334,7 +334,7 @@ void main() {
       await tester.pump();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(DiscoverDetailModal)),
+        tester.element(find.byType(MediaDetailModal)),
       )!;
 
       expect(find.text(l10n.detailLoadingEnriched), findsOneWidget);
@@ -362,7 +362,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(DiscoverDetailModal)),
+        tester.element(find.byType(MediaDetailModal)),
       )!;
 
       expect(find.text(l10n.detailEnrichmentError), findsOneWidget);
@@ -384,7 +384,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(DiscoverDetailModal)),
+        tester.element(find.byType(MediaDetailModal)),
       )!;
 
       expect(find.text(l10n.detailGenres), findsOneWidget);
@@ -443,7 +443,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(DiscoverDetailModal)),
+        tester.element(find.byType(MediaDetailModal)),
       )!;
 
       expect(find.text(l10n.maturityRatingForAll), findsOneWidget);
@@ -460,7 +460,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(DiscoverDetailModal)),
+        tester.element(find.byType(MediaDetailModal)),
       )!;
 
       expect(find.text(l10n.maturityRatingMature), findsOneWidget);
@@ -477,7 +477,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(DiscoverDetailModal)),
+        tester.element(find.byType(MediaDetailModal)),
       )!;
 
       expect(find.text(l10n.maturityRatingForAll), findsNothing);
@@ -507,7 +507,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(DiscoverDetailModal)),
+        tester.element(find.byType(MediaDetailModal)),
       )!;
 
       expect(find.text(l10n.detailThemes), findsOneWidget);
@@ -533,7 +533,7 @@ void main() {
             .pump(); // don't settle — network image keeps pending timers
 
         final l10n = AppLocalizations.of(
-          tester.element(find.byType(DiscoverDetailModal)),
+          tester.element(find.byType(MediaDetailModal)),
         )!;
 
         expect(find.text(l10n.detailScreenshots), findsOneWidget);
@@ -798,8 +798,8 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        expect(find.byIcon(Icons.bookmark_border), findsOneWidget);
-        expect(find.byIcon(Icons.bookmark), findsNothing);
+        expect(find.byIcon(Icons.bookmark_add), findsOneWidget);
+        expect(find.byIcon(Icons.bookmark_added), findsNothing);
       });
 
       testWidgets('shows bookmark when entity is saved', (
@@ -829,8 +829,8 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        expect(find.byIcon(Icons.bookmark), findsOneWidget);
-        expect(find.byIcon(Icons.bookmark_border), findsNothing);
+        expect(find.byIcon(Icons.bookmark_added), findsOneWidget);
+        expect(find.byIcon(Icons.bookmark_add), findsNothing);
       });
 
       testWidgets('shows user sections when entity is saved', (
