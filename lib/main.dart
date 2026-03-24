@@ -50,11 +50,11 @@ void main() async {
         runApp(appProviderScope);
       }
     },
-    (error, stackTrace) async {
-      await Sentry.captureException(error, stackTrace: stackTrace);
-      // Rethrow so fatal startup errors are not silently swallowed
-      // ignore: only_throw_errors
-      throw error;
+    (error, stackTrace) {
+      // Fire-and-forget: don't await so the handler stays synchronous
+      Sentry.captureException(error, stackTrace: stackTrace);
+      // Rethrow preserving original stack trace so runZonedGuarded sees it
+      Error.throwWithStackTrace(error, stackTrace);
     },
   );
 }
