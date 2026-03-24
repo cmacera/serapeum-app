@@ -4,7 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/book.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/game.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:serapeum_app/core/localization/locale_provider.dart';
+import 'package:serapeum_app/features/discovery/data/providers/discovery_providers.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/orchestrator_response.dart';
+import 'package:serapeum_app/features/discovery/domain/entities/search_all_response.dart';
+import 'package:serapeum_app/features/discovery/domain/repositories/i_catalog_discover_repository.dart';
 import 'package:serapeum_app/features/discovery/presentation/providers/discovery_provider.dart';
 import 'package:serapeum_app/features/discovery/presentation/widgets/discover_result_view.dart';
 import 'package:serapeum_app/features/library/data/local/library_item.dart';
@@ -34,8 +39,11 @@ class _FakeLibrary extends Library {
   bool isInLibrary(String externalId, String mediaType) => false;
 }
 
+class _MockCatalogDiscoverRepository extends Mock
+    implements ICatalogDiscoverRepository {}
+
 class _FakeDiscoveryNotifier extends DiscoveryNotifier {
-  _FakeDiscoveryNotifier(super.ref, OrchestratorResponse? response) {
+  _FakeDiscoveryNotifier(super._ref, OrchestratorResponse? response) {
     state = DiscoveryStateData(
       state: DiscoverState.result,
       currentQuery: 'test query',
@@ -222,6 +230,39 @@ void main() {
       expect(find.text('Test Movie'), findsOneWidget);
       expect(find.text('Test Book'), findsOneWidget);
       expect(find.text('Test Game'), findsOneWidget);
+    });
+  });
+
+  group('DiscoveryNotifier Regression', () {
+    test('executeSearch calls repository exactly once', () async {
+      final mockRepository = _MockCatalogDiscoverRepository();
+      final container = ProviderContainer(
+        overrides: [
+          catalogDiscoverRepositoryProvider.overrideWithValue(mockRepository),
+          localeProvider.overrideWith((ref) => 'en'),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final notifier = container.read(discoveryProvider.notifier);
+
+      when(
+        () =>
+            mockRepository.orchestrate(any(), language: any(named: 'language')),
+      ).thenAnswer(
+        (_) async => const OrchestratorGeneral(
+          text: 'success',
+          data: SearchAllResponse(media: [], books: [], games: []),
+        ),
+      );
+
+      // Call executeSearch
+      await notifier.executeSearch('test query');
+
+      // Verify repository was called exactly once
+      verify(
+        () => mockRepository.orchestrate('test query', language: 'en'),
+      ).called(1);
     });
   });
 }
