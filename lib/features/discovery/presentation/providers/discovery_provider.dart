@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/localization/locale_provider.dart';
 import '../../../../core/network/failure.dart';
+import '../../data/providers/discovery_providers.dart';
 import '../../domain/entities/orchestrator_response.dart';
 import 'discover_history_provider.dart';
-import 'discover_query_provider.dart';
 
 enum DiscoverState { initial, searching, result }
 
@@ -117,21 +118,16 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
     );
 
     try {
-      // 2. Invalidate any cached result for this query so every explicit
-      //    search always hits the API fresh, regardless of keepAlive.
-      _ref.invalidate(discoverQueryProvider(trimmedQuery));
-      final response = await _ref.read(
-        discoverQueryProvider(trimmedQuery).future,
+      final repository = _ref.read(catalogDiscoverRepositoryProvider);
+      final language = _ref.read(localeProvider);
+      final response = await repository.orchestrate(
+        trimmedQuery,
+        language: language,
       );
 
       if (localEpoch != _requestEpoch) return null;
 
       _stopTimer();
-
-      if (response == null) {
-        state = DiscoveryStateData();
-        return null;
-      }
 
       // 3. Handle response states
       if (response is OrchestratorGeneral ||
@@ -147,7 +143,10 @@ class DiscoveryNotifier extends StateNotifier<DiscoveryStateData> {
         _ref
             .read(discoverHistoryProvider.notifier)
             .addQuery(trimmedQuery, resultJson: rawJson);
-        state = state.copyWith(state: DiscoverState.result);
+        state = state.copyWith(
+          state: DiscoverState.result,
+          cachedResponse: response,
+        );
       } else {
         // Refusal or Error: stay in initial, showing alert is handled by UI
         // We revert to initial state so the input bar and sentences are reset/handled
