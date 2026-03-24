@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -42,8 +43,8 @@ void main() async {
       if (sentryDsn.isNotEmpty) {
         await SentryFlutter.init((options) {
           options.dsn = sentryDsn;
-          // Capture 100% of transactions for performance monitoring in development
-          options.tracesSampleRate = 1.0;
+          // Capture 100% of transactions in debug; use a lower rate in release
+          options.tracesSampleRate = kDebugMode ? 1.0 : 0.2;
         }, appRunner: () => runApp(appProviderScope));
       } else {
         runApp(appProviderScope);
@@ -51,6 +52,9 @@ void main() async {
     },
     (error, stackTrace) async {
       await Sentry.captureException(error, stackTrace: stackTrace);
+      // Rethrow so fatal startup errors are not silently swallowed
+      // ignore: only_throw_errors
+      throw error;
     },
   );
 }
