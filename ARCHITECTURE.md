@@ -32,7 +32,8 @@ graph LR
     UserQuery --> DiscoveryProvider
     DiscoveryProvider --> SerapeumAPI[Serapeum API (Genkit)]
     SerapeumAPI --> JSONResponse
-    JSONResponse --> UI[UI Rendering (Rich Cards)]
+    JSONResponse --> UI[UI Rendering (Rich Cards + Feedback)]
+    UI --> FeedbackAPI[POST /feedback → Langfuse]
 ```
 
 ### B. Library (My Vault)
@@ -58,5 +59,6 @@ graph LR
 ## 4. ⚠️ Risks & Technical Debt
 
 - **Desktop Polish:** Flutter macOS requires specific tuning for keyboard shortcuts and window management.
-- **Model Download:** Managing large local LLM downloads in the "Settings" section requires robust background service handling to avoid OS termination.
 - **Orchestrator Cost:** Heavy usage of the "Discovery" feature depends on API costs (mitigated by Gemini Flash).
+- **Realm Generator:** `realm_generator 3.5.0` crashes on new files with nullable fields. New Realm models must be written manually (see `lib/features/library/data/local/library_item.dart` pattern).
+- **Observability:** Sentry integrated for crash reporting (SER-35). Langfuse collects AI response quality feedback via `traceId` (SER-97/SER-100).

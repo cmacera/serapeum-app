@@ -5,6 +5,7 @@ import '../../domain/entities/orchestrator_response.dart';
 import '../../domain/entities/search_all_response.dart';
 import '../providers/discovery_provider.dart';
 import '../widgets/chat_message_bubble.dart';
+import '../widgets/feedback_buttons.dart';
 import 'discover_result_list.dart';
 
 class DiscoverResultView extends ConsumerWidget {
@@ -39,24 +40,31 @@ class DiscoverResultView extends ConsumerWidget {
     AppLocalizations l10n,
   ) {
     return switch (data) {
-      OrchestratorMessage(text: final text) => ListView(
+      OrchestratorMessage(text: final text, traceId: final traceId) => ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
           ChatMessageBubble(text: query, isUser: true),
           const SizedBox(height: 16),
           ChatMessageBubble(text: text, isUser: false),
+          FeedbackButtons(traceId: traceId),
         ],
       ),
-      OrchestratorGeneral(text: final text, data: final searchData) =>
+      OrchestratorGeneral(
+        text: final text,
+        data: final searchData,
+        traceId: final traceId,
+      ) =>
         DiscoverResultList(
           query: query,
           assistantText: text,
           response: searchData,
+          traceId: traceId,
         ),
       OrchestratorSelection(
         books: final books,
         media: final media,
         games: final games,
+        traceId: final traceId,
       ) =>
         DiscoverResultList(
           query: query,
@@ -66,6 +74,7 @@ class DiscoverResultView extends ConsumerWidget {
             media: media ?? [],
             games: games ?? [],
           ),
+          traceId: traceId,
         ),
       OrchestratorError(error: final error, details: final details) => ListView(
         padding: const EdgeInsets.all(16.0),

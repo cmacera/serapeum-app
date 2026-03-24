@@ -55,6 +55,28 @@ class CatalogDiscoverRepository implements ICatalogDiscoverRepository {
         receiveTimeout: const Duration(minutes: 5),
       );
 
+  /// [_post] is not used here because the /feedback endpoint returns an empty
+  /// object on success — there is no [result] field to map to a domain type.
+  @override
+  Future<void> submitFeedback({
+    required String traceId,
+    required int score,
+  }) async {
+    try {
+      await _dio.post<dynamic>(
+        ApiConstants.feedback,
+        data: {
+          'data': {'traceId': traceId, 'score': score},
+        },
+      );
+    } on DioException catch (e) {
+      throw _mapDioError(e);
+    } catch (e) {
+      if (e is Failure) rethrow;
+      throw UnknownFailure(e.toString());
+    }
+  }
+
   Failure _mapDioError(DioException e) {
     return switch (e.type) {
       DioExceptionType.connectionError => const NetworkFailure(),

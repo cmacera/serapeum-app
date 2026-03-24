@@ -10,6 +10,7 @@ class OrchestratorResponseDto {
   static const String _kError = 'error';
   static const String _kDetails = 'details';
   static const String _kMessage = 'message';
+  static const String _kTraceId = 'traceId';
 
   static const String _kindRefusal = 'refusal';
   static const String _kindSearchResults = 'search_results';
@@ -30,10 +31,14 @@ class OrchestratorResponseDto {
     // 2. Handle structured Map response
     if (data is Map<String, dynamic>) {
       final kind = data[_kKind] as String?;
+      final traceId = data[_kTraceId] as String?;
 
       switch (kind) {
         case _kindRefusal:
-          return OrchestratorMessage(data[_kMessage] as String? ?? '');
+          return OrchestratorMessage(
+            data[_kMessage] as String? ?? '',
+            traceId: traceId,
+          );
 
         case _kindSearchResults:
         case _kindDiscovery:
@@ -49,7 +54,11 @@ class OrchestratorResponseDto {
             resultsMap,
           ).toDomain();
 
-          return OrchestratorGeneral(text: text, data: searchAllResponse);
+          return OrchestratorGeneral(
+            text: text,
+            data: searchAllResponse,
+            traceId: traceId,
+          );
 
         case _kindSelection:
           final rawResults = data[_kData];
@@ -65,12 +74,14 @@ class OrchestratorResponseDto {
             media: searchAllResponse.media,
             books: searchAllResponse.books,
             games: searchAllResponse.games,
+            traceId: traceId,
           );
 
         case _kindError:
           return OrchestratorError(
             error: data[_kError]?.toString() ?? _kUnknownError,
             details: data[_kDetails]?.toString(),
+            traceId: traceId,
           );
 
         default:
@@ -79,9 +90,13 @@ class OrchestratorResponseDto {
             return OrchestratorError(
               error: data[_kError]?.toString() ?? _kUnknownError,
               details: data[_kDetails]?.toString(),
+              traceId: traceId,
             );
           }
-          return OrchestratorMessage(data[_kMessage]?.toString() ?? '');
+          return OrchestratorMessage(
+            data[_kMessage]?.toString() ?? '',
+            traceId: traceId,
+          );
       }
     }
 

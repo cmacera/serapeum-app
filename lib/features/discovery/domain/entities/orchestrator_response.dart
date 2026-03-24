@@ -5,28 +5,35 @@ import 'media.dart';
 import 'search_all_response.dart';
 
 sealed class OrchestratorResponse extends Equatable {
-  const OrchestratorResponse();
+  final String? traceId;
+
+  const OrchestratorResponse({this.traceId});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [traceId];
 }
 
 class OrchestratorMessage extends OrchestratorResponse {
   final String text;
-  const OrchestratorMessage(this.text);
+  const OrchestratorMessage(this.text, {super.traceId});
 
   @override
-  List<Object?> get props => [text];
+  List<Object?> get props => [text, super.traceId];
 }
 
 class OrchestratorGeneral extends OrchestratorResponse {
   final String text;
   final SearchAllResponse data;
-  const OrchestratorGeneral({required this.text, required this.data});
+  const OrchestratorGeneral({
+    required this.text,
+    required this.data,
+    super.traceId,
+  });
 
   @override
-  List<Object?> get props => [text, data];
+  List<Object?> get props => [text, data, super.traceId];
 
+  // traceId is intentionally excluded — it is ephemeral and not stored in history.
   Map<String, dynamic> toJson() => {
     'kind': 'search_results',
     'message': text,
@@ -39,11 +46,17 @@ class OrchestratorSelection extends OrchestratorResponse {
   final List<Media>? media;
   final List<Game>? games;
 
-  const OrchestratorSelection({this.books, this.media, this.games});
+  const OrchestratorSelection({
+    this.books,
+    this.media,
+    this.games,
+    super.traceId,
+  });
 
   @override
-  List<Object?> get props => [books, media, games];
+  List<Object?> get props => [books, media, games, super.traceId];
 
+  // traceId is intentionally excluded — it is ephemeral and not stored in history.
   Map<String, dynamic> toJson() => {
     'kind': 'orchestrator_selection',
     'data': SearchAllResponse(
@@ -62,8 +75,8 @@ class OrchestratorError extends OrchestratorResponse {
 
   final String error;
   final String? details;
-  const OrchestratorError({required this.error, this.details});
+  const OrchestratorError({required this.error, this.details, super.traceId});
 
   @override
-  List<Object?> get props => [error, details];
+  List<Object?> get props => [error, details, super.traceId];
 }
