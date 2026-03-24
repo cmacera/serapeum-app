@@ -266,5 +266,13 @@
   "libraryMarkAsPlayed": "Mark as played",
   "@libraryMarkAsPlayed": {
     "description": "CTA label to mark a game as played"
+  },
+  "authInitializationError": "Connection failed. The app could not connect to the server. Please check your internet connection and try again.",
+  "@authInitializationError": {
+    "description": "Error message shown when the app fails to authenticate anonymously on startup"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Label for retry buttons"
   }
 }

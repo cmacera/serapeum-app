@@ -889,6 +889,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mark as played'**
   String get libraryMarkAsPlayed;
+
+  /// Error message shown when the app fails to authenticate anonymously on startup
+  ///
+  /// In en, this message translates to:
+  /// **'Connection failed. The app could not connect to the server. Please check your internet connection and try again.'**
+  String get authInitializationError;
+
+  /// Label for retry buttons
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
 }
 
 class _AppLocalizationsDelegate
