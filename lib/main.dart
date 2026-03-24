@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:serapeum_app/core/auth/splash_service.dart';
@@ -11,28 +14,44 @@ import 'core/constants/ui_constants.dart';
 import 'core/localization/locale_provider.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-  const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-  const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+      const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+      const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+      const sentryDsn = String.fromEnvironment('SENTRY_DSN');
 
-  if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
-    throw StateError(
-      'SUPABASE_URL and SUPABASE_ANON_KEY must be defined via --dart-define and cannot be empty.',
-    );
-  }
+      if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
+        throw StateError(
+          'SUPABASE_URL and SUPABASE_ANON_KEY must be defined via --dart-define and cannot be empty.',
+        );
+      }
 
-  // Initialize Supabase
-  await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+      // Initialize Supabase
+      await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
 
-  // Initialize authentication
-  final authSuccess = await SplashService.initialize();
+      // Initialize authentication
+      final authSuccess = await SplashService.initialize();
 
-  runApp(
-    ProviderScope(
-      overrides: [authInitSuccessProvider.overrideWith((ref) => authSuccess)],
-      child: const MyApp(),
-    ),
+      final appProviderScope = ProviderScope(
+        overrides: [authInitSuccessProvider.overrideWith((ref) => authSuccess)],
+        child: const MyApp(),
+      );
+
+      if (sentryDsn.isNotEmpty) {
+        await SentryFlutter.init((options) {
+          options.dsn = sentryDsn;
+          // Capture 100% of transactions for performance monitoring in development
+          options.tracesSampleRate = 1.0;
+        }, appRunner: () => runApp(appProviderScope));
+      } else {
+        runApp(appProviderScope);
+      }
+    },
+    (error, stackTrace) async {
+      await Sentry.captureException(error, stackTrace: stackTrace);
+    },
   );
 }
 
