@@ -5,7 +5,7 @@ import 'package:serapeum_app/features/discovery/domain/entities/book.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/game.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/orchestrator_response.dart';
-import 'package:serapeum_app/features/discovery/presentation/providers/discover_query_provider.dart';
+import 'package:serapeum_app/features/discovery/presentation/providers/discovery_provider.dart';
 import 'package:serapeum_app/features/discovery/presentation/widgets/discover_result_view.dart';
 import 'package:serapeum_app/features/library/data/local/library_item.dart';
 import 'package:serapeum_app/features/library/data/providers/library_provider.dart';
@@ -34,13 +34,23 @@ class _FakeLibrary extends Library {
   bool isInLibrary(String externalId, String mediaType) => false;
 }
 
+class _FakeDiscoveryNotifier extends DiscoveryNotifier {
+  _FakeDiscoveryNotifier(super.ref, OrchestratorResponse? response) {
+    state = DiscoveryStateData(
+      state: DiscoverState.result,
+      currentQuery: 'test query',
+      cachedResponse: response,
+    );
+  }
+}
+
 void main() {
   Widget createWidgetUnderTest({required OrchestratorResponse? response}) {
     return ProviderScope(
       overrides: [
-        discoverQueryProvider(
-          'test query',
-        ).overrideWith((ref) async => response),
+        discoveryProvider.overrideWith(
+          (ref) => _FakeDiscoveryNotifier(ref, response),
+        ),
         libraryProvider.overrideWith(_FakeLibrary.new),
       ],
       child: const MaterialApp(

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 import '../../domain/entities/orchestrator_response.dart';
 import '../../domain/entities/search_all_response.dart';
-import '../providers/discover_query_provider.dart';
 import '../providers/discovery_provider.dart';
 import '../widgets/chat_message_bubble.dart';
 import 'discover_result_list.dart';
@@ -23,42 +22,14 @@ class DiscoverResultView extends ConsumerWidget {
       return _buildFromData(context, cached, l10n);
     }
 
-    final responseAsync = ref.watch(discoverQueryProvider(query));
-
-    return responseAsync.when(
-      data: (data) {
-        if (data == null) {
-          return ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              ChatMessageBubble(text: query, isUser: true),
-              const SizedBox(height: 16),
-              Center(child: Text(l10n.noResponseFromOracle)),
-            ],
-          );
-        }
-
-        return _buildFromData(context, data, l10n);
-      },
-      loading: () => const Center(
-        child: Padding(
-          padding: EdgeInsets.all(32.0),
-          child: CircularProgressIndicator(),
-        ),
-      ),
-      error: (err, stack) {
-        debugPrint('Error querying the Oracle: $err\n$stack');
-        return ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: [
-            ChatMessageBubble(text: query, isUser: true),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ChatMessageBubble(text: l10n.queryFailed, isUser: false),
-            ),
-          ],
-        );
-      },
+    // Should not happen, but we provide a fallback error message
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        ChatMessageBubble(text: query, isUser: true),
+        const SizedBox(height: 16),
+        ChatMessageBubble(text: l10n.noResponseFromOracle, isUser: false),
+      ],
     );
   }
 
