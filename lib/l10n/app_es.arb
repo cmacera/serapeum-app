@@ -173,5 +173,10 @@
   "libraryMarkAsPlayed": "Marcar como jugado",
   "@libraryMarkAsPlayed": {
     "description": "CTA label to mark a game as played"
+  },
+  "authInitializationError": "Error de conexión. La aplicación no pudo conectarse al servidor. Por favor, comprueba tu conexión a internet e inténtalo de nuevo.",
+  "retry": "Reintentar",
+  "@retry": {
+    "description": "Etiqueta para botones de reintentar"
   }
 }

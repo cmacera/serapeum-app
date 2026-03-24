@@ -432,4 +432,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get libraryMarkAsPlayed => 'Mark as played';
+
+  @override
+  String get authInitializationError =>
+      'Connection failed. The app could not connect to the server. Please check your internet connection and try again.';
+
+  @override
+  String get retry => 'Retry';
 }
