@@ -31,13 +31,17 @@ class _FeedbackButtonsState extends ConsumerState<FeedbackButtons> {
           .read(catalogDiscoverRepositoryProvider)
           .submitFeedback(traceId: traceId, score: score);
     } catch (_) {
-      // Silent failure per acceptance criteria
+      // Revert so the user can retry — failure is still silent per AC.
+      setState(() => _submitted = null);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.traceId == null) return const SizedBox.shrink();
+    final traceId = widget.traceId;
+    if (traceId == null || traceId.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     final l10n = AppLocalizations.of(context)!;
     return Padding(
