@@ -5,7 +5,6 @@ import '../../domain/entities/orchestrator_response.dart';
 import '../../domain/entities/search_all_response.dart';
 import '../providers/discovery_provider.dart';
 import '../widgets/chat_message_bubble.dart';
-import '../widgets/feedback_buttons.dart';
 import 'discover_result_list.dart';
 
 class DiscoverResultView extends ConsumerWidget {
@@ -40,13 +39,12 @@ class DiscoverResultView extends ConsumerWidget {
     AppLocalizations l10n,
   ) {
     return switch (data) {
-      OrchestratorMessage(text: final text, traceId: final traceId) => ListView(
+      OrchestratorMessage(text: final text) => ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
           ChatMessageBubble(text: query, isUser: true),
           const SizedBox(height: 16),
           ChatMessageBubble(text: text, isUser: false),
-          FeedbackButtons(traceId: traceId),
         ],
       ),
       OrchestratorGeneral(
