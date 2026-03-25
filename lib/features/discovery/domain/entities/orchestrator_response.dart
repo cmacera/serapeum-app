@@ -9,6 +9,9 @@ sealed class OrchestratorResponse extends Equatable {
 
   const OrchestratorResponse({this.traceId});
 
+  // traceId IS included in equality so two responses with the same content but
+  // different trace IDs are considered distinct. It is excluded from toJson()
+  // on subclasses because it is ephemeral and must not be persisted to history.
   @override
   List<Object?> get props => [traceId];
 }

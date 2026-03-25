@@ -63,6 +63,7 @@ class CatalogDiscoverRepository implements ICatalogDiscoverRepository {
     required String traceId,
     required FeedbackScore score,
   }) async {
+    if (traceId.trim().isEmpty) return;
     try {
       await _dio.post<dynamic>(
         ApiConstants.feedback,

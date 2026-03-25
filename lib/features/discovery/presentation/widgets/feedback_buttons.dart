@@ -24,7 +24,7 @@ class _FeedbackButtonsState extends ConsumerState<FeedbackButtons> {
 
   Future<void> _submit(FeedbackScore score) async {
     final traceId = widget.traceId;
-    if (_submitted != null || traceId == null) return;
+    if (_submitted != null || traceId == null || traceId.trim().isEmpty) return;
     setState(() => _submitted = score);
     try {
       await ref
