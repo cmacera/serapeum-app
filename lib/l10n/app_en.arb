@@ -274,5 +274,13 @@
   "retry": "Retry",
   "@retry": {
     "description": "Label for retry buttons"
+  },
+  "feedbackGoodResponse": "Good response",
+  "@feedbackGoodResponse": {
+    "description": "Tooltip and semantic label for the thumbs-up feedback button"
+  },
+  "feedbackBadResponse": "Bad response",
+  "@feedbackBadResponse": {
+    "description": "Tooltip and semantic label for the thumbs-down feedback button"
   }
 }

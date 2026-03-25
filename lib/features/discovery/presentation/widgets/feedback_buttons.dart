@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:serapeum_app/l10n/app_localizations.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../data/providers/discovery_providers.dart';
+import '../../domain/entities/feedback_score.dart';
 
 /// Shows 👍/👎 buttons below an agent response bubble.
 ///
@@ -18,9 +20,9 @@ class FeedbackButtons extends ConsumerStatefulWidget {
 }
 
 class _FeedbackButtonsState extends ConsumerState<FeedbackButtons> {
-  int? _submitted; // null = not yet sent, 1 = thumbs up, 0 = thumbs down
+  FeedbackScore? _submitted;
 
-  Future<void> _submit(int score) async {
+  Future<void> _submit(FeedbackScore score) async {
     final traceId = widget.traceId;
     if (_submitted != null || traceId == null) return;
     setState(() => _submitted = score);
@@ -37,6 +39,7 @@ class _FeedbackButtonsState extends ConsumerState<FeedbackButtons> {
   Widget build(BuildContext context) {
     if (widget.traceId == null) return const SizedBox.shrink();
 
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, bottom: 4.0),
       child: Row(
@@ -46,23 +49,35 @@ class _FeedbackButtonsState extends ConsumerState<FeedbackButtons> {
             iconSize: 20,
             visualDensity: VisualDensity.compact,
             icon: Icon(
-              _submitted == 1 ? Icons.thumb_up : Icons.thumb_up_outlined,
-              color: _submitted == 1 ? AppColors.accent : Colors.white38,
-              semanticLabel: 'Good response',
+              _submitted == FeedbackScore.up
+                  ? Icons.thumb_up
+                  : Icons.thumb_up_outlined,
+              color: _submitted == FeedbackScore.up
+                  ? AppColors.accent
+                  : Colors.white38,
+              semanticLabel: l10n.feedbackGoodResponse,
             ),
-            onPressed: _submitted == null ? () => _submit(1) : null,
-            tooltip: 'Good response',
+            onPressed: _submitted == null
+                ? () => _submit(FeedbackScore.up)
+                : null,
+            tooltip: l10n.feedbackGoodResponse,
           ),
           IconButton(
             iconSize: 20,
             visualDensity: VisualDensity.compact,
             icon: Icon(
-              _submitted == 0 ? Icons.thumb_down : Icons.thumb_down_outlined,
-              color: _submitted == 0 ? AppColors.accent : Colors.white38,
-              semanticLabel: 'Bad response',
+              _submitted == FeedbackScore.down
+                  ? Icons.thumb_down
+                  : Icons.thumb_down_outlined,
+              color: _submitted == FeedbackScore.down
+                  ? AppColors.accent
+                  : Colors.white38,
+              semanticLabel: l10n.feedbackBadResponse,
             ),
-            onPressed: _submitted == null ? () => _submit(0) : null,
-            tooltip: 'Bad response',
+            onPressed: _submitted == null
+                ? () => _submit(FeedbackScore.down)
+                : null,
+            tooltip: l10n.feedbackBadResponse,
           ),
         ],
       ),

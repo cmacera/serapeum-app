@@ -4,6 +4,7 @@ import 'package:serapeum_app/core/network/failure.dart';
 import 'package:serapeum_app/features/discovery/data/models/catalog_search_input_dto.dart';
 import 'package:serapeum_app/features/discovery/data/models/orchestrator_response_dto.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/orchestrator_response.dart';
+import 'package:serapeum_app/features/discovery/domain/entities/feedback_score.dart';
 import 'package:serapeum_app/features/discovery/domain/repositories/i_catalog_discover_repository.dart';
 
 /// Concrete implementation of [ICatalogDiscoverRepository] using Dio.
@@ -60,13 +61,13 @@ class CatalogDiscoverRepository implements ICatalogDiscoverRepository {
   @override
   Future<void> submitFeedback({
     required String traceId,
-    required int score,
+    required FeedbackScore score,
   }) async {
     try {
       await _dio.post<dynamic>(
         ApiConstants.feedback,
         data: {
-          'data': {'traceId': traceId, 'score': score},
+          'data': {'traceId': traceId, 'score': score.value},
         },
       );
     } on DioException catch (e) {

@@ -31,7 +31,7 @@ class OrchestratorResponseDto {
     // 2. Handle structured Map response
     if (data is Map<String, dynamic>) {
       final kind = data[_kKind] as String?;
-      final traceId = data[_kTraceId] as String?;
+      final traceId = data[_kTraceId]?.toString();
 
       switch (kind) {
         case _kindRefusal:

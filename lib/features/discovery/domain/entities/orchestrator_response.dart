@@ -18,7 +18,7 @@ class OrchestratorMessage extends OrchestratorResponse {
   const OrchestratorMessage(this.text, {super.traceId});
 
   @override
-  List<Object?> get props => [text, super.traceId];
+  List<Object?> get props => [text, traceId];
 }
 
 class OrchestratorGeneral extends OrchestratorResponse {
@@ -31,7 +31,7 @@ class OrchestratorGeneral extends OrchestratorResponse {
   });
 
   @override
-  List<Object?> get props => [text, data, super.traceId];
+  List<Object?> get props => [text, data, traceId];
 
   // traceId is intentionally excluded — it is ephemeral and not stored in history.
   Map<String, dynamic> toJson() => {
@@ -54,7 +54,7 @@ class OrchestratorSelection extends OrchestratorResponse {
   });
 
   @override
-  List<Object?> get props => [books, media, games, super.traceId];
+  List<Object?> get props => [books, media, games, traceId];
 
   // traceId is intentionally excluded — it is ephemeral and not stored in history.
   Map<String, dynamic> toJson() => {
@@ -78,5 +78,5 @@ class OrchestratorError extends OrchestratorResponse {
   const OrchestratorError({required this.error, this.details, super.traceId});
 
   @override
-  List<Object?> get props => [error, details, super.traceId];
+  List<Object?> get props => [error, details, traceId];
 }

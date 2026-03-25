@@ -901,6 +901,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
+
+  /// Tooltip and semantic label for the thumbs-up feedback button
+  ///
+  /// In en, this message translates to:
+  /// **'Good response'**
+  String get feedbackGoodResponse;
+
+  /// Tooltip and semantic label for the thumbs-down feedback button
+  ///
+  /// In en, this message translates to:
+  /// **'Bad response'**
+  String get feedbackBadResponse;
 }
 
 class _AppLocalizationsDelegate
