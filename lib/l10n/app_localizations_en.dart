@@ -439,4 +439,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retry => 'Retry';
+
+  @override
+  String get feedbackGoodResponse => 'Good response';
+
+  @override
+  String get feedbackBadResponse => 'Bad response';
 }

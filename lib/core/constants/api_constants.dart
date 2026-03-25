@@ -41,4 +41,5 @@ class ApiConstants {
   static const String orchestratorFlow = '/orchestratorFlow';
   static const String getMovieDetail = '/getMovieDetail';
   static const String getTvDetail = '/getTvDetail';
+  static const String feedback = '/feedback';
 }

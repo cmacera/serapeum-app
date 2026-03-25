@@ -13,7 +13,7 @@ Serapeum is a Hybrid AI Client built with Flutter, designed with a "Local-First"
 - **State Management:** [Riverpod](https://riverpod.dev)
 - **Local Database:** [Realm](https://realm.io) (Reactive, High-performance)
 - **Authentication:** [Supabase](https://supabase.com)
-- **API Client:** [Dio](https://pub.dev/packages/dio) & [Retrofit](https://pub.dev/packages/retrofit)
+- **API Client:** [Dio](https://pub.dev/packages/dio)
 
 ## 🌐 Backend Integration
 
@@ -32,7 +32,7 @@ Detailed guides and specifications:
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Flutter SDK (>= 3.38.0)
+- Flutter SDK (>= 3.41.0)
 - Dart SDK (^3.11.0)
 
 ### Setup

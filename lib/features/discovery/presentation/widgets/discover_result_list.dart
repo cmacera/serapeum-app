@@ -19,17 +19,20 @@ import '../../../../shared/widgets/category_tab_bar.dart';
 import '../../../../shared/widgets/media_detail_modal.dart';
 import '../../../../shared/widgets/media_result_card.dart';
 import 'chat_message_bubble.dart';
+import 'feedback_buttons.dart';
 
 class DiscoverResultList extends ConsumerStatefulWidget {
   final String query;
   final String assistantText;
   final SearchAllResponse response;
+  final String? traceId;
 
   const DiscoverResultList({
     super.key,
     required this.query,
     required this.assistantText,
     required this.response,
+    this.traceId,
   });
 
   @override
@@ -210,6 +213,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
                 ChatMessageBubble(text: widget.query, isUser: true),
                 const SizedBox(height: 16),
                 ChatMessageBubble(text: widget.assistantText, isUser: false),
+                FeedbackButtons(traceId: widget.traceId),
                 if (!hasResults)
                   Padding(
                     padding: const EdgeInsets.all(16.0),

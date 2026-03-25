@@ -47,16 +47,22 @@ class DiscoverResultView extends ConsumerWidget {
           ChatMessageBubble(text: text, isUser: false),
         ],
       ),
-      OrchestratorGeneral(text: final text, data: final searchData) =>
+      OrchestratorGeneral(
+        text: final text,
+        data: final searchData,
+        traceId: final traceId,
+      ) =>
         DiscoverResultList(
           query: query,
           assistantText: text,
           response: searchData,
+          traceId: traceId,
         ),
       OrchestratorSelection(
         books: final books,
         media: final media,
         games: final games,
+        traceId: final traceId,
       ) =>
         DiscoverResultList(
           query: query,
@@ -66,6 +72,7 @@ class DiscoverResultView extends ConsumerWidget {
             media: media ?? [],
             games: games ?? [],
           ),
+          traceId: traceId,
         ),
       OrchestratorError(error: final error, details: final details) => ListView(
         padding: const EdgeInsets.all(16.0),

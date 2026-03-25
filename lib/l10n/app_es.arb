@@ -178,5 +178,13 @@
   "retry": "Reintentar",
   "@retry": {
     "description": "Etiqueta para botones de reintentar"
+  },
+  "feedbackGoodResponse": "Buena respuesta",
+  "@feedbackGoodResponse": {
+    "description": "Tooltip y etiqueta semántica del botón de valoración positiva"
+  },
+  "feedbackBadResponse": "Mala respuesta",
+  "@feedbackBadResponse": {
+    "description": "Tooltip y etiqueta semántica del botón de valoración negativa"
   }
 }

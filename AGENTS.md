@@ -31,6 +31,23 @@ flutter analyze
 flutter test
 ```
 
+### OpenAPI schema sync (after merging a `chore/sync-openapi-*` PR)
+
+```bash
+# 1. Pull latest main
+git pull origin main
+
+# 2. Regenerate reference models (requires Java 11+)
+./tools/run-codegen.sh
+
+# 3. Review lib/generated/models/ and update hand-written DTOs if needed
+# 4. Re-run build_runner
+dart run build_runner build --delete-conflicting-outputs
+
+# 5. Verify
+flutter analyze
+```
+
 ### Building for Production
 
 ```bash
@@ -40,6 +57,14 @@ flutter build macos --release
 # Build Android APK
 flutter build apk --release
 ```
+
+### Realm models — generator limitation
+
+`realm_generator 3.5.0` + `analyzer 7.6.0` + SDK 3.11.0 crashes on **new** files with nullable fields.
+
+- **Existing** `@RealmModel()` files: keep as-is, build_runner works fine.
+- **New** Realm models: write manually using `with RealmEntity, RealmObjectBase, RealmObject` — **no** `@RealmModel()`, **no** `part` directive.
+- Reference: `lib/features/library/data/local/library_item.dart`.
 
 ## 2. 📂 Project Structure & Naming
 
