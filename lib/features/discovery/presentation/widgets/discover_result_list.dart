@@ -197,7 +197,8 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     final hasBooks = data.books.isNotEmpty;
     final hasGames = data.games.isNotEmpty;
 
-    final hasResults = hasMedia || hasBooks || hasGames;
+    final hasResults =
+        hasMedia || hasBooks || hasGames || data.featured != null;
     final showTabs = [hasMedia, hasBooks, hasGames].where((b) => b).length >= 2;
 
     final cards = _buildFilteredCards(context, l10n, data, libraryItems);
