@@ -10,8 +10,10 @@ abstract class Env {
   @EnviedField(varName: 'SUPABASE_ANON_KEY', obfuscate: true)
   static final String supabaseAnonKey = _Env.supabaseAnonKey;
 
-  // obfuscate: true for consistency; the URL is not a secret but we keep all
-  // env fields obfuscated uniformly to avoid exposing build-time config in the binary.
-  @EnviedField(varName: 'SERAPEUM_API_URL', obfuscate: true)
-  static final String apiUrl = _Env.apiUrl;
+  // Not obfuscated — resolved at compile time via --dart-define so the
+  // launch config (local vs remote) controls which URL is used.
+  static const String apiUrl = String.fromEnvironment(
+    'SERAPEUM_API_URL',
+    defaultValue: 'http://localhost:3000',
+  );
 }

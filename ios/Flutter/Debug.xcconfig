@@ -1,2 +1,4 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
 #include "Generated.xcconfig"
+// Workaround: Xcode 26 does not expand $(TARGET_NAME) in PRODUCT_NAME (flutter/flutter#168297)
+PRODUCT_NAME = Runner
