@@ -1,4 +1,5 @@
 import 'package:envied/envied.dart';
+import 'package:flutter/foundation.dart';
 
 part 'env.g.dart';
 
@@ -16,4 +17,14 @@ abstract class Env {
     'SERAPEUM_API_URL',
     defaultValue: 'http://localhost:3000',
   );
+
+  /// Call once at app startup (e.g. in main()) to catch misconfigured builds.
+  static void validate() {
+    if (kReleaseMode && apiUrl == 'http://localhost:3000') {
+      throw StateError(
+        'SERAPEUM_API_URL is not set. '
+        'Pass --dart-define=SERAPEUM_API_URL=<url> when building for release.',
+      );
+    }
+  }
 }

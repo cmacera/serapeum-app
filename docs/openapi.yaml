@@ -7,7 +7,7 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local development
-  - url: https://api.serapeum.app
+  - url: https://serapeum-api.vercel.app
     description: Production
 components:
   securitySchemes:

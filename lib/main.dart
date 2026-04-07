@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:serapeum_app/core/auth/splash_service.dart';
 import 'core/auth/presentation/screens/auth_error_screen.dart';
 import 'core/auth/providers/auth_init_provider.dart';
+import 'core/env/env.dart';
 import 'core/router/app_router.dart';
 import 'core/constants/app_colors.dart';
 import 'core/constants/ui_constants.dart';
@@ -18,6 +19,7 @@ void main() async {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      Env.validate();
 
       const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
       const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:serapeum_app/core/auth/auth_service.dart';
+import 'package:serapeum_app/core/constants/api_constants.dart';
 import 'package:serapeum_app/core/network/auth_interceptor.dart';
 
 class MockAuthService extends Mock implements AuthService {}
@@ -46,7 +47,7 @@ void main() {
       final handler = MockRequestInterceptorHandler();
       final options = RequestOptions(
         path: '/api/test',
-        baseUrl: 'https://serapeum.app',
+        baseUrl: 'https://${ApiConstants.productionHost}',
       );
 
       interceptor.onRequest(options, handler);
@@ -88,7 +89,7 @@ void main() {
       final handler = MockRequestInterceptorHandler();
       final options = RequestOptions(
         path: '/api/test',
-        baseUrl: 'https://serapeum.app',
+        baseUrl: 'https://${ApiConstants.productionHost}',
       );
 
       interceptor.onRequest(options, handler);
@@ -130,7 +131,7 @@ void main() {
         final handler = MockErrorInterceptorHandler();
         final requestOptions = RequestOptions(
           path: '/api/test',
-          baseUrl: 'https://serapeum.app',
+          baseUrl: 'https://${ApiConstants.productionHost}',
         );
         final err = DioException(
           requestOptions: requestOptions,
@@ -162,7 +163,7 @@ void main() {
       final handler = MockErrorInterceptorHandler();
       final requestOptions = RequestOptions(
         path: '/api/test',
-        baseUrl: 'https://serapeum.app',
+        baseUrl: 'https://${ApiConstants.productionHost}',
       );
       final err = DioException(
         requestOptions: requestOptions,
@@ -186,7 +187,7 @@ void main() {
       final handler = MockErrorInterceptorHandler();
       final requestOptions = RequestOptions(
         path: '/api/test',
-        baseUrl: 'https://serapeum.app',
+        baseUrl: 'https://${ApiConstants.productionHost}',
       );
       final err = DioException(
         requestOptions: requestOptions,
@@ -217,7 +218,7 @@ void main() {
       final handler = MockErrorInterceptorHandler();
       final requestOptions = RequestOptions(
         path: '/api/test',
-        baseUrl: 'https://serapeum.app',
+        baseUrl: 'https://${ApiConstants.productionHost}',
       );
       final err = DioException(
         requestOptions: requestOptions,
@@ -238,7 +239,7 @@ void main() {
         final handler = MockErrorInterceptorHandler();
         final requestOptions = RequestOptions(
           path: '/api/test',
-          baseUrl: 'https://serapeum.app',
+          baseUrl: 'https://${ApiConstants.productionHost}',
           extra: {'auth_retry': true},
         );
         final err = DioException(
@@ -276,7 +277,7 @@ void main() {
       final handler = MockErrorInterceptorHandler();
       final requestOptions = RequestOptions(
         path: '/api/test',
-        baseUrl: 'https://serapeum.app',
+        baseUrl: 'https://${ApiConstants.productionHost}',
       );
       final err = DioException(
         requestOptions: requestOptions,
