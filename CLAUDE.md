@@ -126,7 +126,7 @@ Each feature follows: `data/` (repos, DTOs, local models, providers) → `domain
 
 ## Linear + GitHub workflow
 
-**Linear team:** Serapeum · **Project:** Serapeum APP · **Identifier prefix:** `SER`
+**Linear team:** DEVELOPMENT · **Project:** Serapeum APP · **Identifier prefix:** `DEV`
 
 ### Ticket state automation
 

@@ -18,7 +18,7 @@ import 'core/localization/locale_provider.dart';
 void main() async {
   runZonedGuarded(
     () async {
-      WidgetsFlutterBinding.ensureInitialized();
+      SentryWidgetsFlutterBinding.ensureInitialized();
       Env.validate();
 
       const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
