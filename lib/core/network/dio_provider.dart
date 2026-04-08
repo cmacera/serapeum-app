@@ -10,7 +10,7 @@ part 'dio_provider.g.dart';
 
 /// Riverpod provider for the configured [Dio] singleton.
 ///
-/// Base URL is loaded from [Env.apiUrl] (via envied).
+/// Base URL is loaded from [Env.apiUrl] (via String.fromEnvironment / --dart-define).
 /// Timeouts are defined in [ApiConstants].
 @Riverpod(keepAlive: true)
 Dio dio(DioRef ref) {

@@ -5,6 +5,8 @@ part 'env.g.dart';
 
 @Envied(path: '.env')
 abstract class Env {
+  static const String _localhostApiUrl = 'http://localhost:3000';
+
   @EnviedField(varName: 'SUPABASE_URL', obfuscate: true)
   static final String supabaseUrl = _Env.supabaseUrl;
 
@@ -15,12 +17,12 @@ abstract class Env {
   // launch config (local vs remote) controls which URL is used.
   static const String apiUrl = String.fromEnvironment(
     'SERAPEUM_API_URL',
-    defaultValue: 'http://localhost:3000',
+    defaultValue: _localhostApiUrl,
   );
 
   /// Call once at app startup (e.g. in main()) to catch misconfigured builds.
   static void validate() {
-    if (kReleaseMode && apiUrl == 'http://localhost:3000') {
+    if (kReleaseMode && apiUrl == _localhostApiUrl) {
       throw StateError(
         'SERAPEUM_API_URL is not set. '
         'Pass --dart-define=SERAPEUM_API_URL=<url> when building for release.',
