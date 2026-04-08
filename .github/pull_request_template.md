@@ -2,7 +2,7 @@
 
 <!-- Describe your changes in detail -->
 
-Closes SER-
+Closes DEV-
 
 ## Type of Change
 
@@ -14,7 +14,7 @@ Closes SER-
 
 ## Checklist
 
-- [ ] Title starts with `[SER-<ID>]`
+- [ ] Title starts with `[DEV-<ID>]`
 - [ ] I have performed a self-review of my code
 - [ ] `flutter analyze` passes with 0 warnings
 - [ ] `dart run build_runner` has been run (if applicable)

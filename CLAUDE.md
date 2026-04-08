@@ -112,7 +112,7 @@ Each feature follows: `data/` (repos, DTOs, local models, providers) → `domain
 | Lint | `flutter analyze` (0 warnings) |
 | Format | `dart format .` |
 | Tests | `flutter test` |
-| PR title | Must match `/^\[SER-\d+\]/` |
+| PR title | Must match `/^\[DEV-\d+\]/` |
 
 ---
 
@@ -120,7 +120,7 @@ Each feature follows: `data/` (repos, DTOs, local models, providers) → `domain
 
 - Format: `type(scope): description` (Conventional Commits)
 - **Never** add `Co-Authored-By: Claude` to commit messages
-- `[SER-XX]` prefix belongs only in the PR/squash-merge title, **not** in local commits
+- `[DEV-XX]` prefix belongs only in the PR/squash-merge title, **not** in local commits
 
 ---
 
@@ -137,17 +137,17 @@ Each feature follows: `data/` (repos, DTOs, local models, providers) → `domain
 
 1. Create a ticket in Linear (MCP or UI): assign to self, project = Serapeum APP.
 2. **Move ticket to `In Progress`** (automatic — no need to ask).
-3. Create a branch: `git checkout -b feat/<short-description>` (branch name does NOT need the SER-XX prefix).
-4. Implement, commit with conventional commits (no `[SER-XX]` prefix — commitlint rejects it).
-5. Create the PR: title must start with `[SER-XX]` or `SER-XX` — both accepted by `check-pr-title` CI check. Body should include `Closes SER-XX`.
+3. Create a branch: `git checkout -b feat/<short-description>` (branch name does NOT need the DEV-XX prefix).
+4. Implement, commit with conventional commits (no `[DEV-XX]` prefix — commitlint rejects it).
+5. Create the PR: title must start with `[DEV-XX]` or `DEV-XX`. Body should include `Closes DEV-XX`.
 6. Move ticket to `In Review` when the PR is open (explicit request required).
 
 ### PR title format (enforced by CI)
 
 Both formats accepted:
 ```text
-[SER-XX] type(scope): description
-SER-XX type(scope): description
+[DEV-XX] type(scope): description
+DEV-XX type(scope): description
 ```
 
 ### Available Linear states

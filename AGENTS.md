@@ -98,8 +98,8 @@ lib/
 ### Step 1: Linear & Branching
 
 1.  **Select Ticket:** Pick or create a ticket from Linear (Project: Serapeum APP).
-2.  **Create Branch:** Must follow format: `SER-<ID>/<short-description>`
-    *   Example: `SER-42/implement-realm-schema`
+2.  **Create Branch:** Must follow format: `DEV-<ID>/<short-description>`
+    *   Example: `DEV-42/implement-realm-schema`
 
 ### Step 2: Coding & Commits
 
@@ -111,8 +111,8 @@ lib/
 ### Step 3: Pull Request (PR) Checklist
 
 When creating a PR, a **template** will be automatically applied. Ensure you:
-- [ ] Title starts with `[SER-<ID>]`.
-- [ ] Description includes `Closes SER-<ID>`.
+- [ ] Title starts with `[DEV-<ID>]`.
+- [ ] Description includes `Closes DEV-<ID>`.
 - [ ] `flutter analyze` passes with 0 warnings.
 - [ ] `dart run build_runner` has been run and committed (if schemas changed).
 - [ ] UI changes have been verified on both Mobile and macOS layouts.
