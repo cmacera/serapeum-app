@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
@@ -50,17 +51,16 @@ class _ParticleBackgroundState extends State<ParticleBackground>
       }
     });
 
-    _accelerometerSubscription = accelerometerEventStream().listen(
-      (AccelerometerEvent event) {
+    if (Platform.isAndroid || Platform.isIOS) {
+      _accelerometerSubscription = accelerometerEventStream().listen((
+        AccelerometerEvent event,
+      ) {
         if (mounted) {
           _accelX = event.x;
           _accelY = event.y;
         }
-      },
-      onError: (error) {
-        // Ignore sensor stream errors (e.g. desktop environment without sensors)
-      },
-    );
+      }, onError: (_) {});
+    }
   }
 
   /// Spawns the initial batch of particles. Must be called after layout
