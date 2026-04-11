@@ -6,13 +6,15 @@ import 'package:serapeum_app/features/library/data/local/library_item.dart';
 part 'realm_provider.g.dart';
 
 /// Increment this when any Realm model changes (fields added/removed/renamed).
-const int _kSchemaVersion = 4;
+/// Exposed so backup logic can validate schema compatibility without duplicating
+/// the version number.
+const int kRealmSchemaVersion = 4;
 
 @Riverpod(keepAlive: true)
 Realm realm(RealmRef ref) {
   final config = Configuration.local(
     [DiscoverHistoryItem.schema, LibraryItem.schema],
-    schemaVersion: _kSchemaVersion,
+    schemaVersion: kRealmSchemaVersion,
     migrationCallback: (migration, oldSchemaVersion) {
       if (oldSchemaVersion < 2) {
         // LibraryItem added in schema version 2.
