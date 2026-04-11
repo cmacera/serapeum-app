@@ -296,6 +296,14 @@
   "@backupEmailHint": {
     "description": "Placeholder hint in the email input field"
   },
+  "backupEmailRequired": "Email is required",
+  "@backupEmailRequired": {
+    "description": "Shown when the email field is submitted empty"
+  },
+  "backupEmailInvalid": "Enter a valid email address",
+  "@backupEmailInvalid": {
+    "description": "Shown when the email field contains a malformed address"
+  },
   "backupActivateButton": "Activate backup",
   "@backupActivateButton": {
     "description": "Button to upgrade anonymous account to email and activate backup"
@@ -326,7 +334,7 @@
   "@backupNoBackupYet": {
     "description": "Shown when no backup exists for the current user"
   },
-  "backupLastBackup": "Last backup: {date} · {count} items",
+  "backupLastBackup": "Last backup: {date} · {count, plural, =1{1 item} other{{count} items}}",
   "@backupLastBackup": {
     "description": "Shows date and item count of the last backup",
     "placeholders": {
@@ -354,7 +362,7 @@
   "@backupRestoreConfirmTitle": {
     "description": "Title of the restore confirmation dialog"
   },
-  "backupRestoreConfirmMessage": "This will replace your current library ({localCount} items) with the backup from {date} ({backupCount} items). This cannot be undone.",
+  "backupRestoreConfirmMessage": "This will replace your current library ({localCount, plural, =1{1 item} other{{localCount} items}}) with the backup from {date} ({backupCount, plural, =1{1 item} other{{backupCount} items}}). This cannot be undone.",
   "@backupRestoreConfirmMessage": {
     "description": "Body of the restore confirmation dialog",
     "placeholders": {

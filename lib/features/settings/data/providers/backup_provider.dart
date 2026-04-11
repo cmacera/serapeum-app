@@ -97,8 +97,11 @@ class BackupNotifier extends _$BackupNotifier {
   Future<void> _loadMetadataAndSetReady(String email) async {
     try {
       final metadata = await _repo.getBackupMetadata();
+      // Guard: user may have signed out while awaiting — don't overwrite state.
+      if (state is BackupAnonymous) return;
       state = BackupReady(email: email, lastBackup: metadata);
     } catch (e) {
+      if (state is BackupAnonymous) return;
       debugPrint('BackupNotifier: failed to load metadata — $e');
       state = BackupReady(email: email);
     }
@@ -148,8 +151,10 @@ class BackupNotifier extends _$BackupNotifier {
       final realm = ref.read(realmProvider);
       await _repo.createBackup(realm);
       final metadata = await _repo.getBackupMetadata();
+      if (state is BackupAnonymous) return;
       state = BackupReady(email: current.email, lastBackup: metadata);
     } catch (e) {
+      if (state is BackupAnonymous) return;
       state = BackupError(kind: _classifyError(e), previous: current);
     }
   }
@@ -171,8 +176,10 @@ class BackupNotifier extends _$BackupNotifier {
       // Invalidate so Library screen reflects restored items immediately.
       ref.invalidate(libraryProvider);
       final metadata = await _repo.getBackupMetadata();
+      if (state is BackupAnonymous) return;
       state = BackupReady(email: current.email, lastBackup: metadata);
     } catch (e) {
+      if (state is BackupAnonymous) return;
       state = BackupError(kind: _classifyError(e), previous: current);
     }
   }

@@ -932,6 +932,18 @@ abstract class AppLocalizations {
   /// **'your@email.com'**
   String get backupEmailHint;
 
+  /// Shown when the email field is submitted empty
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get backupEmailRequired;
+
+  /// Shown when the email field contains a malformed address
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get backupEmailInvalid;
+
   /// Button to upgrade anonymous account to email and activate backup
   ///
   /// In en, this message translates to:
@@ -971,7 +983,7 @@ abstract class AppLocalizations {
   /// Shows date and item count of the last backup
   ///
   /// In en, this message translates to:
-  /// **'Last backup: {date} · {count} items'**
+  /// **'Last backup: {date} · {count, plural, =1{1 item} other{{count} items}}'**
   String backupLastBackup(String date, int count);
 
   /// Button to create a new backup
@@ -1007,7 +1019,7 @@ abstract class AppLocalizations {
   /// Body of the restore confirmation dialog
   ///
   /// In en, this message translates to:
-  /// **'This will replace your current library ({localCount} items) with the backup from {date} ({backupCount} items). This cannot be undone.'**
+  /// **'This will replace your current library ({localCount, plural, =1{1 item} other{{localCount} items}}) with the backup from {date} ({backupCount, plural, =1{1 item} other{{backupCount} items}}). This cannot be undone.'**
   String backupRestoreConfirmMessage(
     int localCount,
     String date,

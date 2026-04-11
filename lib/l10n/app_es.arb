@@ -191,6 +191,8 @@
   "backupSectionTitle": "Copia de seguridad",
   "backupSectionSubtitle": "Guarda tu biblioteca en la nube para restaurarla en otro dispositivo.",
   "backupEmailHint": "tu@email.com",
+  "backupEmailRequired": "El correo electrónico es obligatorio",
+  "backupEmailInvalid": "Introduce una dirección de correo válida",
   "backupActivateButton": "Activar copia de seguridad",
   "backupSignInButton": "Iniciar sesión",
   "backupAwaitingTitle": "Revisa tu correo",
@@ -207,7 +209,7 @@
     }
   },
   "backupNoBackupYet": "No se encontró ninguna copia de seguridad.",
-  "backupLastBackup": "Última copia: {date} · {count} elementos",
+  "backupLastBackup": "Última copia: {date} · {count, plural, =1{1 elemento} other{{count} elementos}}",
   "@backupLastBackup": {
     "placeholders": {
       "date": { "type": "String" },
@@ -219,7 +221,7 @@
   "backupInProgressCreating": "Creando copia de seguridad…",
   "backupInProgressRestoring": "Restaurando copia de seguridad…",
   "backupRestoreConfirmTitle": "¿Restaurar copia de seguridad?",
-  "backupRestoreConfirmMessage": "Esto reemplazará tu biblioteca actual ({localCount} elementos) con la copia del {date} ({backupCount} elementos). Esta acción no se puede deshacer.",
+  "backupRestoreConfirmMessage": "Esto reemplazará tu biblioteca actual ({localCount, plural, =1{1 elemento} other{{localCount} elementos}}) con la copia del {date} ({backupCount, plural, =1{1 elemento} other{{backupCount} elementos}}). Esta acción no se puede deshacer.",
   "@backupRestoreConfirmMessage": {
     "placeholders": {
       "localCount": { "type": "int" },

@@ -152,12 +152,12 @@ class _AnonymousCardState extends ConsumerState<_AnonymousCard> {
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return l10n.backupEmailHint;
+                  return l10n.backupEmailRequired;
                 }
                 if (!RegExp(
                   r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
                 ).hasMatch(value.trim())) {
-                  return l10n.backupEmailHint;
+                  return l10n.backupEmailInvalid;
                 }
                 return null;
               },

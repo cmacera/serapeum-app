@@ -460,6 +460,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get backupEmailHint => 'tu@email.com';
 
   @override
+  String get backupEmailRequired => 'El correo electrónico es obligatorio';
+
+  @override
+  String get backupEmailInvalid => 'Introduce una dirección de correo válida';
+
+  @override
   String get backupActivateButton => 'Activar copia de seguridad';
 
   @override
@@ -483,7 +489,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String backupLastBackup(String date, int count) {
-    return 'Última copia: $date · $count elementos';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count elementos',
+      one: '1 elemento',
+    );
+    return 'Última copia: $date · $_temp0';
   }
 
   @override
@@ -507,7 +519,19 @@ class AppLocalizationsEs extends AppLocalizations {
     String date,
     int backupCount,
   ) {
-    return 'Esto reemplazará tu biblioteca actual ($localCount elementos) con la copia del $date ($backupCount elementos). Esta acción no se puede deshacer.';
+    String _temp0 = intl.Intl.pluralLogic(
+      localCount,
+      locale: localeName,
+      other: '$localCount elementos',
+      one: '1 elemento',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      backupCount,
+      locale: localeName,
+      other: '$backupCount elementos',
+      one: '1 elemento',
+    );
+    return 'Esto reemplazará tu biblioteca actual ($_temp0) con la copia del $date ($_temp1). Esta acción no se puede deshacer.';
   }
 
   @override

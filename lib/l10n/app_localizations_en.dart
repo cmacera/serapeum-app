@@ -457,6 +457,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupEmailHint => 'your@email.com';
 
   @override
+  String get backupEmailRequired => 'Email is required';
+
+  @override
+  String get backupEmailInvalid => 'Enter a valid email address';
+
+  @override
   String get backupActivateButton => 'Activate backup';
 
   @override
@@ -480,7 +486,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String backupLastBackup(String date, int count) {
-    return 'Last backup: $date · $count items';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return 'Last backup: $date · $_temp0';
   }
 
   @override
@@ -504,7 +516,19 @@ class AppLocalizationsEn extends AppLocalizations {
     String date,
     int backupCount,
   ) {
-    return 'This will replace your current library ($localCount items) with the backup from $date ($backupCount items). This cannot be undone.';
+    String _temp0 = intl.Intl.pluralLogic(
+      localCount,
+      locale: localeName,
+      other: '$localCount items',
+      one: '1 item',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      backupCount,
+      locale: localeName,
+      other: '$backupCount items',
+      one: '1 item',
+    );
+    return 'This will replace your current library ($_temp0) with the backup from $date ($_temp1). This cannot be undone.';
   }
 
   @override
