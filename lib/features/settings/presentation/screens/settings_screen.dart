@@ -120,6 +120,7 @@ class _AnonymousCard extends ConsumerStatefulWidget {
 class _AnonymousCardState extends ConsumerState<_AnonymousCard> {
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -146,6 +147,7 @@ class _AnonymousCardState extends ConsumerState<_AnonymousCard> {
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               autocorrect: false,
+              enabled: !_isSubmitting,
               decoration: InputDecoration(
                 hintText: l10n.backupEmailHint,
                 border: const OutlineInputBorder(),
@@ -165,7 +167,7 @@ class _AnonymousCardState extends ConsumerState<_AnonymousCard> {
             ),
             const SizedBox(height: 12),
             FilledButton(
-              onPressed: _submit,
+              onPressed: _isSubmitting ? null : _submit,
               child: Text(l10n.backupSignInButton),
             ),
           ],
@@ -174,11 +176,16 @@ class _AnonymousCardState extends ConsumerState<_AnonymousCard> {
     );
   }
 
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      ref
+  Future<void> _submit() async {
+    if (_isSubmitting) return;
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isSubmitting = true);
+    try {
+      await ref
           .read(backupNotifierProvider.notifier)
           .signIn(_emailController.text.trim());
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 }
@@ -434,7 +441,7 @@ class _ErrorCard extends ConsumerWidget {
           OutlinedButton(
             onPressed: () =>
                 ref.read(backupNotifierProvider.notifier).dismissError(),
-            child: Text(l10n.retry),
+            child: Text(l10n.ok),
           ),
         ],
       ),
