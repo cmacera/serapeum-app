@@ -92,8 +92,14 @@ class BackupRepository implements IBackupRepository {
       final bytes = await _supabase.storage
           .from(_bucket)
           .download(_backupPath(userId));
-      final json = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
-      return BackupMetadata.fromJson(json);
+      try {
+        final json = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+        return BackupMetadata.fromJson(json);
+      } on FormatException {
+        throw const BackupParseException();
+      } on TypeError {
+        throw const BackupParseException();
+      }
     } on StorageException catch (e) {
       if (e.statusCode == '404' || e.message.contains('not found')) {
         return null;
@@ -122,7 +128,8 @@ class BackupRepository implements IBackupRepository {
       throw const BackupParseException();
     }
 
-    final backupSchema = json['schema_version'] as int?;
+    final schemaRaw = json['schema_version'];
+    final backupSchema = schemaRaw is int ? schemaRaw : null;
     if (backupSchema == null || backupSchema > kRealmSchemaVersion) {
       throw BackupIncompatibleSchemaException(
         backupVersion: backupSchema,
@@ -137,6 +144,8 @@ class BackupRepository implements IBackupRepository {
       items = rawItems
           .map((e) => _itemFromJson(e as Map<String, dynamic>))
           .toList();
+    } on FormatException {
+      throw const BackupParseException();
     } on TypeError {
       throw const BackupParseException();
     }
