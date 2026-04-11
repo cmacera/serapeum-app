@@ -186,5 +186,56 @@
   "feedbackBadResponse": "Mala respuesta",
   "@feedbackBadResponse": {
     "description": "Tooltip y etiqueta semántica del botón de valoración negativa"
-  }
+  },
+
+  "backupSectionTitle": "Copia de seguridad",
+  "backupSectionSubtitle": "Guarda tu biblioteca en la nube para restaurarla en otro dispositivo.",
+  "backupEmailHint": "tu@email.com",
+  "backupEmailRequired": "El correo electrónico es obligatorio",
+  "backupEmailInvalid": "Introduce una dirección de correo válida",
+  "backupActivateButton": "Activar copia de seguridad",
+  "backupSignInButton": "Iniciar sesión",
+  "backupAwaitingTitle": "Revisa tu correo",
+  "backupAwaitingSubtitle": "Te hemos enviado un enlace a {email}. Tócalo para confirmar y continuar.",
+  "@backupAwaitingSubtitle": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "backupSignedInAs": "Sesión iniciada como {email}",
+  "@backupSignedInAs": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "backupNoBackupYet": "No se encontró ninguna copia de seguridad.",
+  "backupLastBackup": "Última copia: {date} · {count, plural, =1{1 elemento} other{{count} elementos}}",
+  "@backupLastBackup": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "backupCreateButton": "Crear copia de seguridad",
+  "backupRestoreButton": "Restaurar copia de seguridad",
+  "backupInProgressCreating": "Creando copia de seguridad…",
+  "backupInProgressRestoring": "Restaurando copia de seguridad…",
+  "backupRestoreConfirmTitle": "¿Restaurar copia de seguridad?",
+  "backupRestoreConfirmMessage": "Esto reemplazará tu biblioteca actual ({localCount, plural, =1{1 elemento} other{{localCount} elementos}}) con la copia del {date} ({backupCount, plural, =1{1 elemento} other{{backupCount} elementos}}). Esta acción no se puede deshacer.",
+  "@backupRestoreConfirmMessage": {
+    "placeholders": {
+      "localCount": { "type": "int" },
+      "date": { "type": "String" },
+      "backupCount": { "type": "int" }
+    }
+  },
+  "backupRestoreConfirmAction": "Restaurar",
+  "backupErrorTitle": "Error en la copia de seguridad",
+  "backupSignOut": "Cerrar sesión",
+  "backupSignOutConfirmTitle": "¿Cerrar sesión de la copia?",
+  "backupSignOutConfirmMessage": "No podrás crear ni restaurar copias de seguridad hasta que vuelvas a iniciar sesión.",
+  "backupErrorNetwork": "Error de red. Comprueba tu conexión a Internet e inténtalo de nuevo.",
+  "backupErrorNotAuthenticated": "No has iniciado sesión. Inicia sesión para usar la copia de seguridad.",
+  "backupErrorIncompatibleSchema": "Esta copia fue creada con una versión más reciente de la app y no se puede restaurar.",
+  "backupErrorGeneric": "Algo ha salido mal. Por favor, inténtalo de nuevo."
 }

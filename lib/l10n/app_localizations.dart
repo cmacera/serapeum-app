@@ -913,6 +913,172 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bad response'**
   String get feedbackBadResponse;
+
+  /// Title for the cloud backup section in Settings
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Backup'**
+  String get backupSectionTitle;
+
+  /// Subtitle explaining the cloud backup feature
+  ///
+  /// In en, this message translates to:
+  /// **'Back up your library to the cloud to restore it on another device.'**
+  String get backupSectionSubtitle;
+
+  /// Placeholder hint in the email input field
+  ///
+  /// In en, this message translates to:
+  /// **'your@email.com'**
+  String get backupEmailHint;
+
+  /// Shown when the email field is submitted empty
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get backupEmailRequired;
+
+  /// Shown when the email field contains a malformed address
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get backupEmailInvalid;
+
+  /// Button to upgrade anonymous account to email and activate backup
+  ///
+  /// In en, this message translates to:
+  /// **'Activate backup'**
+  String get backupActivateButton;
+
+  /// Button to sign in with email to enable cloud backup
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get backupSignInButton;
+
+  /// Heading shown while waiting for magic link confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email'**
+  String get backupAwaitingTitle;
+
+  /// Instructions shown while waiting for magic link
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a link to {email}. Tap it to confirm and continue.'**
+  String backupAwaitingSubtitle(String email);
+
+  /// Label showing the email of the authenticated user
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in as {email}'**
+  String backupSignedInAs(String email);
+
+  /// Shown when no backup exists for the current user
+  ///
+  /// In en, this message translates to:
+  /// **'No backup found.'**
+  String get backupNoBackupYet;
+
+  /// Shows date and item count of the last backup
+  ///
+  /// In en, this message translates to:
+  /// **'Last backup: {date} · {count, plural, =1{1 item} other{{count} items}}'**
+  String backupLastBackup(String date, int count);
+
+  /// Button to create a new backup
+  ///
+  /// In en, this message translates to:
+  /// **'Create backup'**
+  String get backupCreateButton;
+
+  /// Button to restore from the existing backup
+  ///
+  /// In en, this message translates to:
+  /// **'Restore backup'**
+  String get backupRestoreButton;
+
+  /// Status label while a backup is being created
+  ///
+  /// In en, this message translates to:
+  /// **'Creating backup…'**
+  String get backupInProgressCreating;
+
+  /// Status label while a backup is being restored
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring backup…'**
+  String get backupInProgressRestoring;
+
+  /// Title of the restore confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Restore backup?'**
+  String get backupRestoreConfirmTitle;
+
+  /// Body of the restore confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This will replace your current library ({localCount, plural, =1{1 item} other{{localCount} items}}) with the backup from {date} ({backupCount, plural, =1{1 item} other{{backupCount} items}}). This cannot be undone.'**
+  String backupRestoreConfirmMessage(
+    int localCount,
+    String date,
+    int backupCount,
+  );
+
+  /// Confirm button label in the restore dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get backupRestoreConfirmAction;
+
+  /// Title shown when a backup or restore operation fails
+  ///
+  /// In en, this message translates to:
+  /// **'Backup error'**
+  String get backupErrorTitle;
+
+  /// Button to sign out from the backup account and return to anonymous session
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get backupSignOut;
+
+  /// Title of the sign-out confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out of backup?'**
+  String get backupSignOutConfirmTitle;
+
+  /// Body of the sign-out confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'You will no longer be able to create or restore backups until you sign in again.'**
+  String get backupSignOutConfirmMessage;
+
+  /// Shown when a backup/restore fails due to network issues
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Check your internet connection and try again.'**
+  String get backupErrorNetwork;
+
+  /// Shown when a backup/restore is attempted without a valid session
+  ///
+  /// In en, this message translates to:
+  /// **'You are not signed in. Please sign in to use cloud backup.'**
+  String get backupErrorNotAuthenticated;
+
+  /// Shown when the backup schema version does not match the app
+  ///
+  /// In en, this message translates to:
+  /// **'This backup was created with a newer version of the app and cannot be restored.'**
+  String get backupErrorIncompatibleSchema;
+
+  /// Fallback error message for backup/restore failures
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get backupErrorGeneric;
 }
 
 class _AppLocalizationsDelegate

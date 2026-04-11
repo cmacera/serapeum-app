@@ -445,4 +445,120 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get feedbackBadResponse => 'Bad response';
+
+  @override
+  String get backupSectionTitle => 'Cloud Backup';
+
+  @override
+  String get backupSectionSubtitle =>
+      'Back up your library to the cloud to restore it on another device.';
+
+  @override
+  String get backupEmailHint => 'your@email.com';
+
+  @override
+  String get backupEmailRequired => 'Email is required';
+
+  @override
+  String get backupEmailInvalid => 'Enter a valid email address';
+
+  @override
+  String get backupActivateButton => 'Activate backup';
+
+  @override
+  String get backupSignInButton => 'Sign in';
+
+  @override
+  String get backupAwaitingTitle => 'Check your email';
+
+  @override
+  String backupAwaitingSubtitle(String email) {
+    return 'We sent a link to $email. Tap it to confirm and continue.';
+  }
+
+  @override
+  String backupSignedInAs(String email) {
+    return 'Signed in as $email';
+  }
+
+  @override
+  String get backupNoBackupYet => 'No backup found.';
+
+  @override
+  String backupLastBackup(String date, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return 'Last backup: $date · $_temp0';
+  }
+
+  @override
+  String get backupCreateButton => 'Create backup';
+
+  @override
+  String get backupRestoreButton => 'Restore backup';
+
+  @override
+  String get backupInProgressCreating => 'Creating backup…';
+
+  @override
+  String get backupInProgressRestoring => 'Restoring backup…';
+
+  @override
+  String get backupRestoreConfirmTitle => 'Restore backup?';
+
+  @override
+  String backupRestoreConfirmMessage(
+    int localCount,
+    String date,
+    int backupCount,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      localCount,
+      locale: localeName,
+      other: '$localCount items',
+      one: '1 item',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      backupCount,
+      locale: localeName,
+      other: '$backupCount items',
+      one: '1 item',
+    );
+    return 'This will replace your current library ($_temp0) with the backup from $date ($_temp1). This cannot be undone.';
+  }
+
+  @override
+  String get backupRestoreConfirmAction => 'Restore';
+
+  @override
+  String get backupErrorTitle => 'Backup error';
+
+  @override
+  String get backupSignOut => 'Sign out';
+
+  @override
+  String get backupSignOutConfirmTitle => 'Sign out of backup?';
+
+  @override
+  String get backupSignOutConfirmMessage =>
+      'You will no longer be able to create or restore backups until you sign in again.';
+
+  @override
+  String get backupErrorNetwork =>
+      'Network error. Check your internet connection and try again.';
+
+  @override
+  String get backupErrorNotAuthenticated =>
+      'You are not signed in. Please sign in to use cloud backup.';
+
+  @override
+  String get backupErrorIncompatibleSchema =>
+      'This backup was created with a newer version of the app and cannot be restored.';
+
+  @override
+  String get backupErrorGeneric => 'Something went wrong. Please try again.';
 }
