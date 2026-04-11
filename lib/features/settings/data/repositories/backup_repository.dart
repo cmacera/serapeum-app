@@ -15,10 +15,16 @@ import '../../domain/repositories/i_backup_repository.dart';
 ///
 /// Storage layout: backups/{user_id}/library_backup.json
 ///
-/// All public methods surface only typed domain exceptions
-/// ([BackupNotAuthenticatedException], [BackupIncompatibleSchemaException])
-/// or [Failure] subclasses ([NetworkFailure], [ServerFailure]) so callers
-/// never need to inspect raw exception messages.
+/// All public methods surface only typed domain exceptions:
+/// - [BackupNotAuthenticatedException] — no signed-in user
+/// - [BackupIncompatibleSchemaException] — backup schema_version > app version
+/// - [BackupParseException] — corrupt/malformed JSON or missing fields
+/// - [NetworkFailure] / [TimeoutFailure] — connectivity issues
+/// - [ServerFailure] — Supabase 5xx responses
+/// - [UnknownFailure] — unmapped StorageException
+///
+/// 404 responses from Storage are handled internally: [getBackupMetadata]
+/// returns null, while other methods propagate a [ServerFailure].
 class BackupRepository implements IBackupRepository {
   BackupRepository(this._supabase);
 
@@ -129,7 +135,11 @@ class BackupRepository implements IBackupRepository {
     }
 
     final schemaRaw = json['schema_version'];
-    final backupSchema = schemaRaw is int ? schemaRaw : null;
+    if (schemaRaw != null && schemaRaw is! int) {
+      // Present but wrong type — the payload is malformed.
+      throw const BackupParseException();
+    }
+    final backupSchema = schemaRaw as int?;
     if (backupSchema == null || backupSchema > kRealmSchemaVersion) {
       throw BackupIncompatibleSchemaException(
         backupVersion: backupSchema,
