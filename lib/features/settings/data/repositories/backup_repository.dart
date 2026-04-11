@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:realm/realm.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/realm/realm_schema_version.dart';
 import '../../../library/data/local/library_item.dart';
 import '../../domain/entities/backup_metadata.dart';
 import '../../domain/repositories/i_backup_repository.dart';
@@ -17,7 +18,6 @@ class BackupRepository implements IBackupRepository {
   final SupabaseClient _supabase;
 
   static const _bucket = 'backups';
-  static const _currentSchemaVersion = 4;
   static const _filename = 'library_backup.json';
 
   String _backupPath(String userId) => '$userId/$_filename';
@@ -33,7 +33,7 @@ class BackupRepository implements IBackupRepository {
     final userId = _requireUserId();
     final items = realm.all<LibraryItem>().toList();
     final payload = {
-      'schema_version': _currentSchemaVersion,
+      'schema_version': kRealmSchemaVersion,
       'created_at': DateTime.now().toUtc().toIso8601String(),
       'item_count': items.length,
       'items': items.map(_itemToJson).toList(),
@@ -78,10 +78,10 @@ class BackupRepository implements IBackupRepository {
     final json = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
 
     final backupSchema = json['schema_version'] as int?;
-    if (backupSchema != _currentSchemaVersion) {
+    if (backupSchema == null || backupSchema > kRealmSchemaVersion) {
       throw StateError(
         'Incompatible backup schema: backup=$backupSchema, '
-        'app=$_currentSchemaVersion',
+        'app=$kRealmSchemaVersion',
       );
     }
 
