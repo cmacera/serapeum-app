@@ -37,8 +37,11 @@ User _fakeUser(String id) => User(
   createdAt: '2026-01-01T00:00:00Z',
 );
 
-Map<String, dynamic> _validPayload({int itemCount = 0}) => {
-  'schema_version': 4,
+Map<String, dynamic> _validPayload({
+  int itemCount = 0,
+  int schemaVersion = kRealmSchemaVersion,
+}) => {
+  'schema_version': schemaVersion,
   'created_at': '2026-04-11T10:00:00.000Z',
   'item_count': itemCount,
   'items': [],
@@ -302,8 +305,8 @@ void main() {
 
     test('restores when schema_version == kRealmSchemaVersion', () async {
       when(() => mockFileApi.download(any())).thenAnswer(
-        (_) async => _encode(_validPayload(itemCount: 0)),
-      ); // _validPayload uses schema_version: kRealmSchemaVersion (4)
+        (_) async => _encode(_validPayload(schemaVersion: kRealmSchemaVersion)),
+      );
       stubSuccessfulWrite();
 
       await expectLater(repository.restoreBackup(mockRealm), completes);
@@ -326,6 +329,7 @@ void main() {
 
     test('throws StateError when schema_version is null', () {
       final nullSchemaBackup = {
+        'schema_version': null,
         'created_at': '2026-04-11T10:00:00.000Z',
         'item_count': 0,
         'items': [],
