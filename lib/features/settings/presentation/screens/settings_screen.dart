@@ -168,7 +168,7 @@ class _AnonymousCardState extends ConsumerState<_AnonymousCard> {
             const SizedBox(height: 12),
             FilledButton(
               onPressed: _isSubmitting ? null : _submit,
-              child: Text(l10n.backupSignInButton),
+              child: Text(l10n.backupActivateButton),
             ),
           ],
         ),
