@@ -40,14 +40,18 @@ class BackupRepository implements IBackupRepository {
   /// Network-level → [NetworkFailure]
   /// Server error → [ServerFailure]
   Never _mapStorageException(StorageException e) {
+    final msg = e.message.toLowerCase();
+    if (msg.contains('timed out') || msg.contains('timeout')) {
+      throw const TimeoutFailure();
+    }
     final code = int.tryParse(e.statusCode ?? '');
     if (code != null && code >= 500) {
       throw ServerFailure(statusCode: code, message: e.message);
     }
     if (e.error is SocketException ||
-        e.message.contains('Failed host lookup') ||
-        e.message.contains('Connection refused') ||
-        e.message.contains('NetworkException')) {
+        msg.contains('failed host lookup') ||
+        msg.contains('connection refused') ||
+        msg.contains('networkexception')) {
       throw const NetworkFailure();
     }
     throw ServerFailure(statusCode: code ?? 0, message: e.message);
@@ -125,7 +129,7 @@ class BackupRepository implements IBackupRepository {
         .toList();
 
     if (rawItems.isNotEmpty && items.isEmpty) {
-      throw StateError('Failed to parse backup items');
+      throw const BackupParseException();
     }
 
     realm.write(() {

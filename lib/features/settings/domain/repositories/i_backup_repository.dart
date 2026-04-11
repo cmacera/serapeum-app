@@ -14,6 +14,14 @@ class BackupNotAuthenticatedException implements Exception {
   String toString() => 'BackupNotAuthenticatedException';
 }
 
+/// The backup JSON could not be parsed (corrupt or truncated file).
+class BackupParseException implements Exception {
+  const BackupParseException();
+
+  @override
+  String toString() => 'BackupParseException';
+}
+
 /// The backup was created by a newer version of the app and cannot be restored.
 class BackupIncompatibleSchemaException implements Exception {
   const BackupIncompatibleSchemaException({
