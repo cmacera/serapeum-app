@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/network/failure.dart';
 import '../../../../core/realm/realm_provider.dart';
 import '../../../library/data/providers/library_provider.dart';
 import '../../domain/entities/backup_metadata.dart';
@@ -51,17 +52,13 @@ class BackupError extends BackupState {
 }
 
 BackupErrorKind _classifyError(Object error) {
-  final msg = error.toString();
-  if (msg.contains('SocketException') ||
-      msg.contains('NetworkException') ||
-      msg.contains('Failed host lookup') ||
-      msg.contains('Connection refused')) {
+  if (error is NetworkFailure || error is TimeoutFailure) {
     return BackupErrorKind.network;
   }
-  if (msg.contains('No authenticated user')) {
+  if (error is BackupNotAuthenticatedException) {
     return BackupErrorKind.notAuthenticated;
   }
-  if (msg.contains('Incompatible backup schema')) {
+  if (error is BackupIncompatibleSchemaException) {
     return BackupErrorKind.incompatibleSchema;
   }
   return BackupErrorKind.generic;

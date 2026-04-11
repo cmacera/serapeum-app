@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:realm/realm.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/network/failure.dart';
 import '../../../../core/realm/realm_schema_version.dart';
 import '../../../library/data/local/library_item.dart';
 import '../../domain/entities/backup_metadata.dart';
@@ -12,6 +14,11 @@ import '../../domain/repositories/i_backup_repository.dart';
 /// Supabase Storage implementation of [IBackupRepository].
 ///
 /// Storage layout: backups/{user_id}/library_backup.json
+///
+/// All public methods surface only typed domain exceptions
+/// ([BackupNotAuthenticatedException], [BackupIncompatibleSchemaException])
+/// or [Failure] subclasses ([NetworkFailure], [ServerFailure]) so callers
+/// never need to inspect raw exception messages.
 class BackupRepository implements IBackupRepository {
   BackupRepository(this._supabase);
 
@@ -24,8 +31,26 @@ class BackupRepository implements IBackupRepository {
 
   String _requireUserId() {
     final id = _supabase.auth.currentUser?.id;
-    if (id == null) throw StateError('No authenticated user');
+    if (id == null) throw const BackupNotAuthenticatedException();
     return id;
+  }
+
+  /// Maps a [StorageException] to a [Failure] subclass.
+  /// 404 / "not found" → null (caller handles)
+  /// Network-level → [NetworkFailure]
+  /// Server error → [ServerFailure]
+  Never _mapStorageException(StorageException e) {
+    final code = int.tryParse(e.statusCode ?? '');
+    if (code != null && code >= 500) {
+      throw ServerFailure(statusCode: code, message: e.message);
+    }
+    if (e.error is SocketException ||
+        e.message.contains('Failed host lookup') ||
+        e.message.contains('Connection refused') ||
+        e.message.contains('NetworkException')) {
+      throw const NetworkFailure();
+    }
+    throw ServerFailure(statusCode: code ?? 0, message: e.message);
   }
 
   @override
@@ -39,16 +64,20 @@ class BackupRepository implements IBackupRepository {
       'items': items.map(_itemToJson).toList(),
     };
     final bytes = utf8.encode(jsonEncode(payload));
-    await _supabase.storage
-        .from(_bucket)
-        .uploadBinary(
-          _backupPath(userId),
-          bytes,
-          fileOptions: const FileOptions(
-            contentType: 'application/json',
-            upsert: true,
-          ),
-        );
+    try {
+      await _supabase.storage
+          .from(_bucket)
+          .uploadBinary(
+            _backupPath(userId),
+            bytes,
+            fileOptions: const FileOptions(
+              contentType: 'application/json',
+              upsert: true,
+            ),
+          );
+    } on StorageException catch (e) {
+      _mapStorageException(e);
+    }
     debugPrint('BackupRepository: backup created (${items.length} items)');
   }
 
@@ -65,23 +94,28 @@ class BackupRepository implements IBackupRepository {
       if (e.statusCode == '404' || e.message.contains('not found')) {
         return null;
       }
-      rethrow;
+      _mapStorageException(e);
     }
   }
 
   @override
   Future<void> restoreBackup(Realm realm) async {
     final userId = _requireUserId();
-    final bytes = await _supabase.storage
-        .from(_bucket)
-        .download(_backupPath(userId));
+    final Uint8List bytes;
+    try {
+      bytes = await _supabase.storage
+          .from(_bucket)
+          .download(_backupPath(userId));
+    } on StorageException catch (e) {
+      _mapStorageException(e);
+    }
     final json = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
 
     final backupSchema = json['schema_version'] as int?;
     if (backupSchema == null || backupSchema > kRealmSchemaVersion) {
-      throw StateError(
-        'Incompatible backup schema: backup=$backupSchema, '
-        'app=$kRealmSchemaVersion',
+      throw BackupIncompatibleSchemaException(
+        backupVersion: backupSchema,
+        appVersion: kRealmSchemaVersion,
       );
     }
 
