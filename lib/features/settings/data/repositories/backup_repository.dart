@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:realm/realm.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../core/realm/realm_provider.dart';
+import '../../../../core/realm/realm_schema_version.dart';
 import '../../../library/data/local/library_item.dart';
 import '../../domain/entities/backup_metadata.dart';
 import '../../domain/repositories/i_backup_repository.dart';

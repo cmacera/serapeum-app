@@ -3,12 +3,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:serapeum_app/features/discovery/data/local/discover_history_item.dart';
 import 'package:serapeum_app/features/library/data/local/library_item.dart';
 
-part 'realm_provider.g.dart';
+import 'realm_schema_version.dart';
 
-/// Increment this when any Realm model changes (fields added/removed/renamed).
-/// Exposed so backup logic can validate schema compatibility without duplicating
-/// the version number.
-const int kRealmSchemaVersion = 4;
+export 'realm_schema_version.dart';
+
+part 'realm_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 Realm realm(RealmRef ref) {
