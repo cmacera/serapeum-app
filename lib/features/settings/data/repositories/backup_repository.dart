@@ -54,7 +54,7 @@ class BackupRepository implements IBackupRepository {
         msg.contains('networkexception')) {
       throw const NetworkFailure();
     }
-    throw ServerFailure(statusCode: code ?? 0, message: e.message);
+    throw UnknownFailure(e.message);
   }
 
   @override
@@ -113,7 +113,14 @@ class BackupRepository implements IBackupRepository {
     } on StorageException catch (e) {
       _mapStorageException(e);
     }
-    final json = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+    final Map<String, dynamic> json;
+    try {
+      json = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+    } on FormatException {
+      throw const BackupParseException();
+    } on TypeError {
+      throw const BackupParseException();
+    }
 
     final backupSchema = json['schema_version'] as int?;
     if (backupSchema == null || backupSchema > kRealmSchemaVersion) {
@@ -123,10 +130,16 @@ class BackupRepository implements IBackupRepository {
       );
     }
 
-    final rawItems = json['items'] as List<dynamic>;
-    final items = rawItems
-        .map((e) => _itemFromJson(e as Map<String, dynamic>))
-        .toList();
+    final List<dynamic> rawItems;
+    final List<LibraryItem> items;
+    try {
+      rawItems = json['items'] as List<dynamic>;
+      items = rawItems
+          .map((e) => _itemFromJson(e as Map<String, dynamic>))
+          .toList();
+    } on TypeError {
+      throw const BackupParseException();
+    }
 
     if (rawItems.isNotEmpty && items.isEmpty) {
       throw const BackupParseException();
