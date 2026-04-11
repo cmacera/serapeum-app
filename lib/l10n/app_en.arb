@@ -282,5 +282,121 @@
   "feedbackBadResponse": "Bad response",
   "@feedbackBadResponse": {
     "description": "Tooltip and semantic label for the thumbs-down feedback button"
+  },
+
+  "backupSectionTitle": "Cloud Backup",
+  "@backupSectionTitle": {
+    "description": "Title for the cloud backup section in Settings"
+  },
+  "backupSectionSubtitle": "Back up your library to the cloud to restore it on another device.",
+  "@backupSectionSubtitle": {
+    "description": "Subtitle explaining the cloud backup feature"
+  },
+  "backupEmailHint": "your@email.com",
+  "@backupEmailHint": {
+    "description": "Placeholder hint in the email input field"
+  },
+  "backupActivateButton": "Activate backup",
+  "@backupActivateButton": {
+    "description": "Button to upgrade anonymous account to email and activate backup"
+  },
+  "backupSignInButton": "Sign in",
+  "@backupSignInButton": {
+    "description": "Button to sign in with email to enable cloud backup"
+  },
+  "backupAwaitingTitle": "Check your email",
+  "@backupAwaitingTitle": {
+    "description": "Heading shown while waiting for magic link confirmation"
+  },
+  "backupAwaitingSubtitle": "We sent a link to {email}. Tap it to confirm and continue.",
+  "@backupAwaitingSubtitle": {
+    "description": "Instructions shown while waiting for magic link",
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "backupSignedInAs": "Signed in as {email}",
+  "@backupSignedInAs": {
+    "description": "Label showing the email of the authenticated user",
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "backupNoBackupYet": "No backup found.",
+  "@backupNoBackupYet": {
+    "description": "Shown when no backup exists for the current user"
+  },
+  "backupLastBackup": "Last backup: {date} · {count} items",
+  "@backupLastBackup": {
+    "description": "Shows date and item count of the last backup",
+    "placeholders": {
+      "date": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "backupCreateButton": "Create backup",
+  "@backupCreateButton": {
+    "description": "Button to create a new backup"
+  },
+  "backupRestoreButton": "Restore backup",
+  "@backupRestoreButton": {
+    "description": "Button to restore from the existing backup"
+  },
+  "backupInProgressCreating": "Creating backup…",
+  "@backupInProgressCreating": {
+    "description": "Status label while a backup is being created"
+  },
+  "backupInProgressRestoring": "Restoring backup…",
+  "@backupInProgressRestoring": {
+    "description": "Status label while a backup is being restored"
+  },
+  "backupRestoreConfirmTitle": "Restore backup?",
+  "@backupRestoreConfirmTitle": {
+    "description": "Title of the restore confirmation dialog"
+  },
+  "backupRestoreConfirmMessage": "This will replace your current library ({localCount} items) with the backup from {date} ({backupCount} items). This cannot be undone.",
+  "@backupRestoreConfirmMessage": {
+    "description": "Body of the restore confirmation dialog",
+    "placeholders": {
+      "localCount": { "type": "int" },
+      "date": { "type": "String" },
+      "backupCount": { "type": "int" }
+    }
+  },
+  "backupRestoreConfirmAction": "Restore",
+  "@backupRestoreConfirmAction": {
+    "description": "Confirm button label in the restore dialog"
+  },
+  "backupErrorTitle": "Backup error",
+  "@backupErrorTitle": {
+    "description": "Title shown when a backup or restore operation fails"
+  },
+  "backupSignOut": "Sign out",
+  "@backupSignOut": {
+    "description": "Button to sign out from the backup account and return to anonymous session"
+  },
+  "backupSignOutConfirmTitle": "Sign out of backup?",
+  "@backupSignOutConfirmTitle": {
+    "description": "Title of the sign-out confirmation dialog"
+  },
+  "backupSignOutConfirmMessage": "You will no longer be able to create or restore backups until you sign in again.",
+  "@backupSignOutConfirmMessage": {
+    "description": "Body of the sign-out confirmation dialog"
+  },
+  "backupErrorNetwork": "Network error. Check your internet connection and try again.",
+  "@backupErrorNetwork": {
+    "description": "Shown when a backup/restore fails due to network issues"
+  },
+  "backupErrorNotAuthenticated": "You are not signed in. Please sign in to use cloud backup.",
+  "@backupErrorNotAuthenticated": {
+    "description": "Shown when a backup/restore is attempted without a valid session"
+  },
+  "backupErrorIncompatibleSchema": "This backup was created with a newer version of the app and cannot be restored.",
+  "@backupErrorIncompatibleSchema": {
+    "description": "Shown when the backup schema version does not match the app"
+  },
+  "backupErrorGeneric": "Something went wrong. Please try again.",
+  "@backupErrorGeneric": {
+    "description": "Fallback error message for backup/restore failures"
   }
 }

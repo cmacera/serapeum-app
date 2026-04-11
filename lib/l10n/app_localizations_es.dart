@@ -448,4 +448,97 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get feedbackBadResponse => 'Mala respuesta';
+
+  @override
+  String get backupSectionTitle => 'Copia de seguridad';
+
+  @override
+  String get backupSectionSubtitle =>
+      'Guarda tu biblioteca en la nube para restaurarla en otro dispositivo.';
+
+  @override
+  String get backupEmailHint => 'tu@email.com';
+
+  @override
+  String get backupActivateButton => 'Activar copia de seguridad';
+
+  @override
+  String get backupSignInButton => 'Iniciar sesión';
+
+  @override
+  String get backupAwaitingTitle => 'Revisa tu correo';
+
+  @override
+  String backupAwaitingSubtitle(String email) {
+    return 'Te hemos enviado un enlace a $email. Tócalo para confirmar y continuar.';
+  }
+
+  @override
+  String backupSignedInAs(String email) {
+    return 'Sesión iniciada como $email';
+  }
+
+  @override
+  String get backupNoBackupYet => 'No se encontró ninguna copia de seguridad.';
+
+  @override
+  String backupLastBackup(String date, int count) {
+    return 'Última copia: $date · $count elementos';
+  }
+
+  @override
+  String get backupCreateButton => 'Crear copia de seguridad';
+
+  @override
+  String get backupRestoreButton => 'Restaurar copia de seguridad';
+
+  @override
+  String get backupInProgressCreating => 'Creando copia de seguridad…';
+
+  @override
+  String get backupInProgressRestoring => 'Restaurando copia de seguridad…';
+
+  @override
+  String get backupRestoreConfirmTitle => '¿Restaurar copia de seguridad?';
+
+  @override
+  String backupRestoreConfirmMessage(
+    int localCount,
+    String date,
+    int backupCount,
+  ) {
+    return 'Esto reemplazará tu biblioteca actual ($localCount elementos) con la copia del $date ($backupCount elementos). Esta acción no se puede deshacer.';
+  }
+
+  @override
+  String get backupRestoreConfirmAction => 'Restaurar';
+
+  @override
+  String get backupErrorTitle => 'Error en la copia de seguridad';
+
+  @override
+  String get backupSignOut => 'Cerrar sesión';
+
+  @override
+  String get backupSignOutConfirmTitle => '¿Cerrar sesión de la copia?';
+
+  @override
+  String get backupSignOutConfirmMessage =>
+      'No podrás crear ni restaurar copias de seguridad hasta que vuelvas a iniciar sesión.';
+
+  @override
+  String get backupErrorNetwork =>
+      'Error de red. Comprueba tu conexión a Internet e inténtalo de nuevo.';
+
+  @override
+  String get backupErrorNotAuthenticated =>
+      'No has iniciado sesión. Inicia sesión para usar la copia de seguridad.';
+
+  @override
+  String get backupErrorIncompatibleSchema =>
+      'Esta copia fue creada con una versión más reciente de la app y no se puede restaurar.';
+
+  @override
+  String get backupErrorGeneric =>
+      'Algo ha salido mal. Por favor, inténtalo de nuevo.';
 }

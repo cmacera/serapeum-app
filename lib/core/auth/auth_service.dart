@@ -30,6 +30,14 @@ class AuthService {
     }
   }
 
+  /// Whether the current session is anonymous (no linked email/identity).
+  bool get isAnonymous =>
+      Supabase.instance.client.auth.currentUser?.isAnonymous ?? true;
+
+  /// Email of the currently authenticated user, or null if anonymous.
+  String? get currentUserEmail =>
+      Supabase.instance.client.auth.currentUser?.email;
+
   /// Gets the current access token from Supabase.
   /// Returns null if no session exists.
   String? getAccessToken() {

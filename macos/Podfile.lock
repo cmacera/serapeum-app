@@ -4,6 +4,9 @@ PODS:
   - FlutterMacOS (1.0.0)
   - package_info_plus (0.0.1):
     - FlutterMacOS
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - realm (3.5.0):
     - FlutterMacOS
   - Sentry/HybridSDK (8.58.0)
@@ -24,6 +27,7 @@ DEPENDENCIES:
   - app_links (from `Flutter/ephemeral/.symlinks/plugins/app_links/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
+  - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
   - realm (from `Flutter/ephemeral/.symlinks/plugins/realm/macos`)
   - sentry_flutter (from `Flutter/ephemeral/.symlinks/plugins/sentry_flutter/macos`)
   - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -41,6 +45,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral
   package_info_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos
+  path_provider_foundation:
+    :path: Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin
   realm:
     :path: Flutter/ephemeral/.symlinks/plugins/realm/macos
   sentry_flutter:
@@ -56,6 +62,7 @@ SPEC CHECKSUMS:
   app_links: c3185399a5cabc2e610ee5ad52fb7269b84ff869
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   package_info_plus: 12f1c5c2cfe8727ca46cbd0b26677728972d9a5b
+  path_provider_foundation: 0b743cbb62d8e47eab856f09262bb8c1ddcfe6ba
   realm: 2996aa5c92b18c1405fcd08d36d616cf5b992b31
   Sentry: d587a8fe91ca13503ecd69a1905f3e8a0fcf61be
   sentry_flutter: d17e659e7ca47f9a40d65c93605f85b7346ece89
