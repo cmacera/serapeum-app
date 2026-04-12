@@ -457,7 +457,12 @@ class _DataSection extends ConsumerWidget {
       ),
     );
     if (confirmed == true && context.mounted) {
-      ref.read(libraryProvider.notifier).clearLibrary();
+      final success = ref.read(libraryProvider.notifier).clearLibrary();
+      if (!success && context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.backupErrorGeneric)));
+      }
     }
   }
 

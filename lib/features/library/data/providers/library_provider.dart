@@ -118,12 +118,14 @@ class Library extends _$Library {
     }
   }
 
-  void clearLibrary() {
+  bool clearLibrary() {
     final realm = ref.read(realmProvider);
     try {
       realm.write(() => realm.deleteAll<LibraryItem>());
+      return true;
     } catch (e) {
       debugPrint('Library: failed to clear library — $e');
+      return false;
     }
   }
 
