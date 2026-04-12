@@ -107,7 +107,8 @@ class BackupRepository implements IBackupRepository {
         throw const BackupParseException();
       }
     } on StorageException catch (e) {
-      if (e.statusCode == '404' || e.message.contains('not found')) {
+      if (e.statusCode == '404' ||
+          e.message.toLowerCase().contains('not found')) {
         return null;
       }
       _mapStorageException(e);
@@ -169,6 +170,21 @@ class BackupRepository implements IBackupRepository {
       realm.addAll(items);
     });
     debugPrint('BackupRepository: restored ${items.length} items');
+  }
+
+  @override
+  Future<void> deleteBackup() async {
+    final userId = _requireUserId();
+    try {
+      await _supabase.storage.from(_bucket).remove([_backupPath(userId)]);
+      debugPrint('BackupRepository: backup deleted');
+    } on StorageException catch (e) {
+      if (e.statusCode == '404' ||
+          e.message.toLowerCase().contains('not found')) {
+        return;
+      }
+      _mapStorageException(e);
+    }
   }
 
   Map<String, dynamic> _itemToJson(LibraryItem item) => {

@@ -32,15 +32,17 @@ class BackupReady extends BackupState {
   final BackupMetadata? lastBackup;
 }
 
+enum BackupOperation { creating, restoring, deleting }
+
 class BackupOperationInProgress extends BackupState {
   BackupOperationInProgress({
     required this.email,
     this.lastBackup,
-    required this.isRestoring,
+    required this.operation,
   });
   final String email;
   final BackupMetadata? lastBackup;
-  final bool isRestoring;
+  final BackupOperation operation;
 }
 
 enum BackupErrorKind { network, notAuthenticated, incompatibleSchema, generic }
@@ -141,7 +143,7 @@ class BackupNotifier extends _$BackupNotifier {
     state = BackupOperationInProgress(
       email: current.email,
       lastBackup: current.lastBackup,
-      isRestoring: false,
+      operation: BackupOperation.creating,
     );
 
     try {
@@ -164,7 +166,7 @@ class BackupNotifier extends _$BackupNotifier {
     state = BackupOperationInProgress(
       email: current.email,
       lastBackup: current.lastBackup,
-      isRestoring: true,
+      operation: BackupOperation.restoring,
     );
 
     try {
@@ -175,6 +177,27 @@ class BackupNotifier extends _$BackupNotifier {
       final metadata = await _repo.getBackupMetadata();
       if (state is BackupAnonymous) return;
       state = BackupReady(email: current.email, lastBackup: metadata);
+    } catch (e) {
+      if (state is BackupAnonymous) return;
+      state = BackupError(kind: _classifyError(e), previous: current);
+    }
+  }
+
+  /// Deletes the stored backup from Supabase Storage.
+  Future<void> deleteBackup() async {
+    final current = state;
+    if (current is! BackupReady) return;
+
+    state = BackupOperationInProgress(
+      email: current.email,
+      lastBackup: current.lastBackup,
+      operation: BackupOperation.deleting,
+    );
+
+    try {
+      await _repo.deleteBackup();
+      if (state is BackupAnonymous) return;
+      state = BackupReady(email: current.email, lastBackup: null);
     } catch (e) {
       if (state is BackupAnonymous) return;
       state = BackupError(kind: _classifyError(e), previous: current);

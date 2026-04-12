@@ -511,6 +511,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get backupInProgressRestoring => 'Restaurando copia de seguridad…';
 
   @override
+  String get backupInProgressDeleting => 'Eliminando copia de seguridad…';
+
+  @override
   String get backupRestoreConfirmTitle => '¿Restaurar copia de seguridad?';
 
   @override
@@ -578,4 +581,23 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get clearLibraryConfirmation =>
       'Se eliminarán permanentemente todos los elementos de tu biblioteca local. Esta acción no se puede deshacer.';
+
+  @override
+  String get backupDeleteButton => 'Eliminar copia';
+
+  @override
+  String get backupDeleteConfirmTitle => '¿Eliminar copia en la nube?';
+
+  @override
+  String get backupDeleteConfirmation =>
+      'La copia almacenada en la nube se eliminará de forma permanente. Tu biblioteca local no se verá afectada.';
+
+  @override
+  String get appInfoSectionTitle => 'Acerca de';
+
+  @override
+  String get appInfoVersion => 'Versión';
+
+  @override
+  String get appInfoBuild => 'Compilación';
 }

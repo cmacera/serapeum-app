@@ -1010,6 +1010,12 @@ abstract class AppLocalizations {
   /// **'Restoring backup…'**
   String get backupInProgressRestoring;
 
+  /// Status label while a backup is being deleted from cloud storage
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting backup…'**
+  String get backupInProgressDeleting;
+
   /// Title of the restore confirmation dialog
   ///
   /// In en, this message translates to:
@@ -1103,6 +1109,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This will permanently delete all items from your local library. This action cannot be undone.'**
   String get clearLibraryConfirmation;
+
+  /// Button label to delete the cloud backup
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Backup'**
+  String get backupDeleteButton;
+
+  /// Title of the confirmation dialog for deleting the cloud backup
+  ///
+  /// In en, this message translates to:
+  /// **'Delete cloud backup?'**
+  String get backupDeleteConfirmTitle;
+
+  /// Body of the confirmation dialog for deleting the cloud backup
+  ///
+  /// In en, this message translates to:
+  /// **'The backup stored in the cloud will be permanently deleted. Your local library will not be affected.'**
+  String get backupDeleteConfirmation;
+
+  /// Title for the app info section in Settings
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get appInfoSectionTitle;
+
+  /// Label for app version in the About section
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get appInfoVersion;
+
+  /// Label for build number in the About section
+  ///
+  /// In en, this message translates to:
+  /// **'Build'**
+  String get appInfoBuild;
 }
 
 class _AppLocalizationsDelegate

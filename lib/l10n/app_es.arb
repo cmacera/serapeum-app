@@ -220,6 +220,7 @@
   "backupRestoreButton": "Restaurar copia de seguridad",
   "backupInProgressCreating": "Creando copia de seguridad…",
   "backupInProgressRestoring": "Restaurando copia de seguridad…",
+  "backupInProgressDeleting": "Eliminando copia de seguridad…",
   "backupRestoreConfirmTitle": "¿Restaurar copia de seguridad?",
   "backupRestoreConfirmMessage": "Esto reemplazará tu biblioteca actual ({localCount, plural, =1{1 elemento} other{{localCount} elementos}}) con la copia del {date} ({backupCount, plural, =1{1 elemento} other{{backupCount} elementos}}). Esta acción no se puede deshacer.",
   "@backupRestoreConfirmMessage": {
@@ -242,5 +243,13 @@
   "dataSectionTitle": "Datos",
   "clearLibrary": "Borrar biblioteca",
   "clearLibraryConfirmTitle": "¿Borrar toda la biblioteca?",
-  "clearLibraryConfirmation": "Se eliminarán permanentemente todos los elementos de tu biblioteca local. Esta acción no se puede deshacer."
+  "clearLibraryConfirmation": "Se eliminarán permanentemente todos los elementos de tu biblioteca local. Esta acción no se puede deshacer.",
+
+  "backupDeleteButton": "Eliminar copia",
+  "backupDeleteConfirmTitle": "¿Eliminar copia en la nube?",
+  "backupDeleteConfirmation": "La copia almacenada en la nube se eliminará de forma permanente. Tu biblioteca local no se verá afectada.",
+
+  "appInfoSectionTitle": "Acerca de",
+  "appInfoVersion": "Versión",
+  "appInfoBuild": "Compilación"
 }
