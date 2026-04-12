@@ -567,7 +567,17 @@ class _AppInfoSectionState extends State<_AppInfoSection> {
       child: FutureBuilder<PackageInfo>(
         future: _packageInfo,
         builder: (context, snap) {
-          if (!snap.hasData) return const SizedBox.shrink();
+          if (snap.hasError) {
+            return Text('—', style: const TextStyle(color: AppColors.subtitle));
+          }
+          if (!snap.hasData) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 4),
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            );
+          }
           final info = snap.data!;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,

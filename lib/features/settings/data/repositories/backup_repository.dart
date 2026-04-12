@@ -178,7 +178,10 @@ class BackupRepository implements IBackupRepository {
       await _supabase.storage.from(_bucket).remove([_backupPath(userId)]);
       debugPrint('BackupRepository: backup deleted');
     } on StorageException catch (e) {
-      if (e.statusCode == '404' || e.message.contains('not found')) return;
+      if (e.statusCode == '404' ||
+          e.message.toLowerCase().contains('not found')) {
+        return;
+      }
       _mapStorageException(e);
     }
   }

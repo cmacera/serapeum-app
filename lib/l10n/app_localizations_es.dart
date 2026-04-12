@@ -599,5 +599,5 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appInfoVersion => 'Versión';
 
   @override
-  String get appInfoBuild => 'Build';
+  String get appInfoBuild => 'Compilación';
 }
