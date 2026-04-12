@@ -6,9 +6,11 @@ import 'package:mocktail/mocktail.dart';
 import 'package:realm/realm.dart' hide User;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:serapeum_app/core/network/failure.dart';
 import 'package:serapeum_app/core/realm/realm_schema_version.dart';
 import 'package:serapeum_app/features/library/data/local/library_item.dart';
 import 'package:serapeum_app/features/settings/data/repositories/backup_repository.dart';
+import 'package:serapeum_app/features/settings/domain/repositories/i_backup_repository.dart';
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -87,18 +89,12 @@ void main() {
   // ---------------------------------------------------------------------------
 
   group('_requireUserId', () {
-    test('throws StateError when currentUser is null', () {
+    test('throws BackupNotAuthenticatedException when currentUser is null', () {
       when(() => mockAuth.currentUser).thenReturn(null);
 
       expect(
         () => repository.createBackup(mockRealm),
-        throwsA(
-          isA<StateError>().having(
-            (e) => e.message,
-            'message',
-            contains('No authenticated user'),
-          ),
-        ),
+        throwsA(isA<BackupNotAuthenticatedException>()),
       );
     });
   });
@@ -216,14 +212,14 @@ void main() {
       expect(metadata, isNull);
     });
 
-    test('rethrows non-404 StorageExceptions', () {
+    test('throws ServerFailure on non-404 StorageExceptions', () {
       when(
         () => mockFileApi.download(any()),
       ).thenThrow(StorageException('Server error', statusCode: '500'));
 
       expect(
         () => repository.getBackupMetadata(),
-        throwsA(isA<StorageException>()),
+        throwsA(isA<ServerFailure>()),
       );
     });
   });
@@ -237,28 +233,25 @@ void main() {
       when(() => mockAuth.currentUser).thenReturn(_fakeUser('user-abc'));
     });
 
-    test('throws StateError on incompatible schema version', () {
-      final incompatible = {
-        'schema_version': 99,
-        'created_at': '2026-04-11T10:00:00.000Z',
-        'item_count': 0,
-        'items': [],
-      };
-      when(
-        () => mockFileApi.download(any()),
-      ).thenAnswer((_) async => _encode(incompatible));
+    test(
+      'throws BackupIncompatibleSchemaException on schema_version > current',
+      () {
+        final incompatible = {
+          'schema_version': kRealmSchemaVersion + 1,
+          'created_at': '2026-04-11T10:00:00.000Z',
+          'item_count': 0,
+          'items': [],
+        };
+        when(
+          () => mockFileApi.download(any()),
+        ).thenAnswer((_) async => _encode(incompatible));
 
-      expect(
-        () => repository.restoreBackup(mockRealm),
-        throwsA(
-          isA<StateError>().having(
-            (e) => e.message,
-            'message',
-            contains('Incompatible backup schema'),
-          ),
-        ),
-      );
-    });
+        expect(
+          () => repository.restoreBackup(mockRealm),
+          throwsA(isA<BackupIncompatibleSchemaException>()),
+        );
+      },
+    );
 
     test('writes to realm when backup is valid', () async {
       when(
@@ -327,28 +320,25 @@ void main() {
       await expectLater(repository.restoreBackup(mockRealm), completes);
     });
 
-    test('throws StateError when schema_version is null', () {
-      final nullSchemaBackup = {
-        'schema_version': null,
-        'created_at': '2026-04-11T10:00:00.000Z',
-        'item_count': 0,
-        'items': [],
-      };
-      when(
-        () => mockFileApi.download(any()),
-      ).thenAnswer((_) async => _encode(nullSchemaBackup));
+    test(
+      'throws BackupIncompatibleSchemaException when schema_version is null',
+      () {
+        final nullSchemaBackup = {
+          'schema_version': null,
+          'created_at': '2026-04-11T10:00:00.000Z',
+          'item_count': 0,
+          'items': [],
+        };
+        when(
+          () => mockFileApi.download(any()),
+        ).thenAnswer((_) async => _encode(nullSchemaBackup));
 
-      expect(
-        () => repository.restoreBackup(mockRealm),
-        throwsA(
-          isA<StateError>().having(
-            (e) => e.message,
-            'message',
-            contains('Incompatible backup schema'),
-          ),
-        ),
-      );
-    });
+        expect(
+          () => repository.restoreBackup(mockRealm),
+          throwsA(isA<BackupIncompatibleSchemaException>()),
+        );
+      },
+    );
   });
 }
 

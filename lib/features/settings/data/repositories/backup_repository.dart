@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:realm/realm.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/network/failure.dart';
 import '../../../../core/realm/realm_schema_version.dart';
 import '../../../library/data/local/library_item.dart';
 import '../../domain/entities/backup_metadata.dart';
@@ -12,6 +14,17 @@ import '../../domain/repositories/i_backup_repository.dart';
 /// Supabase Storage implementation of [IBackupRepository].
 ///
 /// Storage layout: backups/{user_id}/library_backup.json
+///
+/// All public methods surface only typed domain exceptions:
+/// - [BackupNotAuthenticatedException] — no signed-in user
+/// - [BackupIncompatibleSchemaException] — backup schema_version > app version
+/// - [BackupParseException] — corrupt/malformed JSON or missing fields
+/// - [NetworkFailure] / [TimeoutFailure] — connectivity issues
+/// - [ServerFailure] — Supabase 5xx responses
+/// - [UnknownFailure] — unmapped StorageException
+///
+/// 404 responses from Storage are handled internally: [getBackupMetadata]
+/// returns null, while other methods propagate a [ServerFailure].
 class BackupRepository implements IBackupRepository {
   BackupRepository(this._supabase);
 
@@ -24,8 +37,30 @@ class BackupRepository implements IBackupRepository {
 
   String _requireUserId() {
     final id = _supabase.auth.currentUser?.id;
-    if (id == null) throw StateError('No authenticated user');
+    if (id == null) throw const BackupNotAuthenticatedException();
     return id;
+  }
+
+  /// Maps a [StorageException] to a [Failure] subclass.
+  /// 404 / "not found" → null (caller handles)
+  /// Network-level → [NetworkFailure]
+  /// Server error → [ServerFailure]
+  Never _mapStorageException(StorageException e) {
+    final msg = e.message.toLowerCase();
+    if (msg.contains('timed out') || msg.contains('timeout')) {
+      throw const TimeoutFailure();
+    }
+    final code = int.tryParse(e.statusCode ?? '');
+    if (code != null && code >= 500) {
+      throw ServerFailure(statusCode: code, message: e.message);
+    }
+    if (e.error is SocketException ||
+        msg.contains('failed host lookup') ||
+        msg.contains('connection refused') ||
+        msg.contains('networkexception')) {
+      throw const NetworkFailure();
+    }
+    throw UnknownFailure(e.message);
   }
 
   @override
@@ -39,16 +74,20 @@ class BackupRepository implements IBackupRepository {
       'items': items.map(_itemToJson).toList(),
     };
     final bytes = utf8.encode(jsonEncode(payload));
-    await _supabase.storage
-        .from(_bucket)
-        .uploadBinary(
-          _backupPath(userId),
-          bytes,
-          fileOptions: const FileOptions(
-            contentType: 'application/json',
-            upsert: true,
-          ),
-        );
+    try {
+      await _supabase.storage
+          .from(_bucket)
+          .uploadBinary(
+            _backupPath(userId),
+            bytes,
+            fileOptions: const FileOptions(
+              contentType: 'application/json',
+              upsert: true,
+            ),
+          );
+    } on StorageException catch (e) {
+      _mapStorageException(e);
+    }
     debugPrint('BackupRepository: backup created (${items.length} items)');
   }
 
@@ -59,39 +98,70 @@ class BackupRepository implements IBackupRepository {
       final bytes = await _supabase.storage
           .from(_bucket)
           .download(_backupPath(userId));
-      final json = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
-      return BackupMetadata.fromJson(json);
+      try {
+        final json = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+        return BackupMetadata.fromJson(json);
+      } on FormatException {
+        throw const BackupParseException();
+      } on TypeError {
+        throw const BackupParseException();
+      }
     } on StorageException catch (e) {
       if (e.statusCode == '404' || e.message.contains('not found')) {
         return null;
       }
-      rethrow;
+      _mapStorageException(e);
     }
   }
 
   @override
   Future<void> restoreBackup(Realm realm) async {
     final userId = _requireUserId();
-    final bytes = await _supabase.storage
-        .from(_bucket)
-        .download(_backupPath(userId));
-    final json = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+    final Uint8List bytes;
+    try {
+      bytes = await _supabase.storage
+          .from(_bucket)
+          .download(_backupPath(userId));
+    } on StorageException catch (e) {
+      _mapStorageException(e);
+    }
+    final Map<String, dynamic> json;
+    try {
+      json = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+    } on FormatException {
+      throw const BackupParseException();
+    } on TypeError {
+      throw const BackupParseException();
+    }
 
-    final backupSchema = json['schema_version'] as int?;
+    final schemaRaw = json['schema_version'];
+    if (schemaRaw != null && schemaRaw is! int) {
+      // Present but wrong type — the payload is malformed.
+      throw const BackupParseException();
+    }
+    final backupSchema = schemaRaw as int?;
     if (backupSchema == null || backupSchema > kRealmSchemaVersion) {
-      throw StateError(
-        'Incompatible backup schema: backup=$backupSchema, '
-        'app=$kRealmSchemaVersion',
+      throw BackupIncompatibleSchemaException(
+        backupVersion: backupSchema,
+        appVersion: kRealmSchemaVersion,
       );
     }
 
-    final rawItems = json['items'] as List<dynamic>;
-    final items = rawItems
-        .map((e) => _itemFromJson(e as Map<String, dynamic>))
-        .toList();
+    final List<dynamic> rawItems;
+    final List<LibraryItem> items;
+    try {
+      rawItems = json['items'] as List<dynamic>;
+      items = rawItems
+          .map((e) => _itemFromJson(e as Map<String, dynamic>))
+          .toList();
+    } on FormatException {
+      throw const BackupParseException();
+    } on TypeError {
+      throw const BackupParseException();
+    }
 
     if (rawItems.isNotEmpty && items.isEmpty) {
-      throw StateError('Failed to parse backup items');
+      throw const BackupParseException();
     }
 
     realm.write(() {
