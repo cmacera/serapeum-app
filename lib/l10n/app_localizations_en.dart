@@ -508,6 +508,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupInProgressRestoring => 'Restoring backup…';
 
   @override
+  String get backupInProgressDeleting => 'Deleting backup…';
+
+  @override
   String get backupRestoreConfirmTitle => 'Restore backup?';
 
   @override
@@ -574,4 +577,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get clearLibraryConfirmation =>
       'This will permanently delete all items from your local library. This action cannot be undone.';
+
+  @override
+  String get backupDeleteButton => 'Delete Backup';
+
+  @override
+  String get backupDeleteConfirmTitle => 'Delete cloud backup?';
+
+  @override
+  String get backupDeleteConfirmation =>
+      'The backup stored in the cloud will be permanently deleted. Your local library will not be affected.';
+
+  @override
+  String get appInfoSectionTitle => 'About';
+
+  @override
+  String get appInfoVersion => 'Version';
+
+  @override
+  String get appInfoBuild => 'Build';
 }

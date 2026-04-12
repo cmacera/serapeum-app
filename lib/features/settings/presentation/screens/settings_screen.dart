@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/layout_constants.dart';
@@ -24,7 +25,13 @@ class SettingsScreen extends ConsumerWidget {
             MediaQuery.paddingOf(context).bottom +
             LayoutConstants.navBarClearance,
       ),
-      children: const [_BackupSection(), SizedBox(height: 16), _DataSection()],
+      children: const [
+        _BackupSection(),
+        SizedBox(height: 16),
+        _DataSection(),
+        SizedBox(height: 16),
+        _AppInfoSection(),
+      ],
     );
   }
 }
@@ -97,8 +104,8 @@ class _BackupSection extends ConsumerWidget {
         lastBackup: lastBackup,
         title: title,
       ),
-      BackupOperationInProgress(:final isRestoring) => _InProgressCard(
-        isRestoring: isRestoring,
+      BackupOperationInProgress(:final operation) => _InProgressCard(
+        operation: operation,
         title: title,
       ),
       BackupError(:final kind) => _ErrorCard(kind: kind, title: title),
@@ -299,10 +306,47 @@ class _ReadyCard extends ConsumerWidget {
               icon: const Icon(Icons.restore_outlined),
               label: Text(l10n.backupRestoreButton),
             ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.redAccent,
+              ),
+              onPressed: () => _confirmDeleteBackup(context, ref, l10n),
+              icon: const Icon(Icons.cloud_off_outlined),
+              label: Text(l10n.backupDeleteButton),
+            ),
           ],
         ],
       ),
     );
+  }
+
+  Future<void> _confirmDeleteBackup(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.backupDeleteConfirmTitle),
+        content: Text(l10n.backupDeleteConfirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.backupDeleteButton),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      ref.read(backupNotifierProvider.notifier).deleteBackup();
+    }
   }
 
   Future<void> _confirmSignOut(
@@ -372,13 +416,18 @@ class _ReadyCard extends ConsumerWidget {
 // ---------------------------------------------------------------------------
 
 class _InProgressCard extends StatelessWidget {
-  const _InProgressCard({required this.isRestoring, required this.title});
-  final bool isRestoring;
+  const _InProgressCard({required this.operation, required this.title});
+  final BackupOperation operation;
   final String title;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final label = switch (operation) {
+      BackupOperation.creating => l10n.backupInProgressCreating,
+      BackupOperation.restoring => l10n.backupInProgressRestoring,
+      BackupOperation.deleting => l10n.backupInProgressDeleting,
+    };
     return _GlassCard(
       title: title,
       child: Padding(
@@ -387,12 +436,7 @@ class _InProgressCard extends StatelessWidget {
           children: [
             const CircularProgressIndicator(),
             const SizedBox(height: 16),
-            Text(
-              isRestoring
-                  ? l10n.backupInProgressRestoring
-                  : l10n.backupInProgressCreating,
-              style: const TextStyle(color: AppColors.subtitle),
-            ),
+            Text(label, style: const TextStyle(color: AppColors.subtitle)),
           ],
         ),
       ),
@@ -492,6 +536,67 @@ class _DataSection extends ConsumerWidget {
     if (confirmed == true && context.mounted) {
       ref.read(discoverHistoryProvider.notifier).clearHistory();
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// App info section
+// ---------------------------------------------------------------------------
+
+class _AppInfoSection extends StatefulWidget {
+  const _AppInfoSection();
+
+  @override
+  State<_AppInfoSection> createState() => _AppInfoSectionState();
+}
+
+class _AppInfoSectionState extends State<_AppInfoSection> {
+  late final Future<PackageInfo> _packageInfo;
+
+  @override
+  void initState() {
+    super.initState();
+    _packageInfo = PackageInfo.fromPlatform();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return _GlassCard(
+      title: l10n.appInfoSectionTitle,
+      child: FutureBuilder<PackageInfo>(
+        future: _packageInfo,
+        builder: (context, snap) {
+          if (!snap.hasData) return const SizedBox.shrink();
+          final info = snap.data!;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _InfoRow(label: l10n.appInfoVersion, value: info.version),
+              const SizedBox(height: 4),
+              _InfoRow(label: l10n.appInfoBuild, value: info.buildNumber),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({required this.label, required this.value});
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(color: AppColors.subtitle)),
+        Text(value, style: const TextStyle(color: Colors.white70)),
+      ],
+    );
   }
 }
 

@@ -358,6 +358,10 @@
   "@backupInProgressRestoring": {
     "description": "Status label while a backup is being restored"
   },
+  "backupInProgressDeleting": "Deleting backup…",
+  "@backupInProgressDeleting": {
+    "description": "Status label while a backup is being deleted from cloud storage"
+  },
   "backupRestoreConfirmTitle": "Restore backup?",
   "@backupRestoreConfirmTitle": {
     "description": "Title of the restore confirmation dialog"
@@ -423,5 +427,31 @@
   "clearLibraryConfirmation": "This will permanently delete all items from your local library. This action cannot be undone.",
   "@clearLibraryConfirmation": {
     "description": "Body of the confirmation dialog for clearing the library"
+  },
+
+  "backupDeleteButton": "Delete Backup",
+  "@backupDeleteButton": {
+    "description": "Button label to delete the cloud backup"
+  },
+  "backupDeleteConfirmTitle": "Delete cloud backup?",
+  "@backupDeleteConfirmTitle": {
+    "description": "Title of the confirmation dialog for deleting the cloud backup"
+  },
+  "backupDeleteConfirmation": "The backup stored in the cloud will be permanently deleted. Your local library will not be affected.",
+  "@backupDeleteConfirmation": {
+    "description": "Body of the confirmation dialog for deleting the cloud backup"
+  },
+
+  "appInfoSectionTitle": "About",
+  "@appInfoSectionTitle": {
+    "description": "Title for the app info section in Settings"
+  },
+  "appInfoVersion": "Version",
+  "@appInfoVersion": {
+    "description": "Label for app version in the About section"
+  },
+  "appInfoBuild": "Build",
+  "@appInfoBuild": {
+    "description": "Label for build number in the About section"
   }
 }

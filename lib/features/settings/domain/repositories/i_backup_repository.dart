@@ -48,4 +48,8 @@ abstract interface class IBackupRepository {
 
   /// Downloads the stored backup and replaces the local Realm library.
   Future<void> restoreBackup(Realm realm);
+
+  /// Deletes the stored backup for the current user from cloud storage.
+  /// Returns normally if no backup existed (404 is treated as success).
+  Future<void> deleteBackup();
 }

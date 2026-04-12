@@ -171,6 +171,18 @@ class BackupRepository implements IBackupRepository {
     debugPrint('BackupRepository: restored ${items.length} items');
   }
 
+  @override
+  Future<void> deleteBackup() async {
+    final userId = _requireUserId();
+    try {
+      await _supabase.storage.from(_bucket).remove([_backupPath(userId)]);
+      debugPrint('BackupRepository: backup deleted');
+    } on StorageException catch (e) {
+      if (e.statusCode == '404' || e.message.contains('not found')) return;
+      _mapStorageException(e);
+    }
+  }
+
   Map<String, dynamic> _itemToJson(LibraryItem item) => {
     'id': item.id.hexString,
     'externalId': item.externalId,
