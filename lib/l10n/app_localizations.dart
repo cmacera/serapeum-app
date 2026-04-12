@@ -1079,6 +1079,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong. Please try again.'**
   String get backupErrorGeneric;
+
+  /// Title for the data management section in Settings
+  ///
+  /// In en, this message translates to:
+  /// **'Data'**
+  String get dataSectionTitle;
+
+  /// Button text to delete all items from the local library
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Library'**
+  String get clearLibrary;
+
+  /// Title of the confirmation dialog for clearing the library
+  ///
+  /// In en, this message translates to:
+  /// **'Clear entire library?'**
+  String get clearLibraryConfirmTitle;
+
+  /// Body of the confirmation dialog for clearing the library
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete all items from your local library. This action cannot be undone.'**
+  String get clearLibraryConfirmation;
 }
 
 class _AppLocalizationsDelegate

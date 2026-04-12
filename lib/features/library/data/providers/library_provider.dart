@@ -118,6 +118,17 @@ class Library extends _$Library {
     }
   }
 
+  bool clearLibrary() {
+    final realm = ref.read(realmProvider);
+    try {
+      realm.write(() => realm.deleteAll<LibraryItem>());
+      return true;
+    } catch (e) {
+      debugPrint('Library: failed to clear library — $e');
+      return false;
+    }
+  }
+
   bool isInLibrary(String externalId, String mediaType) {
     return state.any(
       (item) => item.externalId == externalId && item.mediaType == mediaType,

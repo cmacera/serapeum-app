@@ -561,4 +561,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupErrorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get dataSectionTitle => 'Data';
+
+  @override
+  String get clearLibrary => 'Clear Library';
+
+  @override
+  String get clearLibraryConfirmTitle => 'Clear entire library?';
+
+  @override
+  String get clearLibraryConfirmation =>
+      'This will permanently delete all items from your local library. This action cannot be undone.';
 }

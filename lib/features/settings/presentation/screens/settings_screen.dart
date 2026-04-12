@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/layout_constants.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../discovery/presentation/providers/discover_history_provider.dart';
 import '../../../library/data/providers/library_provider.dart';
 import '../../domain/entities/backup_metadata.dart';
 import '../../data/providers/backup_provider.dart';
@@ -23,7 +24,7 @@ class SettingsScreen extends ConsumerWidget {
             MediaQuery.paddingOf(context).bottom +
             LayoutConstants.navBarClearance,
       ),
-      children: const [_BackupSection()],
+      children: const [_BackupSection(), SizedBox(height: 16), _DataSection()],
     );
   }
 }
@@ -396,6 +397,101 @@ class _InProgressCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Data section — clear library / clear history
+// ---------------------------------------------------------------------------
+
+class _DataSection extends ConsumerWidget {
+  const _DataSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    return _GlassCard(
+      title: l10n.dataSectionTitle,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(foregroundColor: Colors.redAccent),
+            onPressed: () => _confirmClearLibrary(context, ref, l10n),
+            icon: const Icon(Icons.delete_forever_outlined),
+            label: Text(l10n.clearLibrary),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(foregroundColor: Colors.redAccent),
+            onPressed: () => _confirmClearHistory(context, ref, l10n),
+            icon: const Icon(Icons.history_toggle_off_outlined),
+            label: Text(l10n.clearHistory),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmClearLibrary(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.clearLibraryConfirmTitle),
+        content: Text(l10n.clearLibraryConfirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.clearLibrary),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      final success = ref.read(libraryProvider.notifier).clearLibrary();
+      if (!success && context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.backupErrorGeneric)));
+      }
+    }
+  }
+
+  Future<void> _confirmClearHistory(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.clearHistory),
+        content: Text(l10n.clearHistoryConfirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.clearHistory),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      ref.read(discoverHistoryProvider.notifier).clearHistory();
+    }
   }
 }
 

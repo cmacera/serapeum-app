@@ -565,4 +565,17 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get backupErrorGeneric =>
       'Algo ha salido mal. Por favor, inténtalo de nuevo.';
+
+  @override
+  String get dataSectionTitle => 'Datos';
+
+  @override
+  String get clearLibrary => 'Borrar biblioteca';
+
+  @override
+  String get clearLibraryConfirmTitle => '¿Borrar toda la biblioteca?';
+
+  @override
+  String get clearLibraryConfirmation =>
+      'Se eliminarán permanentemente todos los elementos de tu biblioteca local. Esta acción no se puede deshacer.';
 }
