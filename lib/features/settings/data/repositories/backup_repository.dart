@@ -107,7 +107,8 @@ class BackupRepository implements IBackupRepository {
         throw const BackupParseException();
       }
     } on StorageException catch (e) {
-      if (e.statusCode == '404' || e.message.contains('not found')) {
+      if (e.statusCode == '404' ||
+          e.message.toLowerCase().contains('not found')) {
         return null;
       }
       _mapStorageException(e);
