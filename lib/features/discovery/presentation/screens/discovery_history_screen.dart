@@ -57,15 +57,6 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (history.isNotEmpty)
-                      IconButton(
-                        icon: const Icon(
-                          Icons.delete_sweep_outlined,
-                          color: Colors.white70,
-                        ),
-                        onPressed: () => _showClearDialog(context, ref, l10n),
-                        tooltip: l10n.clearHistory,
-                      ),
                   ],
                 ),
               ),
@@ -174,30 +165,6 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
                                           ],
                                         ),
                                       ),
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.delete_outline,
-                                          color: Colors.white54,
-                                          size: 20,
-                                        ),
-                                        tooltip: l10n.deleteHistoryItem,
-                                        onPressed: () async {
-                                          final confirmed =
-                                              await _showDeleteDialog(
-                                                context,
-                                                l10n,
-                                              );
-                                          if (!context.mounted) return;
-                                          if (confirmed == true) {
-                                            ref
-                                                .read(
-                                                  discoverHistoryProvider
-                                                      .notifier,
-                                                )
-                                                .deleteItem(item);
-                                          }
-                                        },
-                                      ),
                                     ],
                                   ),
                                 ),
@@ -244,41 +211,4 @@ class DiscoveryHistoryScreen extends ConsumerWidget {
       ],
     ),
   );
-
-  void _showClearDialog(
-    BuildContext context,
-    WidgetRef ref,
-    AppLocalizations l10n,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF16163A),
-        title: Text(
-          l10n.clearHistory,
-          style: const TextStyle(color: Colors.white),
-        ),
-        content: Text(
-          l10n.clearHistoryConfirmation,
-          style: const TextStyle(color: Colors.white70),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              ref.read(discoverHistoryProvider.notifier).clearHistory();
-              Navigator.pop(context);
-            },
-            child: Text(
-              l10n.clearHistory,
-              style: const TextStyle(color: Colors.redAccent),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

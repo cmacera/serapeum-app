@@ -406,5 +406,22 @@
   "backupErrorGeneric": "Something went wrong. Please try again.",
   "@backupErrorGeneric": {
     "description": "Fallback error message for backup/restore failures"
+  },
+
+  "dataSectionTitle": "Data",
+  "@dataSectionTitle": {
+    "description": "Title for the data management section in Settings"
+  },
+  "clearLibrary": "Clear Library",
+  "@clearLibrary": {
+    "description": "Button text to delete all items from the local library"
+  },
+  "clearLibraryConfirmTitle": "Clear entire library?",
+  "@clearLibraryConfirmTitle": {
+    "description": "Title of the confirmation dialog for clearing the library"
+  },
+  "clearLibraryConfirmation": "This will permanently delete all items from your local library. This action cannot be undone.",
+  "@clearLibraryConfirmation": {
+    "description": "Body of the confirmation dialog for clearing the library"
   }
 }
