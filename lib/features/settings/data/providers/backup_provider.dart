@@ -135,21 +135,25 @@ class BackupNotifier extends _$BackupNotifier {
     }
   }
 
-  /// Creates a backup from the current Realm state and uploads to Supabase Storage.
-  Future<void> createBackup() async {
+  /// Shared scaffolding for backup operations: guards on [BackupReady], sets
+  /// [BackupOperationInProgress], runs [work] (which returns the new
+  /// [BackupMetadata] or null), then transitions to [BackupReady] or
+  /// [BackupError]. Guards against sign-out races via [BackupAnonymous] checks.
+  Future<void> _runBackupOperation(
+    BackupOperation operation,
+    Future<BackupMetadata?> Function() work,
+  ) async {
     final current = state;
     if (current is! BackupReady) return;
 
     state = BackupOperationInProgress(
       email: current.email,
       lastBackup: current.lastBackup,
-      operation: BackupOperation.creating,
+      operation: operation,
     );
 
     try {
-      final realm = ref.read(realmProvider);
-      await _repo.createBackup(realm);
-      final metadata = await _repo.getBackupMetadata();
+      final metadata = await work();
       if (state is BackupAnonymous) return;
       state = BackupReady(email: current.email, lastBackup: metadata);
     } catch (e) {
@@ -157,52 +161,31 @@ class BackupNotifier extends _$BackupNotifier {
       state = BackupError(kind: _classifyError(e), previous: current);
     }
   }
+
+  /// Creates a backup from the current Realm state and uploads to Supabase Storage.
+  Future<void> createBackup() =>
+      _runBackupOperation(BackupOperation.creating, () async {
+        final realm = ref.read(realmProvider);
+        await _repo.createBackup(realm);
+        return _repo.getBackupMetadata();
+      });
 
   /// Downloads the latest backup and replaces the local Realm library.
-  Future<void> restoreBackup() async {
-    final current = state;
-    if (current is! BackupReady) return;
-
-    state = BackupOperationInProgress(
-      email: current.email,
-      lastBackup: current.lastBackup,
-      operation: BackupOperation.restoring,
-    );
-
-    try {
-      final realm = ref.read(realmProvider);
-      await _repo.restoreBackup(realm);
-      // Invalidate so Library screen reflects restored items immediately.
-      ref.invalidate(libraryProvider);
-      final metadata = await _repo.getBackupMetadata();
-      if (state is BackupAnonymous) return;
-      state = BackupReady(email: current.email, lastBackup: metadata);
-    } catch (e) {
-      if (state is BackupAnonymous) return;
-      state = BackupError(kind: _classifyError(e), previous: current);
-    }
-  }
+  Future<void> restoreBackup() =>
+      _runBackupOperation(BackupOperation.restoring, () async {
+        final realm = ref.read(realmProvider);
+        await _repo.restoreBackup(realm);
+        // Invalidate so Library screen reflects restored items immediately.
+        ref.invalidate(libraryProvider);
+        return _repo.getBackupMetadata();
+      });
 
   /// Deletes the stored backup from Supabase Storage.
-  Future<void> deleteBackup() async {
-    final current = state;
-    if (current is! BackupReady) return;
-
-    state = BackupOperationInProgress(
-      email: current.email,
-      lastBackup: current.lastBackup,
-      operation: BackupOperation.deleting,
-    );
-
-    try {
-      await _repo.deleteBackup();
-      if (state is BackupAnonymous) return;
-      state = BackupReady(email: current.email, lastBackup: null);
-    } catch (e) {
-      if (state is BackupAnonymous) return;
-      state = BackupError(kind: _classifyError(e), previous: current);
-    }
-  }
+  Future<void> deleteBackup() =>
+      _runBackupOperation(BackupOperation.deleting, () async {
+        await _repo.deleteBackup();
+        return null;
+      });
 
   /// Signs out of the backup account and restores an anonymous session
   /// so the app continues to work normally.
