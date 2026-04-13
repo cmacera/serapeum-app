@@ -34,7 +34,7 @@ class _OracleLinesAnimationState extends State<OracleLinesAnimation>
     // This avoids the jump that occurs when multiplying a large driftT by a
     // changing factor — here the speed blends smoothly frame by frame.
     _ticker = createTicker((elapsed) {
-      final real = elapsed.inMilliseconds / 1000.0;
+      final real = elapsed.inMicroseconds / 1e6;
       final dt = real - _lastRealElapsed;
       _lastRealElapsed = real;
       final speed = lerpDouble(1.0, 1.5, _glowController.value)!;

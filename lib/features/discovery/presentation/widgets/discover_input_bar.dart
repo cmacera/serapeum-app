@@ -10,15 +10,18 @@ class DiscoverInputBar extends ConsumerWidget {
   final TextEditingController controller;
   final ValueChanged<String> onSearch;
 
-  /// Total visual height of the input bar, computed from the actual padding and
-  /// button size used in [build]. Pass [bottomSafeArea] from
+  static const double _outerPadding = 16.0;
+  static const double _containerVerticalPadding = 4.0;
+  static const double _actionButtonSize = 44.0;
+
+  /// Total visual height of the input bar. Pass [bottomSafeArea] from
   /// `MediaQuery.of(context).padding.bottom` so callers can offset layouts
-  /// without duplicating these constants.
+  /// using the same values that drive the actual build layout.
   static double visualHeight(double bottomSafeArea) =>
-      16.0 + // top outer padding
-      4.0 * 2 + // AnimatedContainer vertical padding (symmetric 4.0)
-      44.0 + // action button height
-      16.0 + // bottom outer padding
+      _outerPadding +
+      _containerVerticalPadding * 2 +
+      _actionButtonSize +
+      _outerPadding +
       bottomSafeArea;
 
   const DiscoverInputBar({
@@ -40,8 +43,8 @@ class DiscoverInputBar extends ConsumerWidget {
         padding: EdgeInsets.only(
           left: isSearching ? 0.0 : 16.0,
           right: isSearching ? 0.0 : 16.0,
-          top: 16.0,
-          bottom: 16.0 + MediaQuery.of(context).padding.bottom,
+          top: _outerPadding,
+          bottom: _outerPadding + MediaQuery.of(context).padding.bottom,
         ),
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -65,7 +68,7 @@ class DiscoverInputBar extends ConsumerWidget {
                 ),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 4.0,
-                  vertical: 4.0,
+                  vertical: _containerVerticalPadding,
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
@@ -122,8 +125,8 @@ class DiscoverInputBar extends ConsumerWidget {
       label: isSearching ? l10n.cancel : l10n.askOracleTooltip,
       button: true,
       child: Container(
-        width: 44,
-        height: 44,
+        width: _actionButtonSize,
+        height: _actionButtonSize,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           boxShadow: isSearching
