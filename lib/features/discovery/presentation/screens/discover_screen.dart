@@ -74,9 +74,16 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                     key: const ValueKey('result'),
                     query: discoveryState.currentQuery ?? '',
                   )
-                : Center(
+                : Padding(
                     key: const ValueKey('oracle'),
-                    child: OracleLinesAnimation(isSearching: isSearching),
+                    padding: EdgeInsets.only(
+                      bottom: DiscoverInputBar.visualHeight(
+                        MediaQuery.of(context).padding.bottom,
+                      ),
+                    ),
+                    child: Center(
+                      child: OracleLinesAnimation(isSearching: isSearching),
+                    ),
                   ),
           ),
         ),

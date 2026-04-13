@@ -10,6 +10,17 @@ class DiscoverInputBar extends ConsumerWidget {
   final TextEditingController controller;
   final ValueChanged<String> onSearch;
 
+  /// Total visual height of the input bar, computed from the actual padding and
+  /// button size used in [build]. Pass [bottomSafeArea] from
+  /// `MediaQuery.of(context).padding.bottom` so callers can offset layouts
+  /// without duplicating these constants.
+  static double visualHeight(double bottomSafeArea) =>
+      16.0 + // top outer padding
+      4.0 * 2 + // AnimatedContainer vertical padding (symmetric 4.0)
+      44.0 + // action button height
+      16.0 + // bottom outer padding
+      bottomSafeArea;
+
   const DiscoverInputBar({
     super.key,
     required this.isSearching,
