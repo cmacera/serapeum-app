@@ -7,6 +7,7 @@ import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../core/constants/app_colors.dart';
 import 'package:serapeum_app/core/presentation/widgets/particle_background.dart';
+import 'package:serapeum_app/features/library/presentation/widgets/add_to_library_sheet.dart';
 
 import 'package:serapeum_app/features/discovery/data/local/discover_history_item.dart';
 import 'package:serapeum_app/features/discovery/data/models/orchestrator_response_dto.dart';
@@ -277,6 +278,23 @@ class _AppShellState extends ConsumerState<AppShell> {
             ],
           ],
         ),
+        floatingActionButton: currentIndex == 0 && !_isSearchActive
+            ? FloatingActionButton(
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  useRootNavigator: true,
+                  useSafeArea: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => const AddToLibrarySheet(),
+                ),
+                backgroundColor: AppColors.accent,
+                foregroundColor: Colors.white,
+                tooltip: l10n.addToLibraryTitle,
+                child: const Icon(Icons.add),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         body: Stack(
           children: [
             const Positioned.fill(child: ParticleBackground()),

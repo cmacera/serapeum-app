@@ -367,7 +367,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get libraryEmpty =>
-      'Tu Biblioteca está vacía.\nGuarda elementos desde el Oráculo para empezar.';
+      'Tu Biblioteca está vacía.\nGuarda elementos desde el Oráculo o usa el botón + para añadir directamente.';
 
   @override
   String get sortOptions => 'Ordenar por';
@@ -600,4 +600,20 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get appInfoBuild => 'Compilación';
+
+  @override
+  String get addToLibraryTitle => 'Añadir a la biblioteca';
+
+  @override
+  String get addToLibrarySearchHint => 'Buscar películas, libros, juegos…';
+
+  @override
+  String get addToLibrarySearchPrompt => 'Escribe algo para buscar';
+
+  @override
+  String get addToLibraryNoResults => 'Sin resultados';
+
+  @override
+  String get addToLibrarySearchError =>
+      'Algo ha salido mal. Por favor, inténtalo de nuevo.';
 }

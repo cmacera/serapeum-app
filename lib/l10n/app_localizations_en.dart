@@ -365,7 +365,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get libraryEmpty =>
-      'Your Library is empty.\nSave items from the Oracle to get started.';
+      'Your Library is empty.\nSave items from the Oracle or use the + button to add directly.';
 
   @override
   String get sortOptions => 'Sort by';
@@ -596,4 +596,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appInfoBuild => 'Build';
+
+  @override
+  String get addToLibraryTitle => 'Add to Library';
+
+  @override
+  String get addToLibrarySearchHint => 'Search movies, books, games…';
+
+  @override
+  String get addToLibrarySearchPrompt => 'Type something to search';
+
+  @override
+  String get addToLibraryNoResults => 'No results found';
+
+  @override
+  String get addToLibrarySearchError =>
+      'Something went wrong. Please try again.';
 }
