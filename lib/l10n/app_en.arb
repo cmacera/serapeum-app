@@ -196,7 +196,7 @@
   },
   "saveToLibrary": "Save to Library",
   "removeFromLibrary": "Remove from Library",
-  "libraryEmpty": "Your Library is empty.\nSave items from the Oracle to get started.",
+  "libraryEmpty": "Your Library is empty.\nSave items from the Oracle or use the + button to add directly.",
   "sortOptions": "Sort by",
   "sortByDateDesc": "Newest first",
   "sortByDateAsc": "Oldest first",
@@ -453,5 +453,22 @@
   "appInfoBuild": "Build",
   "@appInfoBuild": {
     "description": "Label for build number in the About section"
+  },
+
+  "addToLibraryTitle": "Add to Library",
+  "@addToLibraryTitle": {
+    "description": "Title of the bottom sheet for adding items directly to the library"
+  },
+  "addToLibrarySearchHint": "Search movies, books, games\u2026",
+  "@addToLibrarySearchHint": {
+    "description": "Placeholder hint inside the search field in the Add to Library sheet"
+  },
+  "addToLibrarySearchPrompt": "Type something to search",
+  "@addToLibrarySearchPrompt": {
+    "description": "Prompt shown when the search field is empty in the Add to Library sheet"
+  },
+  "addToLibraryNoResults": "No results found",
+  "@addToLibraryNoResults": {
+    "description": "Message shown when a search returns no results in the Add to Library sheet"
   }
 }

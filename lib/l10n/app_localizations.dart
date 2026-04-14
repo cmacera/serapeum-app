@@ -755,7 +755,7 @@ abstract class AppLocalizations {
   /// No description provided for @libraryEmpty.
   ///
   /// In en, this message translates to:
-  /// **'Your Library is empty.\nSave items from the Oracle to get started.'**
+  /// **'Your Library is empty.\nSave items from the Oracle or use the + button to add directly.'**
   String get libraryEmpty;
 
   /// No description provided for @sortOptions.
@@ -1145,6 +1145,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Build'**
   String get appInfoBuild;
+
+  /// Title of the bottom sheet for adding items directly to the library
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Library'**
+  String get addToLibraryTitle;
+
+  /// Placeholder hint inside the search field in the Add to Library sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Search movies, books, games…'**
+  String get addToLibrarySearchHint;
+
+  /// Prompt shown when the search field is empty in the Add to Library sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Type something to search'**
+  String get addToLibrarySearchPrompt;
+
+  /// Message shown when a search returns no results in the Add to Library sheet
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get addToLibraryNoResults;
 }
 
 class _AppLocalizationsDelegate
