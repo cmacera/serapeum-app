@@ -608,4 +608,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addToLibraryNoResults => 'No results found';
+
+  @override
+  String get addToLibrarySearchError =>
+      'Something went wrong. Please try again.';
 }

@@ -319,16 +319,19 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
 
     return asyncValue.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Text(
-            e.toString(),
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-            textAlign: TextAlign.center,
+      error: (e, _) {
+        debugPrint('AddToLibrarySheet search error: $e');
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Text(
+              l10n.addToLibrarySearchError,
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
-      ),
+        );
+      },
       data: (results) {
         if (results.isEmpty) {
           return Center(

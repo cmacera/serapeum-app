@@ -289,6 +289,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                 ),
                 backgroundColor: AppColors.accent,
                 foregroundColor: Colors.white,
+                tooltip: l10n.addToLibraryTitle,
                 child: const Icon(Icons.add),
               )
             : null,

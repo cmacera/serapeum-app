@@ -470,5 +470,9 @@
   "addToLibraryNoResults": "No results found",
   "@addToLibraryNoResults": {
     "description": "Message shown when a search returns no results in the Add to Library sheet"
+  },
+  "addToLibrarySearchError": "Something went wrong. Please try again.",
+  "@addToLibrarySearchError": {
+    "description": "Generic error message shown when a search fails in the Add to Library sheet"
   }
 }

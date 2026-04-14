@@ -256,5 +256,6 @@
   "addToLibraryTitle": "A\u00f1adir a la biblioteca",
   "addToLibrarySearchHint": "Buscar pel\u00edculas, libros, juegos\u2026",
   "addToLibrarySearchPrompt": "Escribe algo para buscar",
-  "addToLibraryNoResults": "Sin resultados"
+  "addToLibraryNoResults": "Sin resultados",
+  "addToLibrarySearchError": "Algo ha salido mal. Por favor, inténtalo de nuevo."
 }

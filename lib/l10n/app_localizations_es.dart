@@ -612,4 +612,8 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get addToLibraryNoResults => 'Sin resultados';
+
+  @override
+  String get addToLibrarySearchError =>
+      'Algo ha salido mal. Por favor, inténtalo de nuevo.';
 }

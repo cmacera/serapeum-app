@@ -1169,6 +1169,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No results found'**
   String get addToLibraryNoResults;
+
+  /// Generic error message shown when a search fails in the Add to Library sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get addToLibrarySearchError;
 }
 
 class _AppLocalizationsDelegate
