@@ -293,65 +293,82 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
     List<LibraryItem> libraryItems,
     AppLocalizations l10n,
   ) {
+    Widget sliver;
+
     if (_query.isEmpty) {
-      return Center(
-        child: Text(
-          l10n.addToLibrarySearchPrompt,
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
+      sliver = SliverFillRemaining(
+        hasScrollBody: false,
+        child: Center(
+          child: Text(
+            l10n.addToLibrarySearchPrompt,
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
+          ),
         ),
+      );
+    } else {
+      final AsyncValue<List<Object>> asyncValue = switch (_selectedCategory) {
+        DiscoverCategory.media =>
+          ref
+              .watch(searchMediaProvider(_query))
+              .whenData((list) => list.cast<Object>()),
+        DiscoverCategory.books =>
+          ref
+              .watch(searchBooksProvider(_query))
+              .whenData((list) => list.cast<Object>()),
+        DiscoverCategory.games =>
+          ref
+              .watch(searchGamesProvider(_query))
+              .whenData((list) => list.cast<Object>()),
+      };
+
+      sliver = asyncValue.when(
+        loading: () => const SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(child: CircularProgressIndicator()),
+        ),
+        error: (e, _) {
+          debugPrint('AddToLibrarySheet search error: $e');
+          return SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Text(
+                  l10n.addToLibrarySearchError,
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          );
+        },
+        data: (results) {
+          if (results.isEmpty) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: Text(
+                  l10n.addToLibraryNoResults,
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
+                ),
+              ),
+            );
+          }
+          return SliverPadding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+            ).copyWith(bottom: 32.0 + MediaQuery.paddingOf(context).bottom),
+            sliver: SliverToBoxAdapter(
+              child: _buildMasonryGrid(
+                _buildCards(context, results, libraryItems),
+              ),
+            ),
+          );
+        },
       );
     }
 
-    final AsyncValue<List<Object>> asyncValue = switch (_selectedCategory) {
-      DiscoverCategory.media =>
-        ref
-            .watch(searchMediaProvider(_query))
-            .whenData((list) => list.cast<Object>()),
-      DiscoverCategory.books =>
-        ref
-            .watch(searchBooksProvider(_query))
-            .whenData((list) => list.cast<Object>()),
-      DiscoverCategory.games =>
-        ref
-            .watch(searchGamesProvider(_query))
-            .whenData((list) => list.cast<Object>()),
-    };
-
-    return asyncValue.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) {
-        debugPrint('AddToLibrarySheet search error: $e');
-        return Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Text(
-              l10n.addToLibrarySearchError,
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        );
-      },
-      data: (results) {
-        if (results.isEmpty) {
-          return Center(
-            child: Text(
-              l10n.addToLibraryNoResults,
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
-            ),
-          );
-        }
-        return ListView(
-          controller: scrollController,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-          ).copyWith(bottom: 32.0 + MediaQuery.paddingOf(context).bottom),
-          children: [
-            _buildMasonryGrid(_buildCards(context, results, libraryItems)),
-          ],
-        );
-      },
-    );
+    return CustomScrollView(controller: scrollController, slivers: [sliver]);
   }
 
   List<Widget> _buildCards(
