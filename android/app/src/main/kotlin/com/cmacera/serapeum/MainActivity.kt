@@ -1,4 +1,4 @@
-package com.cmacera.serapeum_app
+package com.cmacera.serapeum
 
 import io.flutter.embedding.android.FlutterActivity
 
