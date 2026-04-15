@@ -120,6 +120,7 @@ Each feature follows: `data/` (repos, DTOs, local models, providers) → `domain
 
 - Format: `type(scope): description` (Conventional Commits)
 - **Never** add `Co-Authored-By: Claude` to commit messages
+- **Never** add Claude attribution of any kind to PR bodies
 - `[DEV-XX]` prefix belongs only in the PR/squash-merge title, **not** in local commits
 
 ---
