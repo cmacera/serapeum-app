@@ -354,12 +354,11 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
       librarySearchProvider(_query, _selectedCategory),
     );
 
-    // Underflow check: if the first page doesn't fill the viewport, no scroll
-    // events will fire. Listen for data transitions and trigger loadMore if
-    // the content height is below the scroll threshold.
+    // Underflow check: if a loaded page doesn't fill the viewport, no scroll
+    // events will fire. Schedule a post-frame check after every successful
+    // page load while there are more pages to fetch.
     ref.listen(librarySearchProvider(_query, _selectedCategory), (_, next) {
-      if (next.valueOrNull?.currentPage == 1 &&
-          (next.valueOrNull?.hasMore ?? false)) {
+      if (next.valueOrNull?.hasMore ?? false) {
         _scheduleUnderflowCheck();
       }
     });
