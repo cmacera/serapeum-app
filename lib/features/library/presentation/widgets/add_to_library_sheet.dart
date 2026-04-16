@@ -42,6 +42,7 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
   DiscoverCategory _selectedCategory = DiscoverCategory.media;
   String _query = '';
   final TextEditingController _textController = TextEditingController();
+  ScrollController? _scrollController;
   Timer? _debounce;
 
   @override
@@ -49,6 +50,22 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
     _debounce?.cancel();
     _textController.dispose();
     super.dispose();
+  }
+
+  /// Schedules a post-frame underflow check: if after the first page renders
+  /// the content doesn't fill the viewport, load the next page automatically.
+  void _scheduleUnderflowCheck() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final controller = _scrollController;
+      if (controller == null || !controller.hasClients) return;
+      final pos = controller.position;
+      if (pos.maxScrollExtent - pos.pixels < _kLoadMoreThreshold) {
+        ref
+            .read(librarySearchProvider(_query, _selectedCategory).notifier)
+            .loadMore();
+      }
+    });
   }
 
   void _onSearchChanged(String value) {
@@ -314,6 +331,8 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
     Set<String> savedKeys,
     AppLocalizations l10n,
   ) {
+    _scrollController = scrollController;
+
     if (_query.isEmpty) {
       return CustomScrollView(
         controller: scrollController,
@@ -334,6 +353,16 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
     final asyncState = ref.watch(
       librarySearchProvider(_query, _selectedCategory),
     );
+
+    // Underflow check: if the first page doesn't fill the viewport, no scroll
+    // events will fire. Listen for data transitions and trigger loadMore if
+    // the content height is below the scroll threshold.
+    ref.listen(librarySearchProvider(_query, _selectedCategory), (_, next) {
+      if (next.valueOrNull?.currentPage == 1 &&
+          (next.valueOrNull?.hasMore ?? false)) {
+        _scheduleUnderflowCheck();
+      }
+    });
 
     return NotificationListener<ScrollUpdateNotification>(
       onNotification: (notification) {

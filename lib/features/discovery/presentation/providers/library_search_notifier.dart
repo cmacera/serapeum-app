@@ -10,31 +10,36 @@ class LibrarySearchState {
   final bool hasMore;
   final int currentPage;
   final bool isLoadingMore;
+  final Object? paginationError;
 
   const LibrarySearchState({
     required this.items,
     required this.hasMore,
     required this.currentPage,
     required this.isLoadingMore,
+    this.paginationError,
   });
 
   const LibrarySearchState.empty()
     : items = const [],
       hasMore = false,
       currentPage = 0,
-      isLoadingMore = false;
+      isLoadingMore = false,
+      paginationError = null;
 
   LibrarySearchState copyWith({
     List<Object>? items,
     bool? hasMore,
     int? currentPage,
     bool? isLoadingMore,
+    Object? paginationError,
   }) {
     return LibrarySearchState(
       items: items ?? this.items,
       hasMore: hasMore ?? this.hasMore,
       currentPage: currentPage ?? this.currentPage,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      paginationError: paginationError,
     );
   }
 }
@@ -83,9 +88,10 @@ class LibrarySearch extends _$LibrarySearch {
           isLoadingMore: false,
         ),
       );
-    } catch (e, st) {
-      state = AsyncData(current.copyWith(isLoadingMore: false));
-      Error.throwWithStackTrace(e, st);
+    } catch (e) {
+      state = AsyncData(
+        current.copyWith(isLoadingMore: false, paginationError: e),
+      );
     } finally {
       _isLoadingMore = false;
     }

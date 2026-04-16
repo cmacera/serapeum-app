@@ -74,12 +74,32 @@ class CatalogSearchRepository implements ICatalogSearchRepository {
     if (data is! Map<String, dynamic>) {
       throw UnknownFailure('Expected Map for $endpoint response');
     }
-    final list = data['results'] as List;
+    final rawResults = data['results'];
+    if (rawResults is! List) {
+      throw UnknownFailure('$endpoint: "results" must be a List');
+    }
+    final rawPage = data['page'];
+    if (rawPage is! int) {
+      throw UnknownFailure('$endpoint: "page" must be an int');
+    }
+    final rawHasMore = data['hasMore'];
+    if (rawHasMore is! bool) {
+      throw UnknownFailure('$endpoint: "hasMore" must be a bool');
+    }
+    final rawTotal = data['total'];
+    if (rawTotal != null && rawTotal is! int) {
+      throw UnknownFailure('$endpoint: "total" must be an int or null');
+    }
     return PaginatedResult(
-      results: list.map((e) => parse(e as Map<String, dynamic>)).toList(),
-      page: data['page'] as int,
-      hasMore: data['hasMore'] as bool,
-      total: data['total'] as int?,
+      results: rawResults.map((e) {
+        if (e is! Map<String, dynamic>) {
+          throw UnknownFailure('$endpoint: result item must be a Map');
+        }
+        return parse(e);
+      }).toList(),
+      page: rawPage,
+      hasMore: rawHasMore,
+      total: rawTotal as int?,
     );
   }
 
