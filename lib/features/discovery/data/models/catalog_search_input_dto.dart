@@ -9,8 +9,9 @@ part 'catalog_search_input_dto.g.dart';
 class CatalogSearchInputDto {
   final String query;
   final String? language;
+  final int? page;
 
-  const CatalogSearchInputDto({required this.query, this.language});
+  const CatalogSearchInputDto({required this.query, this.language, this.page});
 
   Map<String, dynamic> toJson() => _$CatalogSearchInputDtoToJson(this);
 }

@@ -11,6 +11,7 @@ import 'package:serapeum_app/features/discovery/domain/entities/book.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/game.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/media_detail.dart';
+import 'package:serapeum_app/features/discovery/domain/entities/paginated_result.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/search_all_response.dart';
 import 'package:serapeum_app/features/discovery/domain/repositories/i_catalog_search_repository.dart';
 
@@ -65,57 +66,99 @@ class CatalogSearchRepository implements ICatalogSearchRepository {
         },
       );
 
-  @override
-  Future<List<Book>> searchBooks(String query, {String? language}) =>
-      _post<List<Book>>(
-        ApiConstants.searchBooks,
-        CatalogSearchInputDto(query: query, language: language).toJson(),
-        (data) {
-          if (data is List) {
-            return data
-                .map(
-                  (e) => BookDto.fromJson(e as Map<String, dynamic>).toDomain(),
-                )
-                .toList();
-          }
-          throw const UnknownFailure('Expected List for searchBooks response');
-        },
-      );
+  PaginatedResult<T> _parsePaginated<T>(
+    dynamic data,
+    String endpoint,
+    T Function(Map<String, dynamic>) parse,
+  ) {
+    if (data is! Map<String, dynamic>) {
+      throw UnknownFailure('Expected Map for $endpoint response');
+    }
+    final rawResults = data['results'];
+    if (rawResults is! List) {
+      throw UnknownFailure('$endpoint: "results" must be a List');
+    }
+    final rawPage = data['page'];
+    if (rawPage is! int) {
+      throw UnknownFailure('$endpoint: "page" must be an int');
+    }
+    final rawHasMore = data['hasMore'];
+    if (rawHasMore is! bool) {
+      throw UnknownFailure('$endpoint: "hasMore" must be a bool');
+    }
+    final rawTotal = data['total'];
+    if (rawTotal != null && rawTotal is! int) {
+      throw UnknownFailure('$endpoint: "total" must be an int or null');
+    }
+    return PaginatedResult(
+      results: rawResults.map((e) {
+        if (e is! Map<String, dynamic>) {
+          throw UnknownFailure('$endpoint: result item must be a Map');
+        }
+        return parse(e);
+      }).toList(),
+      page: rawPage,
+      hasMore: rawHasMore,
+      total: rawTotal as int?,
+    );
+  }
 
   @override
-  Future<List<Media>> searchMedia(String query, {String? language}) =>
-      _post<List<Media>>(
-        ApiConstants.searchMedia,
-        CatalogSearchInputDto(query: query, language: language).toJson(),
-        (data) {
-          if (data is List) {
-            return data
-                .map(
-                  (e) =>
-                      MediaDto.fromJson(e as Map<String, dynamic>).toDomain(),
-                )
-                .toList();
-          }
-          throw const UnknownFailure('Expected List for searchMedia response');
-        },
-      );
+  Future<PaginatedResult<Book>> searchBooks(
+    String query, {
+    String? language,
+    int? page,
+  }) => _post(
+    ApiConstants.searchBooks,
+    CatalogSearchInputDto(
+      query: query,
+      language: language,
+      page: page,
+    ).toJson(),
+    (data) => _parsePaginated(
+      data,
+      ApiConstants.searchBooks,
+      (e) => BookDto.fromJson(e).toDomain(),
+    ),
+  );
 
   @override
-  Future<List<Game>> searchGames(String query, {String? language}) =>
-      _post<List<Game>>(
-        ApiConstants.searchGames,
-        CatalogSearchInputDto(query: query, language: language).toJson(),
-        (data) {
-          if (data is List) {
-            return data
-                .map(
-                  (e) => GameDto.fromJson(e as Map<String, dynamic>).toDomain(),
-                )
-                .toList();
-          }
-          throw const UnknownFailure('Expected List for searchGames response');
-        },
-      );
+  Future<PaginatedResult<Media>> searchMedia(
+    String query, {
+    String? language,
+    int? page,
+  }) => _post(
+    ApiConstants.searchMedia,
+    CatalogSearchInputDto(
+      query: query,
+      language: language,
+      page: page,
+    ).toJson(),
+    (data) => _parsePaginated(
+      data,
+      ApiConstants.searchMedia,
+      (e) => MediaDto.fromJson(e).toDomain(),
+    ),
+  );
+
+  @override
+  Future<PaginatedResult<Game>> searchGames(
+    String query, {
+    String? language,
+    int? page,
+  }) => _post(
+    ApiConstants.searchGames,
+    CatalogSearchInputDto(
+      query: query,
+      language: language,
+      page: page,
+    ).toJson(),
+    (data) => _parsePaginated(
+      data,
+      ApiConstants.searchGames,
+      (e) => GameDto.fromJson(e).toDomain(),
+    ),
+  );
 
   @override
   Future<MovieDetail> getMovieDetail(
