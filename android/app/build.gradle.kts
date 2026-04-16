@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.cmacera.serapeum_app"
+    namespace = "com.cmacera.serapeum"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.cmacera.serapeum_app"
+        applicationId = "com.cmacera.serapeum"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
