@@ -60,7 +60,9 @@ void main() {
         () => mockDio.post<dynamic>(any(), data: any(named: 'data')),
       ).thenAnswer(
         (_) async => Response(
-          data: {'result': []},
+          data: {
+            'result': {'results': [], 'page': 1, 'hasMore': false},
+          },
           requestOptions: RequestOptions(path: ''),
           statusCode: 200,
         ),
@@ -85,14 +87,17 @@ void main() {
         () => mockDio.post<dynamic>(any(), data: any(named: 'data')),
       ).thenAnswer(
         (_) async => Response(
-          data: {'result': []},
+          data: {
+            'result': {'results': [], 'page': 1, 'hasMore': false},
+          },
           requestOptions: RequestOptions(path: ''),
           statusCode: 200,
         ),
       );
 
       final result = await repository.searchMedia('query');
-      expect(result, isEmpty);
+      expect(result.results, isEmpty);
+      expect(result.hasMore, isFalse);
     });
   });
 

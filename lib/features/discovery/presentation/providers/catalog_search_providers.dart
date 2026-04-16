@@ -28,7 +28,8 @@ Future<List<Book>> searchBooks(Ref ref, String query) async {
   final repository = ref.watch(catalogSearchRepositoryProvider);
   final language = ref.watch(localeProvider);
 
-  return await repository.searchBooks(query, language: language);
+  final result = await repository.searchBooks(query, language: language);
+  return result.results;
 }
 
 @riverpod
@@ -38,7 +39,8 @@ Future<List<Media>> searchMedia(Ref ref, String query) async {
   final repository = ref.watch(catalogSearchRepositoryProvider);
   final language = ref.watch(localeProvider);
 
-  return await repository.searchMedia(query, language: language);
+  final result = await repository.searchMedia(query, language: language);
+  return result.results;
 }
 
 @riverpod
@@ -48,5 +50,6 @@ Future<List<Game>> searchGames(Ref ref, String query) async {
   final repository = ref.watch(catalogSearchRepositoryProvider);
   final language = ref.watch(localeProvider);
 
-  return await repository.searchGames(query, language: language);
+  final result = await repository.searchGames(query, language: language);
+  return result.results;
 }

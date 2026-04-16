@@ -10,13 +10,26 @@ import 'package:serapeum_app/core/utils/tmdb_image_utils.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/book.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/game.dart';
 import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
-import 'package:serapeum_app/features/discovery/presentation/providers/catalog_search_providers.dart';
+import 'package:serapeum_app/features/discovery/presentation/providers/library_search_notifier.dart';
 import 'package:serapeum_app/features/library/data/local/library_item.dart';
 import 'package:serapeum_app/features/library/data/providers/library_provider.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 import 'package:serapeum_app/shared/widgets/category_tab_bar.dart';
 import 'package:serapeum_app/shared/widgets/media_detail_modal.dart';
 import 'package:serapeum_app/shared/widgets/media_result_card.dart';
+
+// How many pixels before the bottom edge triggers the next-page load.
+const double _kLoadMoreThreshold = 200.0;
+
+// Sheet and modal snap sizes.
+const double _kSheetInitialSize = 0.75;
+const double _kSheetMinSize = 0.4;
+const double _kSheetMaxSize = 0.95;
+const double _kDetailModalInitialSize = 0.9;
+const double _kDetailModalMinSize = 0.4;
+
+// Background colour for the sheet surface — matches the dark-space theme.
+const Color _kSheetBackground = Color(0xFF12122A);
 
 class AddToLibrarySheet extends ConsumerStatefulWidget {
   const AddToLibrarySheet({super.key});
@@ -71,6 +84,9 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
     return parts.join('  ·  ');
   }
 
+  String? _bookImageUrl(Book book) =>
+      book.imageLinks?['thumbnail'] ?? book.imageLinks?['smallThumbnail'];
+
   void _saveMedia(Media media) {
     ref
         .read(libraryProvider.notifier)
@@ -90,8 +106,7 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
   }
 
   void _saveBook(Book book) {
-    final imageUrl =
-        book.imageLinks?['thumbnail'] ?? book.imageLinks?['smallThumbnail'];
+    final imageUrl = _bookImageUrl(book);
     ref
         .read(libraryProvider.notifier)
         .addItem(
@@ -141,11 +156,11 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
             return false;
           },
           child: DraggableScrollableSheet(
-            initialChildSize: 0.9,
-            minChildSize: 0.4,
-            maxChildSize: 0.95,
+            initialChildSize: _kDetailModalInitialSize,
+            minChildSize: _kDetailModalMinSize,
+            maxChildSize: _kSheetMaxSize,
             snap: true,
-            snapSizes: const [0.9],
+            snapSizes: const [_kDetailModalInitialSize],
             shouldCloseOnMinExtent: true,
             builder: (_, controller) =>
                 MediaDetailModal(entity: entity, scrollController: controller),
@@ -155,22 +170,28 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
     );
   }
 
+  /// Builds a Set of "mediaType:externalId" keys for O(1) saved-item lookup.
+  Set<String> _savedKeys(List<LibraryItem> items) => {
+    for (final i in items) '${i.mediaType}:${i.externalId}',
+  };
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final libraryItems = ref.watch(libraryProvider);
+    final savedKeys = _savedKeys(libraryItems);
 
     return DraggableScrollableSheet(
-      initialChildSize: 0.75,
-      minChildSize: 0.4,
-      maxChildSize: 0.95,
+      initialChildSize: _kSheetInitialSize,
+      minChildSize: _kSheetMinSize,
+      maxChildSize: _kSheetMaxSize,
       snap: true,
-      snapSizes: const [0.75, 0.95],
+      snapSizes: const [_kSheetInitialSize, _kSheetMaxSize],
       shouldCloseOnMinExtent: true,
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF12122A),
+            color: _kSheetBackground,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
           ),
@@ -276,7 +297,7 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
                 child: _buildResults(
                   context,
                   scrollController,
-                  libraryItems,
+                  savedKeys,
                   l10n,
                 ),
               ),
@@ -290,97 +311,125 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
   Widget _buildResults(
     BuildContext context,
     ScrollController scrollController,
-    List<LibraryItem> libraryItems,
+    Set<String> savedKeys,
     AppLocalizations l10n,
   ) {
-    Widget sliver;
-
     if (_query.isEmpty) {
-      sliver = SliverFillRemaining(
-        hasScrollBody: false,
-        child: Center(
-          child: Text(
-            l10n.addToLibrarySearchPrompt,
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
-          ),
-        ),
-      );
-    } else {
-      final AsyncValue<List<Object>> asyncValue = switch (_selectedCategory) {
-        DiscoverCategory.media =>
-          ref
-              .watch(searchMediaProvider(_query))
-              .whenData((list) => list.cast<Object>()),
-        DiscoverCategory.books =>
-          ref
-              .watch(searchBooksProvider(_query))
-              .whenData((list) => list.cast<Object>()),
-        DiscoverCategory.games =>
-          ref
-              .watch(searchGamesProvider(_query))
-              .whenData((list) => list.cast<Object>()),
-      };
-
-      sliver = asyncValue.when(
-        loading: () => const SliverFillRemaining(
-          hasScrollBody: false,
-          child: Center(child: CircularProgressIndicator()),
-        ),
-        error: (e, _) {
-          debugPrint('AddToLibrarySheet search error: $e');
-          return SliverFillRemaining(
+      return CustomScrollView(
+        controller: scrollController,
+        slivers: [
+          SliverFillRemaining(
             hasScrollBody: false,
             child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Text(
-                  l10n.addToLibrarySearchError,
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-                  textAlign: TextAlign.center,
-                ),
+              child: Text(
+                l10n.addToLibrarySearchPrompt,
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
               ),
             ),
-          );
-        },
-        data: (results) {
-          if (results.isEmpty) {
-            return SliverFillRemaining(
-              hasScrollBody: false,
-              child: Center(
-                child: Text(
-                  l10n.addToLibraryNoResults,
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
-                ),
-              ),
-            );
-          }
-          return SliverPadding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-            ).copyWith(bottom: 32.0 + MediaQuery.paddingOf(context).bottom),
-            sliver: SliverToBoxAdapter(
-              child: _buildMasonryGrid(
-                _buildCards(context, results, libraryItems),
-              ),
-            ),
-          );
-        },
+          ),
+        ],
       );
     }
 
-    return CustomScrollView(controller: scrollController, slivers: [sliver]);
+    final asyncState = ref.watch(
+      librarySearchProvider(_query, _selectedCategory),
+    );
+
+    return NotificationListener<ScrollUpdateNotification>(
+      onNotification: (notification) {
+        final metrics = notification.metrics;
+        if (metrics.pixels >= metrics.maxScrollExtent - _kLoadMoreThreshold) {
+          ref
+              .read(librarySearchProvider(_query, _selectedCategory).notifier)
+              .loadMore();
+        }
+        return false;
+      },
+      child: CustomScrollView(
+        controller: scrollController,
+        slivers: [
+          ...asyncState.when(
+            loading: () => [
+              const SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ],
+            error: (e, _) {
+              debugPrint('AddToLibrarySheet search error: $e');
+              return [
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Text(
+                        l10n.addToLibrarySearchError,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.5),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              ];
+            },
+            data: (searchState) {
+              if (searchState.items.isEmpty) {
+                return [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Text(
+                        l10n.addToLibraryNoResults,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.4),
+                        ),
+                      ),
+                    ),
+                  ),
+                ];
+              }
+              return [
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  sliver: SliverToBoxAdapter(
+                    child: _buildMasonryGrid(
+                      _buildCards(context, searchState.items, savedKeys),
+                    ),
+                  ),
+                ),
+                if (searchState.isLoadingMore)
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  ),
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 32.0 + MediaQuery.paddingOf(context).bottom,
+                  ),
+                ),
+              ];
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   List<Widget> _buildCards(
     BuildContext context,
     List<Object> results,
-    List<LibraryItem> libraryItems,
+    Set<String> savedKeys,
   ) {
     return results.map((entity) {
       return switch (entity) {
-        Media media => _buildMediaCard(context, media, libraryItems),
-        Book book => _buildBookCard(context, book, libraryItems),
-        Game game => _buildGameCard(context, game, libraryItems),
+        Media media => _buildMediaCard(context, media, savedKeys),
+        Book book => _buildBookCard(context, book, savedKeys),
+        Game game => _buildGameCard(context, game, savedKeys),
         _ => const SizedBox.shrink(),
       };
     }).toList();
@@ -389,13 +438,10 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
   Widget _buildMediaCard(
     BuildContext context,
     Media media,
-    List<LibraryItem> libraryItems,
+    Set<String> savedKeys,
   ) {
-    final externalId = media.id.toString();
     final mediaType = _persistedMediaType(media.mediaType);
-    final isSaved = libraryItems.any(
-      (i) => i.externalId == externalId && i.mediaType == mediaType,
-    );
+    final isSaved = savedKeys.contains('$mediaType:${media.id}');
     return MediaResultCard(
       title: media.title ?? media.name ?? '',
       mediaType: media.mediaType == MediaType.tv
@@ -408,39 +454,39 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
       imageUrl: tmdbPosterUrl(media.posterPath),
       isSaved: isSaved,
       onTap: () => _showDetails(context, media),
-      onSave: () => _saveMedia(media),
+      onSave: isSaved
+          ? () => ref
+                .read(libraryProvider.notifier)
+                .removeItem(media.id.toString(), mediaType)
+          : () => _saveMedia(media),
     );
   }
 
   Widget _buildBookCard(
     BuildContext context,
     Book book,
-    List<LibraryItem> libraryItems,
+    Set<String> savedKeys,
   ) {
-    final isSaved = libraryItems.any(
-      (i) => i.externalId == book.id && i.mediaType == 'book',
-    );
-    final imageUrl =
-        book.imageLinks?['thumbnail'] ?? book.imageLinks?['smallThumbnail'];
+    final isSaved = savedKeys.contains('book:${book.id}');
     return MediaResultCard(
       title: book.title,
       mediaType: MediaCardType.book,
       subtitle: _buildSubtitle(_extractYear(book.publishedDate), null),
-      imageUrl: imageUrl,
+      imageUrl: _bookImageUrl(book),
       isSaved: isSaved,
       onTap: () => _showDetails(context, book),
-      onSave: () => _saveBook(book),
+      onSave: isSaved
+          ? () => ref.read(libraryProvider.notifier).removeItem(book.id, 'book')
+          : () => _saveBook(book),
     );
   }
 
   Widget _buildGameCard(
     BuildContext context,
     Game game,
-    List<LibraryItem> libraryItems,
+    Set<String> savedKeys,
   ) {
-    final isSaved = libraryItems.any(
-      (i) => i.externalId == game.id.toString() && i.mediaType == 'game',
-    );
+    final isSaved = savedKeys.contains('game:${game.id}');
     return MediaResultCard(
       title: game.name,
       mediaType: MediaCardType.game,
@@ -451,32 +497,28 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
       imageUrl: game.coverUrl,
       isSaved: isSaved,
       onTap: () => _showDetails(context, game),
-      onSave: () => _saveGame(game),
+      onSave: isSaved
+          ? () => ref
+                .read(libraryProvider.notifier)
+                .removeItem(game.id.toString(), 'game')
+          : () => _saveGame(game),
     );
   }
 
   Widget _buildMasonryGrid(List<Widget> cards) {
     final leftCards = <Widget>[];
     final rightCards = <Widget>[];
-    for (int i = 0; i < cards.length; i++) {
-      if (i.isEven) {
-        leftCards.add(cards[i]);
-      } else {
-        rightCards.add(cards[i]);
-      }
+    for (var i = 0; i < cards.length; i++) {
+      (i.isEven ? leftCards : rightCards).add(cards[i]);
     }
 
     Widget column(List<Widget> items) => Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: items
-            .map(
-              (w) => Padding(
-                padding: const EdgeInsets.only(bottom: 12.0),
-                child: w,
-              ),
-            )
-            .toList(),
+        children: [
+          for (final w in items)
+            Padding(padding: const EdgeInsets.only(bottom: 12.0), child: w),
+        ],
       ),
     );
 
