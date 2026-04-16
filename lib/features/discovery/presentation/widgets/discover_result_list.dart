@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/layout_constants.dart';
 import '../../domain/entities/book.dart';
 import '../../domain/entities/featured_item.dart';
 import '../../domain/entities/game.dart';
@@ -187,11 +190,30 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     }
   }
 
+  Widget _buildCategoryTabBar(
+    AppLocalizations l10n,
+    bool hasMedia,
+    bool hasBooks,
+    bool hasGames,
+  ) => CategoryTabBar(
+    filterAllLabel: l10n.filterAll,
+    filterMediaLabel: l10n.filterMedia,
+    filterBooksLabel: l10n.filterBooks,
+    filterGamesLabel: l10n.filterGames,
+    hasMedia: hasMedia,
+    hasBooks: hasBooks,
+    hasGames: hasGames,
+    selectedCategory: _selectedCategory,
+    onCategorySelected: (category) =>
+        setState(() => _selectedCategory = category),
+  );
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final data = widget.response;
     final libraryItems = ref.watch(libraryProvider);
+    final wide = ResponsiveLayout.isWide(context);
 
     final hasMedia = data.media.isNotEmpty;
     final hasBooks = data.books.isNotEmpty;
@@ -202,7 +224,100 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     final showTabs = [hasMedia, hasBooks, hasGames].where((b) => b).length >= 2;
 
     final cards = _buildFilteredCards(context, l10n, data, libraryItems);
+    final bottomPadding = 32.0 + MediaQuery.paddingOf(context).bottom;
 
+    final headerColumn = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ChatMessageBubble(text: widget.query, isUser: true),
+        const SizedBox(height: 16),
+        ChatMessageBubble(text: widget.assistantText, isUser: false),
+        FeedbackButtons(traceId: widget.traceId),
+        if (!hasResults)
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              l10n.noMatches,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontStyle: FontStyle.italic),
+            ),
+          ),
+      ],
+    );
+
+    if (wide && data.featured != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: headerColumn,
+          ),
+          const Divider(height: 1, thickness: 1, color: Color(0x14FFFFFF)),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: ResponsiveLayout.featuredPanelWidth,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: _buildFeaturedCard(
+                      context,
+                      data.featured!,
+                      libraryItems,
+                      l10n,
+                    ),
+                  ),
+                ),
+                const VerticalDivider(
+                  thickness: 1,
+                  width: 1,
+                  color: AppColors.subtleDivider,
+                ),
+                Expanded(
+                  child: CustomScrollView(
+                    slivers: [
+                      if (showTabs && hasResults)
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 16.0),
+                            child: _buildCategoryTabBar(
+                              l10n,
+                              hasMedia,
+                              hasBooks,
+                              hasGames,
+                            ),
+                          ),
+                        ),
+                      if (cards.isNotEmpty)
+                        SliverPadding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                          ).copyWith(top: 16.0, bottom: bottomPadding),
+                          sliver: SliverToBoxAdapter(
+                            child: LayoutBuilder(
+                              builder: (context, constraints) =>
+                                  _buildMasonryGrid(
+                                    cards,
+                                    ResponsiveLayout.gridColumnCount(
+                                      constraints.maxWidth,
+                                    ),
+                                  ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
+    // Narrow or wide without featured: single scroll view
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
@@ -211,19 +326,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                ChatMessageBubble(text: widget.query, isUser: true),
-                const SizedBox(height: 16),
-                ChatMessageBubble(text: widget.assistantText, isUser: false),
-                FeedbackButtons(traceId: widget.traceId),
-                if (!hasResults)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      l10n.noMatches,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
+                headerColumn,
                 if (data.featured != null) ...[
                   const SizedBox(height: 24),
                   Padding(
@@ -238,21 +341,7 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
                 ],
                 if (showTabs && hasResults) ...[
                   const SizedBox(height: 24),
-                  CategoryTabBar(
-                    filterAllLabel: l10n.filterAll,
-                    filterMediaLabel: l10n.filterMedia,
-                    filterBooksLabel: l10n.filterBooks,
-                    filterGamesLabel: l10n.filterGames,
-                    hasMedia: hasMedia,
-                    hasBooks: hasBooks,
-                    hasGames: hasGames,
-                    selectedCategory: _selectedCategory,
-                    onCategorySelected: (category) {
-                      setState(() {
-                        _selectedCategory = category;
-                      });
-                    },
-                  ),
+                  _buildCategoryTabBar(l10n, hasMedia, hasBooks, hasGames),
                 ],
               ],
             ),
@@ -262,8 +351,15 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
           SliverPadding(
             padding: const EdgeInsets.symmetric(
               horizontal: 16.0,
-            ).copyWith(bottom: 32.0 + MediaQuery.paddingOf(context).bottom),
-            sliver: SliverToBoxAdapter(child: _buildMasonryGrid(cards)),
+            ).copyWith(bottom: bottomPadding),
+            sliver: SliverToBoxAdapter(
+              child: LayoutBuilder(
+                builder: (context, constraints) => _buildMasonryGrid(
+                  cards,
+                  ResponsiveLayout.gridColumnCount(constraints.maxWidth),
+                ),
+              ),
+            ),
           ),
       ],
     );
@@ -389,26 +485,23 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     FeaturedItem featured,
     List<LibraryItem> libraryItems,
     AppLocalizations l10n,
-  ) => switch (featured) {
-    FeaturedMedia(:final media) => _buildMediaCard(
-      context,
-      media,
-      libraryItems,
-      l10n,
-    ),
-    FeaturedBook(:final book) => _buildBookCard(context, book, libraryItems),
-    FeaturedGame(:final game) => _buildGameCard(context, game, libraryItems),
-  };
+  ) => _FeaturedHalo(
+    child: switch (featured) {
+      FeaturedMedia(:final media) => _buildMediaCard(
+        context,
+        media,
+        libraryItems,
+        l10n,
+      ),
+      FeaturedBook(:final book) => _buildBookCard(context, book, libraryItems),
+      FeaturedGame(:final game) => _buildGameCard(context, game, libraryItems),
+    },
+  );
 
-  Widget _buildMasonryGrid(List<Widget> cards) {
-    final leftCards = <Widget>[];
-    final rightCards = <Widget>[];
+  Widget _buildMasonryGrid(List<Widget> cards, int columns) {
+    final cols = List.generate(columns, (_) => <Widget>[]);
     for (int i = 0; i < cards.length; i++) {
-      if (i.isEven) {
-        leftCards.add(cards[i]);
-      } else {
-        rightCards.add(cards[i]);
-      }
+      cols[i % columns].add(cards[i]);
     }
 
     Widget column(List<Widget> items) => Expanded(
@@ -428,9 +521,10 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        column(leftCards),
-        const SizedBox(width: 16),
-        column(rightCards),
+        for (int i = 0; i < columns; i++) ...[
+          column(cols[i]),
+          if (i < columns - 1) const SizedBox(width: 16),
+        ],
       ],
     );
   }
@@ -451,4 +545,103 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     if (parts.isEmpty) return null;
     return parts.join('  ·  ');
   }
+}
+
+// ---------------------------------------------------------------------------
+// Shimmering halo wrapper for the featured card
+// ---------------------------------------------------------------------------
+
+class _FeaturedHalo extends StatefulWidget {
+  const _FeaturedHalo({required this.child});
+  final Widget child;
+
+  @override
+  State<_FeaturedHalo> createState() => _FeaturedHaloState();
+}
+
+class _FeaturedHaloState extends State<_FeaturedHalo>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) => CustomPaint(
+        painter: _HaloPainter(progress: _controller.value),
+        child: child,
+      ),
+      child: Padding(padding: const EdgeInsets.all(3.0), child: widget.child),
+    );
+  }
+}
+
+class _HaloPainter extends CustomPainter {
+  const _HaloPainter({required this.progress});
+  final double progress;
+
+  // Matches MediaResultCard's BorderRadius.circular(16) + 2px halo inset
+  static const _radius = 18.0;
+  static const _inset = 1.5;
+  static const _strokeWidth = 2.0;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Rect.fromLTWH(
+      _inset,
+      _inset,
+      size.width - _inset * 2,
+      size.height - _inset * 2,
+    );
+    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(_radius));
+
+    // Soft pulsing outer glow
+    final glowAlpha = 0.25 + 0.15 * math.sin(2 * math.pi * progress);
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..color = const Color(0xFF930DF2).withValues(alpha: glowAlpha)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = _strokeWidth * 5
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10.0),
+    );
+
+    // Rotating sweep gradient stroke
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..shader = SweepGradient(
+          colors: const [
+            Colors.transparent,
+            Color(0xFF930DF2),
+            Color(0xFFB060FF),
+            Color(0xFF60C8FF),
+            Color(0xFF930DF2),
+            Colors.transparent,
+          ],
+          stops: const [0.0, 0.15, 0.4, 0.6, 0.8, 1.0],
+          transform: GradientRotation(2 * math.pi * progress),
+        ).createShader(rect)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = _strokeWidth,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_HaloPainter old) => old.progress != progress;
 }

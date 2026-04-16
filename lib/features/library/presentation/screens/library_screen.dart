@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/layout_constants.dart';
 import '../../../discovery/domain/entities/book.dart';
 import '../../../discovery/domain/entities/game.dart';
 import '../../../discovery/domain/entities/media.dart';
@@ -150,7 +151,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
               top: showTabs ? 8.0 : 16.0,
               bottom: 32.0 + MediaQuery.paddingOf(context).bottom,
             ),
-            sliver: SliverToBoxAdapter(child: _buildMasonryGrid(cards)),
+            sliver: SliverToBoxAdapter(
+              child: LayoutBuilder(
+                builder: (context, constraints) => _buildMasonryGrid(
+                  cards,
+                  ResponsiveLayout.gridColumnCount(constraints.maxWidth),
+                ),
+              ),
+            ),
           ),
       ],
     );
@@ -257,15 +265,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     }).toList();
   }
 
-  Widget _buildMasonryGrid(List<Widget> cards) {
-    final leftCards = <Widget>[];
-    final rightCards = <Widget>[];
+  Widget _buildMasonryGrid(List<Widget> cards, int columns) {
+    final cols = List.generate(columns, (_) => <Widget>[]);
     for (int i = 0; i < cards.length; i++) {
-      if (i.isEven) {
-        leftCards.add(cards[i]);
-      } else {
-        rightCards.add(cards[i]);
-      }
+      cols[i % columns].add(cards[i]);
     }
 
     Widget column(List<Widget> items) => Expanded(
@@ -285,9 +288,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        column(leftCards),
-        const SizedBox(width: 16),
-        column(rightCards),
+        for (int i = 0; i < columns; i++) ...[
+          column(cols[i]),
+          if (i < columns - 1) const SizedBox(width: 16),
+        ],
       ],
     );
   }

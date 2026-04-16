@@ -16,22 +16,30 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ListView(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 24,
-        bottom:
-            MediaQuery.paddingOf(context).bottom +
-            LayoutConstants.navBarClearance,
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: ResponsiveLayout.contentMaxWidth,
+        ),
+        child: ListView(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 24,
+            bottom:
+                MediaQuery.paddingOf(context).bottom +
+                LayoutConstants.navBarClearance,
+          ),
+          children: const [
+            _BackupSection(),
+            SizedBox(height: 16),
+            _DataSection(),
+            SizedBox(height: 16),
+            _AppInfoSection(),
+          ],
+        ),
       ),
-      children: const [
-        _BackupSection(),
-        SizedBox(height: 16),
-        _DataSection(),
-        SizedBox(height: 16),
-        _AppInfoSection(),
-      ],
     );
   }
 }

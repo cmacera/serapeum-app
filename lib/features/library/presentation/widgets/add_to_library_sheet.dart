@@ -198,6 +198,14 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
     final libraryItems = ref.watch(libraryProvider);
     final savedKeys = _savedKeys(libraryItems);
 
+    // ref.listen must be called inside build(), not inside helper callbacks
+    // (DraggableScrollableSheet's builder is not considered a build() by Riverpod).
+    ref.listen(librarySearchProvider(_query, _selectedCategory), (_, next) {
+      if (_query.isNotEmpty && (next.valueOrNull?.hasMore ?? false)) {
+        _scheduleUnderflowCheck();
+      }
+    });
+
     return DraggableScrollableSheet(
       initialChildSize: _kSheetInitialSize,
       minChildSize: _kSheetMinSize,
@@ -353,15 +361,6 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
     final asyncState = ref.watch(
       librarySearchProvider(_query, _selectedCategory),
     );
-
-    // Underflow check: if a loaded page doesn't fill the viewport, no scroll
-    // events will fire. Schedule a post-frame check after every successful
-    // page load while there are more pages to fetch.
-    ref.listen(librarySearchProvider(_query, _selectedCategory), (_, next) {
-      if (next.valueOrNull?.hasMore ?? false) {
-        _scheduleUnderflowCheck();
-      }
-    });
 
     return NotificationListener<ScrollUpdateNotification>(
       onNotification: (notification) {
