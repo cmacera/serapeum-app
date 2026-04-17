@@ -265,7 +265,11 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: headerColumn,
               ),
-              const Divider(height: 1, thickness: 1, color: Color(0x14FFFFFF)),
+              const Divider(
+                height: 1,
+                thickness: 1,
+                color: AppColors.subtleDivider,
+              ),
               Expanded(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,11 +313,11 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
                               ).copyWith(top: 16.0, bottom: bottomPadding),
                               sliver: SliverToBoxAdapter(
                                 child: LayoutBuilder(
-                                  builder: (context, constraints) =>
+                                  builder: (context, paneConstraints) =>
                                       _buildMasonryGrid(
                                         cards,
                                         ResponsiveLayout.gridColumnCount(
-                                          constraints.maxWidth,
+                                          paneConstraints.maxWidth,
                                         ),
                                       ),
                                 ),
@@ -575,7 +579,7 @@ class _FeaturedHalo extends StatefulWidget {
 }
 
 class _FeaturedHaloState extends State<_FeaturedHalo>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController _controller;
 
   @override
@@ -585,10 +589,22 @@ class _FeaturedHaloState extends State<_FeaturedHalo>
       vsync: this,
       duration: const Duration(seconds: 3),
     )..repeat();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _controller.repeat();
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
+      _controller.stop();
+    }
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     super.dispose();
   }
