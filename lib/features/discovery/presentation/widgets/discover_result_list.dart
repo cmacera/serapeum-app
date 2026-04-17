@@ -613,9 +613,11 @@ class _FeaturedHaloState extends State<_FeaturedHalo>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
-      builder: (context, child) => CustomPaint(
-        painter: _HaloPainter(progress: _controller.value),
-        child: child,
+      builder: (context, child) => RepaintBoundary(
+        child: CustomPaint(
+          painter: _HaloPainter(progress: _controller.value),
+          child: child,
+        ),
       ),
       child: Padding(padding: const EdgeInsets.all(3.0), child: widget.child),
     );

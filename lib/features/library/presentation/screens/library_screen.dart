@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -266,9 +267,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   }
 
   Widget _buildMasonryGrid(List<Widget> cards, int columns) {
-    final cols = List.generate(columns, (_) => <Widget>[]);
+    final effectiveCols = math.min(columns, math.max(1, cards.length));
+    final cols = List.generate(effectiveCols, (_) => <Widget>[]);
     for (int i = 0; i < cards.length; i++) {
-      cols[i % columns].add(cards[i]);
+      cols[i % effectiveCols].add(cards[i]);
     }
 
     Widget column(List<Widget> items) => Expanded(
@@ -288,9 +290,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (int i = 0; i < columns; i++) ...[
+        for (int i = 0; i < effectiveCols; i++) ...[
           column(cols[i]),
-          if (i < columns - 1) const SizedBox(width: 16),
+          if (i < effectiveCols - 1) const SizedBox(width: 16),
         ],
       ],
     );
