@@ -626,13 +626,34 @@ class _FeaturedHaloState extends State<_FeaturedHalo>
 }
 
 class _HaloPainter extends CustomPainter {
-  const _HaloPainter({required this.progress});
+  _HaloPainter({required this.progress});
   final double progress;
 
   // Matches MediaResultCard's BorderRadius.circular(16) + 2px halo inset
   static const _radius = 18.0;
   static const _inset = 1.5;
   static const _strokeWidth = 2.0;
+
+  // Static gradient config — allocated once, not per frame.
+  static const _gradientColors = [
+    Colors.transparent,
+    AppColors.accent,
+    AppColors.haloViolet,
+    AppColors.haloCyan,
+    AppColors.accent,
+    Colors.transparent,
+  ];
+  static const _gradientStops = [0.0, 0.15, 0.4, 0.6, 0.8, 1.0];
+
+  // Cached paints — fixed properties set once; only color/shader updated in paint().
+  final _glowPaint = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = _strokeWidth * 5
+    ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10.0);
+
+  final _sweepPaint = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = _strokeWidth;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -646,34 +667,16 @@ class _HaloPainter extends CustomPainter {
 
     // Soft pulsing outer glow
     final glowAlpha = 0.25 + 0.15 * math.sin(2 * math.pi * progress);
-    canvas.drawRRect(
-      rrect,
-      Paint()
-        ..color = AppColors.accent.withValues(alpha: glowAlpha)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = _strokeWidth * 5
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10.0),
-    );
+    _glowPaint.color = AppColors.accent.withValues(alpha: glowAlpha);
+    canvas.drawRRect(rrect, _glowPaint);
 
     // Rotating sweep gradient stroke
-    canvas.drawRRect(
-      rrect,
-      Paint()
-        ..shader = SweepGradient(
-          colors: const [
-            Colors.transparent,
-            AppColors.accent,
-            AppColors.haloViolet,
-            AppColors.haloCyan,
-            AppColors.accent,
-            Colors.transparent,
-          ],
-          stops: const [0.0, 0.15, 0.4, 0.6, 0.8, 1.0],
-          transform: GradientRotation(2 * math.pi * progress),
-        ).createShader(rect)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = _strokeWidth,
-    );
+    _sweepPaint.shader = SweepGradient(
+      colors: _gradientColors,
+      stops: _gradientStops,
+      transform: GradientRotation(2 * math.pi * progress),
+    ).createShader(rect);
+    canvas.drawRRect(rrect, _sweepPaint);
   }
 
   @override

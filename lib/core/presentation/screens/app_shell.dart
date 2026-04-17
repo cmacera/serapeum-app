@@ -331,7 +331,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                     selectedIndex: currentIndex,
                     onDestinationSelected: _onNavTap,
                     backgroundColor: Colors.transparent,
-                    labelType: NavigationRailLabelType.none,
+                    labelType: NavigationRailLabelType.selected,
                     indicatorColor: AppColors.accent.withValues(alpha: 0.15),
                     destinations: _navItems(l10n)
                         .map(
