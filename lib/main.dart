@@ -61,6 +61,11 @@ void main() async {
   );
 }
 
+// Clearance for macOS traffic light buttons (close/minimize/fullscreen) which
+// overlap Flutter content when titlebarAppearsTransparent + fullSizeContentView
+// are set in MainFlutterWindow.swift.
+const double _kMacOsTitlebarInset = 28.0;
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
@@ -89,7 +94,9 @@ class MyApp extends ConsumerWidget {
         final mq = MediaQuery.of(context);
         return MediaQuery(
           data: mq.copyWith(
-            padding: mq.padding.copyWith(top: mq.padding.top + 28),
+            padding: mq.padding.copyWith(
+              top: mq.padding.top + _kMacOsTitlebarInset,
+            ),
           ),
           child: child!,
         );

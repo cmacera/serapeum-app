@@ -88,7 +88,10 @@ class CategoryTabBar extends StatelessWidget {
       builder: (context, constraints) {
         // Use actual widget width so split-panel layouts center correctly
         // instead of using the full screen width via MediaQuery.
-        final availableWidth = constraints.maxWidth - 32;
+        final availableWidth = (constraints.maxWidth - 32).clamp(
+          0.0,
+          double.infinity,
+        );
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 16.0),

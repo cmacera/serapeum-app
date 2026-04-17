@@ -163,22 +163,29 @@ class _AppShellState extends ConsumerState<AppShell> {
     final appBar = AppBar(
       centerTitle: false,
       title: showSearchField
-          ? TextField(
-              controller: _searchController,
-              focusNode: _searchFocusNode,
-              style: const TextStyle(color: Colors.white),
-              cursorColor: AppColors.accent,
-              decoration: InputDecoration(
-                hintText: l10n.searchLibraryHint,
-                hintStyle: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
-                ),
-                border: InputBorder.none,
-                isDense: true,
+          ? ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: wide
+                    ? ResponsiveLayout.contentMaxWidth
+                    : double.infinity,
               ),
-              onChanged: (value) {
-                ref.read(librarySearchQueryProvider.notifier).state = value;
-              },
+              child: TextField(
+                controller: _searchController,
+                focusNode: _searchFocusNode,
+                style: const TextStyle(color: Colors.white),
+                cursorColor: AppColors.accent,
+                decoration: InputDecoration(
+                  hintText: l10n.searchLibraryHint,
+                  hintStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.5),
+                  ),
+                  border: InputBorder.none,
+                  isDense: true,
+                ),
+                onChanged: (value) {
+                  ref.read(librarySearchQueryProvider.notifier).state = value;
+                },
+              ),
             )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,32 +333,18 @@ class _AppShellState extends ConsumerState<AppShell> {
                     backgroundColor: Colors.transparent,
                     labelType: NavigationRailLabelType.none,
                     indicatorColor: AppColors.accent.withValues(alpha: 0.15),
-                    destinations: [
-                      NavigationRailDestination(
-                        icon: const Icon(Icons.bookmarks_outlined),
-                        selectedIcon: Icon(
-                          Icons.bookmarks,
-                          color: AppColors.accent,
-                        ),
-                        label: Text(l10n.myLibraryTitle),
-                      ),
-                      NavigationRailDestination(
-                        icon: const Icon(Icons.auto_awesome_outlined),
-                        selectedIcon: Icon(
-                          Icons.auto_awesome,
-                          color: AppColors.accent,
-                        ),
-                        label: Text(l10n.discoverTitle),
-                      ),
-                      NavigationRailDestination(
-                        icon: const Icon(Icons.settings_outlined),
-                        selectedIcon: Icon(
-                          Icons.settings,
-                          color: AppColors.accent,
-                        ),
-                        label: Text(l10n.controlCenterTitle),
-                      ),
-                    ],
+                    destinations: _navItems(l10n)
+                        .map(
+                          (item) => NavigationRailDestination(
+                            icon: Icon(item.icon),
+                            selectedIcon: Icon(
+                              item.selectedIcon,
+                              color: AppColors.accent,
+                            ),
+                            label: Text(item.label),
+                          ),
+                        )
+                        .toList(),
                   ),
                   const VerticalDivider(
                     thickness: 1,
@@ -388,32 +381,18 @@ class _AppShellState extends ConsumerState<AppShell> {
                         labelBehavior:
                             NavigationDestinationLabelBehavior.alwaysHide,
                         indicatorColor: Colors.transparent,
-                        destinations: [
-                          NavigationDestination(
-                            icon: const Icon(Icons.bookmarks_outlined),
-                            selectedIcon: const Icon(
-                              Icons.bookmarks,
-                              color: AppColors.accent,
-                            ),
-                            label: l10n.myLibraryTitle,
-                          ),
-                          NavigationDestination(
-                            icon: const Icon(Icons.auto_awesome_outlined),
-                            selectedIcon: const Icon(
-                              Icons.auto_awesome,
-                              color: AppColors.accent,
-                            ),
-                            label: l10n.discoverTitle,
-                          ),
-                          NavigationDestination(
-                            icon: const Icon(Icons.settings_outlined),
-                            selectedIcon: const Icon(
-                              Icons.settings,
-                              color: AppColors.accent,
-                            ),
-                            label: l10n.controlCenterTitle,
-                          ),
-                        ],
+                        destinations: _navItems(l10n)
+                            .map(
+                              (item) => NavigationDestination(
+                                icon: Icon(item.icon),
+                                selectedIcon: Icon(
+                                  item.selectedIcon,
+                                  color: AppColors.accent,
+                                ),
+                                label: item.label,
+                              ),
+                            )
+                            .toList(),
                       ),
                     ),
                   ),
@@ -423,3 +402,37 @@ class _AppShellState extends ConsumerState<AppShell> {
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// Shared nav item definition — single source of truth for both NavigationRail
+// and NavigationBar destinations.
+// ---------------------------------------------------------------------------
+
+class _NavItem {
+  const _NavItem({
+    required this.icon,
+    required this.selectedIcon,
+    required this.label,
+  });
+  final IconData icon;
+  final IconData selectedIcon;
+  final String label;
+}
+
+List<_NavItem> _navItems(AppLocalizations l10n) => [
+  _NavItem(
+    icon: Icons.bookmarks_outlined,
+    selectedIcon: Icons.bookmarks,
+    label: l10n.myLibraryTitle,
+  ),
+  _NavItem(
+    icon: Icons.auto_awesome_outlined,
+    selectedIcon: Icons.auto_awesome,
+    label: l10n.discoverTitle,
+  ),
+  _NavItem(
+    icon: Icons.settings_outlined,
+    selectedIcon: Icons.settings,
+    label: l10n.controlCenterTitle,
+  ),
+];

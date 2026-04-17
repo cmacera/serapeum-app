@@ -17,6 +17,10 @@ class AppColors {
   static const Color badgeBook = Color(0xFF00897B);
   static const Color badgeGame = Color(0xFFFFB300);
 
+  // Halo / shimmer gradient tokens
+  static const Color haloViolet = Color(0xFFB060FF);
+  static const Color haloCyan = Color(0xFF60C8FF);
+
   // Layout
   static const Color subtleDivider = Color(0x14FFFFFF);
 }

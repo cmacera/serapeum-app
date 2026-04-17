@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -540,7 +541,7 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
   }
 
   Widget _buildMasonryGrid(List<Widget> cards, int columns) {
-    final effectiveCols = columns.clamp(1, cards.length);
+    final effectiveCols = math.min(columns, math.max(1, cards.length));
     final cols = List.generate(effectiveCols, (_) => <Widget>[]);
     for (var i = 0; i < cards.length; i++) {
       cols[i % effectiveCols].add(cards[i]);

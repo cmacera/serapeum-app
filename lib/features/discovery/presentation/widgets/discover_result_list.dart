@@ -597,7 +597,8 @@ class _FeaturedHaloState extends State<_FeaturedHalo>
     if (state == AppLifecycleState.resumed) {
       _controller.repeat();
     } else if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.paused) {
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
       _controller.stop();
     }
   }
@@ -648,7 +649,7 @@ class _HaloPainter extends CustomPainter {
     canvas.drawRRect(
       rrect,
       Paint()
-        ..color = const Color(0xFF930DF2).withValues(alpha: glowAlpha)
+        ..color = AppColors.accent.withValues(alpha: glowAlpha)
         ..style = PaintingStyle.stroke
         ..strokeWidth = _strokeWidth * 5
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10.0),
@@ -661,10 +662,10 @@ class _HaloPainter extends CustomPainter {
         ..shader = SweepGradient(
           colors: const [
             Colors.transparent,
-            Color(0xFF930DF2),
-            Color(0xFFB060FF),
-            Color(0xFF60C8FF),
-            Color(0xFF930DF2),
+            AppColors.accent,
+            AppColors.haloViolet,
+            AppColors.haloCyan,
+            AppColors.accent,
             Colors.transparent,
           ],
           stops: const [0.0, 0.15, 0.4, 0.6, 0.8, 1.0],
