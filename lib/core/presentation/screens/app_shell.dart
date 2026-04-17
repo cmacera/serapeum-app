@@ -331,17 +331,18 @@ class _AppShellState extends ConsumerState<AppShell> {
                     selectedIndex: currentIndex,
                     onDestinationSelected: _onNavTap,
                     backgroundColor: Colors.transparent,
-                    labelType: NavigationRailLabelType.selected,
+                    labelType: NavigationRailLabelType.none,
                     indicatorColor: AppColors.accent.withValues(alpha: 0.15),
                     destinations: _navItems(l10n)
                         .map(
                           (item) => NavigationRailDestination(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
                             icon: Icon(item.icon),
                             selectedIcon: Icon(
                               item.selectedIcon,
                               color: AppColors.accent,
                             ),
-                            label: Text(item.label),
+                            label: const SizedBox.shrink(),
                           ),
                         )
                         .toList(),
