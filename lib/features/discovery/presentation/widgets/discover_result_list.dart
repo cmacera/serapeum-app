@@ -245,123 +245,137 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
       ],
     );
 
-    if (wide && data.featured != null) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: headerColumn,
-          ),
-          const Divider(height: 1, thickness: 1, color: Color(0x14FFFFFF)),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: ResponsiveLayout.featuredPanelWidth,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
-                    child: _buildFeaturedCard(
-                      context,
-                      data.featured!,
-                      libraryItems,
-                      l10n,
-                    ),
-                  ),
-                ),
-                const VerticalDivider(
-                  thickness: 1,
-                  width: 1,
-                  color: AppColors.subtleDivider,
-                ),
-                Expanded(
-                  child: CustomScrollView(
-                    slivers: [
-                      if (showTabs && hasResults)
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 16.0),
-                            child: _buildCategoryTabBar(
-                              l10n,
-                              hasMedia,
-                              hasBooks,
-                              hasGames,
-                            ),
-                          ),
-                        ),
-                      if (cards.isNotEmpty)
-                        SliverPadding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                          ).copyWith(top: 16.0, bottom: bottomPadding),
-                          sliver: SliverToBoxAdapter(
-                            child: LayoutBuilder(
-                              builder: (context, constraints) =>
-                                  _buildMasonryGrid(
-                                    cards,
-                                    ResponsiveLayout.gridColumnCount(
-                                      constraints.maxWidth,
-                                    ),
-                                  ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      );
-    }
+    // Require enough available width for the featured panel + a usable results
+    // pane (at least 2 grid columns). Use LayoutBuilder so the check is based
+    // on the actual content area width, not the full window width.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const minResultsPaneWidth = 250.0;
+        final useSplitLayout =
+            wide &&
+            data.featured != null &&
+            constraints.maxWidth >=
+                ResponsiveLayout.featuredPanelWidth + 1 + minResultsPaneWidth;
 
-    // Narrow or wide without featured: single scroll view
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                headerColumn,
-                if (data.featured != null) ...[
-                  const SizedBox(height: 24),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: _buildFeaturedCard(
-                      context,
-                      data.featured!,
-                      libraryItems,
-                      l10n,
+        if (useSplitLayout) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: headerColumn,
+              ),
+              const Divider(height: 1, thickness: 1, color: Color(0x14FFFFFF)),
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: ResponsiveLayout.featuredPanelWidth,
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16.0),
+                        child: _buildFeaturedCard(
+                          context,
+                          data.featured!,
+                          libraryItems,
+                          l10n,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
-                if (showTabs && hasResults) ...[
-                  const SizedBox(height: 24),
-                  _buildCategoryTabBar(l10n, hasMedia, hasBooks, hasGames),
-                ],
-              ],
-            ),
-          ),
-        ),
-        if (cards.isNotEmpty)
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-            ).copyWith(bottom: bottomPadding),
-            sliver: SliverToBoxAdapter(
-              child: LayoutBuilder(
-                builder: (context, constraints) => _buildMasonryGrid(
-                  cards,
-                  ResponsiveLayout.gridColumnCount(constraints.maxWidth),
+                    const VerticalDivider(
+                      thickness: 1,
+                      width: 1,
+                      color: AppColors.subtleDivider,
+                    ),
+                    Expanded(
+                      child: CustomScrollView(
+                        slivers: [
+                          if (showTabs && hasResults)
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: _buildCategoryTabBar(
+                                  l10n,
+                                  hasMedia,
+                                  hasBooks,
+                                  hasGames,
+                                ),
+                              ),
+                            ),
+                          if (cards.isNotEmpty)
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                              ).copyWith(top: 16.0, bottom: bottomPadding),
+                              sliver: SliverToBoxAdapter(
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) =>
+                                      _buildMasonryGrid(
+                                        cards,
+                                        ResponsiveLayout.gridColumnCount(
+                                          constraints.maxWidth,
+                                        ),
+                                      ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        }
+
+        // Narrow or wide without featured: single scroll view
+        return CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    headerColumn,
+                    if (data.featured != null) ...[
+                      const SizedBox(height: 24),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: _buildFeaturedCard(
+                          context,
+                          data.featured!,
+                          libraryItems,
+                          l10n,
+                        ),
+                      ),
+                    ],
+                    if (showTabs && hasResults) ...[
+                      const SizedBox(height: 24),
+                      _buildCategoryTabBar(l10n, hasMedia, hasBooks, hasGames),
+                    ],
+                  ],
                 ),
               ),
             ),
-          ),
-      ],
+            if (cards.isNotEmpty)
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                ).copyWith(bottom: bottomPadding),
+                sliver: SliverToBoxAdapter(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => _buildMasonryGrid(
+                      cards,
+                      ResponsiveLayout.gridColumnCount(constraints.maxWidth),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 
@@ -499,9 +513,10 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
   );
 
   Widget _buildMasonryGrid(List<Widget> cards, int columns) {
-    final cols = List.generate(columns, (_) => <Widget>[]);
+    final effectiveCols = math.min(columns, math.max(1, cards.length));
+    final cols = List.generate(effectiveCols, (_) => <Widget>[]);
     for (int i = 0; i < cards.length; i++) {
-      cols[i % columns].add(cards[i]);
+      cols[i % effectiveCols].add(cards[i]);
     }
 
     Widget column(List<Widget> items) => Expanded(
@@ -521,9 +536,9 @@ class _DiscoverResultListState extends ConsumerState<DiscoverResultList> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (int i = 0; i < columns; i++) ...[
+        for (int i = 0; i < effectiveCols; i++) ...[
           column(cols[i]),
-          if (i < columns - 1) const SizedBox(width: 16),
+          if (i < effectiveCols - 1) const SizedBox(width: 16),
         ],
       ],
     );

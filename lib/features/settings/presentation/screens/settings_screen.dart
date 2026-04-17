@@ -29,7 +29,9 @@ class SettingsScreen extends ConsumerWidget {
             top: 24,
             bottom:
                 MediaQuery.paddingOf(context).bottom +
-                LayoutConstants.navBarClearance,
+                (ResponsiveLayout.isWide(context)
+                    ? 0
+                    : LayoutConstants.navBarClearance),
           ),
           children: const [
             _BackupSection(),

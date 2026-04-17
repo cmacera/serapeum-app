@@ -88,7 +88,9 @@ class MyApp extends ConsumerWidget {
       macOsBuilder = (context, child) {
         final mq = MediaQuery.of(context);
         return MediaQuery(
-          data: mq.copyWith(padding: mq.padding.copyWith(top: 28)),
+          data: mq.copyWith(
+            padding: mq.padding.copyWith(top: mq.padding.top + 28),
+          ),
           child: child!,
         );
       };
