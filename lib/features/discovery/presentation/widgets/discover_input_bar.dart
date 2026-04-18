@@ -41,6 +41,7 @@ class DiscoverInputBar extends ConsumerWidget {
     // MediaQuery.padding.bottom so the AnimatedContainer can animate
     // its width without the SafeArea interfering with the layout bounds.
     final bar = SafeArea(
+      top: false,
       bottom: false,
       child: Padding(
         padding: EdgeInsets.only(

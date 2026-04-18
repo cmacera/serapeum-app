@@ -342,7 +342,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                               item.selectedIcon,
                               color: AppColors.accent,
                             ),
-                            label: const SizedBox.shrink(),
+                            label: Text(item.label),
                           ),
                         )
                         .toList(),
