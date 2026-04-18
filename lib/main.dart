@@ -61,6 +61,11 @@ void main() async {
   );
 }
 
+// Clearance for macOS traffic light buttons (close/minimize/fullscreen) which
+// overlap Flutter content when titlebarAppearsTransparent + fullSizeContentView
+// are set in MainFlutterWindow.swift.
+const double _kMacOsTitlebarInset = 28.0;
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
@@ -80,6 +85,24 @@ class MyApp extends ConsumerWidget {
       fontFamily: UiConstants.fontFamily, // The font from the Stitch project
     );
 
+    // On macOS with a transparent title bar and fullSizeContentView, Flutter
+    // content extends under the traffic light buttons. Inject 28px top padding
+    // so the system SafeArea / AppBar accounts for the button clearance.
+    Widget Function(BuildContext, Widget?)? macOsBuilder;
+    if (defaultTargetPlatform == TargetPlatform.macOS) {
+      macOsBuilder = (context, child) {
+        final mq = MediaQuery.of(context);
+        return MediaQuery(
+          data: mq.copyWith(
+            padding: mq.padding.copyWith(
+              top: mq.padding.top + _kMacOsTitlebarInset,
+            ),
+          ),
+          child: child!,
+        );
+      };
+    }
+
     if (!authSuccess) {
       return MaterialApp(
         title: UiConstants.appTitle,
@@ -87,6 +110,7 @@ class MyApp extends ConsumerWidget {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         theme: theme,
+        builder: macOsBuilder,
         home: AuthErrorScreen(
           onRetry: () async {
             final success = await SplashService.initialize();
@@ -104,6 +128,7 @@ class MyApp extends ConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: theme,
+      builder: macOsBuilder,
       routerConfig: router,
     );
   }

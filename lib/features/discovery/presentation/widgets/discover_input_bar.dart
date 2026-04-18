@@ -3,6 +3,7 @@ import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/layout_constants.dart';
 import '../providers/discovery_provider.dart';
 
 class DiscoverInputBar extends ConsumerWidget {
@@ -34,10 +35,13 @@ class DiscoverInputBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final wide = ResponsiveLayout.isWide(context);
+
     // bottom: false because we apply the bottom inset manually via
     // MediaQuery.padding.bottom so the AnimatedContainer can animate
     // its width without the SafeArea interfering with the layout bounds.
-    return SafeArea(
+    final bar = SafeArea(
+      top: false,
       bottom: false,
       child: Padding(
         padding: EdgeInsets.only(
@@ -118,6 +122,18 @@ class DiscoverInputBar extends ConsumerWidget {
         ),
       ),
     );
+
+    if (wide) {
+      return Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: ResponsiveLayout.wideBreakpoint,
+          ),
+          child: bar,
+        ),
+      );
+    }
+    return bar;
   }
 
   Widget _buildActionButton(WidgetRef ref, AppLocalizations l10n) {

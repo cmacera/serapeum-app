@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +14,7 @@ import 'package:serapeum_app/features/discovery/domain/entities/media.dart';
 import 'package:serapeum_app/features/discovery/presentation/providers/library_search_notifier.dart';
 import 'package:serapeum_app/features/library/data/local/library_item.dart';
 import 'package:serapeum_app/features/library/data/providers/library_provider.dart';
+import 'package:serapeum_app/core/constants/layout_constants.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 import 'package:serapeum_app/shared/widgets/category_tab_bar.dart';
 import 'package:serapeum_app/shared/widgets/media_detail_modal.dart';
@@ -198,6 +200,17 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
     final libraryItems = ref.watch(libraryProvider);
     final savedKeys = _savedKeys(libraryItems);
 
+    // ref.listen must be called inside build(), not inside helper callbacks
+    // (DraggableScrollableSheet's builder is not considered a build() by Riverpod).
+    // Guard with _query.isNotEmpty to avoid subscribing on empty queries.
+    if (_query.isNotEmpty) {
+      ref.listen(librarySearchProvider(_query, _selectedCategory), (_, next) {
+        if (next.valueOrNull?.hasMore ?? false) {
+          _scheduleUnderflowCheck();
+        }
+      });
+    }
+
     return DraggableScrollableSheet(
       initialChildSize: _kSheetInitialSize,
       minChildSize: _kSheetMinSize,
@@ -354,15 +367,6 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
       librarySearchProvider(_query, _selectedCategory),
     );
 
-    // Underflow check: if a loaded page doesn't fill the viewport, no scroll
-    // events will fire. Schedule a post-frame check after every successful
-    // page load while there are more pages to fetch.
-    ref.listen(librarySearchProvider(_query, _selectedCategory), (_, next) {
-      if (next.valueOrNull?.hasMore ?? false) {
-        _scheduleUnderflowCheck();
-      }
-    });
-
     return NotificationListener<ScrollUpdateNotification>(
       onNotification: (notification) {
         final metrics = notification.metrics;
@@ -423,8 +427,11 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   sliver: SliverToBoxAdapter(
-                    child: _buildMasonryGrid(
-                      _buildCards(context, searchState.items, savedKeys),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) => _buildMasonryGrid(
+                        _buildCards(context, searchState.items, savedKeys),
+                        ResponsiveLayout.gridColumnCount(constraints.maxWidth),
+                      ),
                     ),
                   ),
                 ),
@@ -533,11 +540,11 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
     );
   }
 
-  Widget _buildMasonryGrid(List<Widget> cards) {
-    final leftCards = <Widget>[];
-    final rightCards = <Widget>[];
+  Widget _buildMasonryGrid(List<Widget> cards, int columns) {
+    final effectiveCols = math.min(columns, math.max(1, cards.length));
+    final cols = List.generate(effectiveCols, (_) => <Widget>[]);
     for (var i = 0; i < cards.length; i++) {
-      (i.isEven ? leftCards : rightCards).add(cards[i]);
+      cols[i % effectiveCols].add(cards[i]);
     }
 
     Widget column(List<Widget> items) => Expanded(
@@ -553,9 +560,10 @@ class _AddToLibrarySheetState extends ConsumerState<AddToLibrarySheet> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        column(leftCards),
-        const SizedBox(width: 12),
-        column(rightCards),
+        for (var i = 0; i < effectiveCols; i++) ...[
+          column(cols[i]),
+          if (i < effectiveCols - 1) const SizedBox(width: 12),
+        ],
       ],
     );
   }

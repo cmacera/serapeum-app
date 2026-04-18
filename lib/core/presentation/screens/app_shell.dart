@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/layout_constants.dart';
 import 'package:serapeum_app/core/presentation/widgets/particle_background.dart';
 import 'package:serapeum_app/features/library/presentation/widgets/add_to_library_sheet.dart';
 
@@ -132,10 +133,23 @@ class _AppShellState extends ConsumerState<AppShell> {
         LibrarySortOption.byType => l10n.sortByType,
       };
 
+  void _onNavTap(int index) {
+    if (widget.navigationShell.currentIndex == 0 &&
+        index != 0 &&
+        _isSearchActive) {
+      _resetSearchState();
+    }
+    widget.navigationShell.goBranch(
+      index,
+      initialLocation: index == widget.navigationShell.currentIndex,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final currentIndex = widget.navigationShell.currentIndex;
+    final wide = ResponsiveLayout.isWide(context);
 
     final String subtitle = switch (currentIndex) {
       0 => l10n.myLibraryTitle,
@@ -146,230 +160,280 @@ class _AppShellState extends ConsumerState<AppShell> {
 
     final bool showSearchField = currentIndex == 0 && _isSearchActive;
 
+    final appBar = AppBar(
+      centerTitle: false,
+      title: showSearchField
+          ? ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: wide
+                    ? ResponsiveLayout.contentMaxWidth
+                    : double.infinity,
+              ),
+              child: TextField(
+                controller: _searchController,
+                focusNode: _searchFocusNode,
+                style: const TextStyle(color: Colors.white),
+                cursorColor: AppColors.accent,
+                decoration: InputDecoration(
+                  hintText: l10n.searchLibraryHint,
+                  hintStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.5),
+                  ),
+                  border: InputBorder.none,
+                  isDense: true,
+                ),
+                onChanged: (value) {
+                  ref.read(librarySearchQueryProvider.notifier).state = value;
+                },
+              ),
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.appName,
+                  style: GoogleFonts.cinzel(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    letterSpacing: 2.0,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.inter(
+                    color: AppColors.accent,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+      actions: [
+        if (currentIndex == 0) ...[
+          if (_isSearchActive)
+            IconButton(
+              icon: const Icon(Icons.close, color: Colors.white),
+              tooltip: l10n.close,
+              onPressed: _resetSearchState,
+            )
+          else ...[
+            IconButton(
+              icon: const Icon(Icons.search, color: Colors.white),
+              onPressed: () {
+                setState(() {
+                  _isSearchActive = true;
+                });
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _searchFocusNode.requestFocus();
+                });
+              },
+              tooltip: l10n.searchLibraryTooltip,
+            ),
+            IconButton(
+              icon: const Icon(Icons.sort, color: Colors.white),
+              onPressed: () => _showSortSheet(context, l10n),
+              tooltip: l10n.sortOptions,
+            ),
+          ],
+        ],
+        if (currentIndex == 1) ...[
+          IconButton(
+            icon: const Icon(Icons.add, color: Colors.white),
+            onPressed: () {
+              ref.read(discoveryProvider.notifier).startNewConversation();
+            },
+            tooltip: l10n.newConversation,
+          ),
+          IconButton(
+            icon: const Icon(Icons.history, color: Colors.white),
+            onPressed: () async {
+              final historyItem =
+                  await showModalBottomSheet<DiscoverHistoryItem>(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    useRootNavigator: true,
+                    builder: (context) => const DiscoveryHistoryScreen(),
+                  );
+
+              if (historyItem != null && context.mounted) {
+                try {
+                  final cached = OrchestratorResponseDto.mapToDomain(
+                    jsonDecode(historyItem.resultJson),
+                  );
+                  ref
+                      .read(discoveryProvider.notifier)
+                      .loadCachedResult(historyItem.query, cached);
+                } catch (e) {
+                  debugPrint('Failed to restore history item: $e');
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(l10n.queryFailed)));
+                  }
+                }
+              }
+            },
+            tooltip: l10n.discoveryHistoryTitle,
+          ),
+          const SizedBox(width: 8),
+        ],
+      ],
+    );
+
+    final fab = currentIndex == 0 && !_isSearchActive
+        ? FloatingActionButton(
+            onPressed: () => showModalBottomSheet<void>(
+              context: context,
+              isScrollControlled: true,
+              useRootNavigator: true,
+              useSafeArea: true,
+              backgroundColor: Colors.transparent,
+              builder: (_) => const AddToLibrarySheet(),
+            ),
+            backgroundColor: AppColors.accent,
+            foregroundColor: Colors.white,
+            tooltip: l10n.addToLibraryTitle,
+            child: const Icon(Icons.add),
+          )
+        : null;
+
+    final contentStack = Stack(
+      children: [
+        const Positioned.fill(child: ParticleBackground()),
+        widget.navigationShell,
+      ],
+    );
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF06061A), // Dark navy base
-            Color(0xFF0A0414), // Deep space transition
-            Color(0xFF2B0B55), // Vibrant deep purple accent in the corner
-          ],
+          colors: [Color(0xFF06061A), Color(0xFF0A0414), Color(0xFF2B0B55)],
           stops: [0.0, 0.4, 1.0],
         ),
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent, // Let the gradient shine through
-        appBar: AppBar(
-          centerTitle: false,
-          title: showSearchField
-              ? TextField(
-                  controller: _searchController,
-                  focusNode: _searchFocusNode,
-                  style: const TextStyle(color: Colors.white),
-                  cursorColor: AppColors.accent,
-                  decoration: InputDecoration(
-                    hintText: l10n.searchLibraryHint,
-                    hintStyle: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
-                    ),
-                    border: InputBorder.none,
-                    isDense: true,
-                  ),
-                  onChanged: (value) {
-                    ref.read(librarySearchQueryProvider.notifier).state = value;
-                  },
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.appName,
-                      style: GoogleFonts.cinzel(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        letterSpacing: 2.0,
-                      ),
-                    ),
-                    Text(
-                      subtitle,
-                      style: GoogleFonts.inter(
-                        color: AppColors.accent,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-          backgroundColor: Colors.transparent, // Let gradient shine through
-          elevation: 0,
-          surfaceTintColor: Colors.transparent,
-          actions: [
-            if (currentIndex == 0) ...[
-              if (_isSearchActive)
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
-                  tooltip: l10n.close,
-                  onPressed: _resetSearchState,
-                )
-              else ...[
-                IconButton(
-                  icon: const Icon(Icons.search, color: Colors.white),
-                  onPressed: () {
-                    setState(() {
-                      _isSearchActive = true;
-                    });
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      _searchFocusNode.requestFocus();
-                    });
-                  },
-                  tooltip: l10n.searchLibraryTooltip,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.sort, color: Colors.white),
-                  onPressed: () => _showSortSheet(context, l10n),
-                  tooltip: l10n.sortOptions,
-                ),
-              ],
-            ],
-            if (widget.navigationShell.currentIndex == 1) ...[
-              IconButton(
-                icon: const Icon(Icons.add, color: Colors.white),
-                onPressed: () {
-                  ref.read(discoveryProvider.notifier).startNewConversation();
-                },
-                tooltip: l10n.newConversation,
-              ),
-              IconButton(
-                icon: const Icon(Icons.history, color: Colors.white),
-                onPressed: () async {
-                  final historyItem =
-                      await showModalBottomSheet<DiscoverHistoryItem>(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        useRootNavigator: true,
-                        builder: (context) => const DiscoveryHistoryScreen(),
-                      );
-
-                  if (historyItem != null && context.mounted) {
-                    try {
-                      final cached = OrchestratorResponseDto.mapToDomain(
-                        jsonDecode(historyItem.resultJson),
-                      );
-                      ref
-                          .read(discoveryProvider.notifier)
-                          .loadCachedResult(historyItem.query, cached);
-                    } catch (e) {
-                      debugPrint('Failed to restore history item: $e');
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.queryFailed)),
-                        );
-                      }
-                    }
-                  }
-                },
-                tooltip: l10n.discoveryHistoryTitle,
-              ),
-              const SizedBox(width: 8),
-            ],
-          ],
-        ),
-        floatingActionButton: currentIndex == 0 && !_isSearchActive
-            ? FloatingActionButton(
-                onPressed: () => showModalBottomSheet<void>(
-                  context: context,
-                  isScrollControlled: true,
-                  useRootNavigator: true,
-                  useSafeArea: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (_) => const AddToLibrarySheet(),
-                ),
-                backgroundColor: AppColors.accent,
-                foregroundColor: Colors.white,
-                tooltip: l10n.addToLibraryTitle,
-                child: const Icon(Icons.add),
-              )
-            : null,
+        backgroundColor: Colors.transparent,
+        appBar: appBar,
+        floatingActionButton: fab,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        body: Stack(
-          children: [
-            const Positioned.fill(child: ParticleBackground()),
-            widget.navigationShell,
-          ],
-        ),
-        extendBody: true,
-        bottomNavigationBar: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 56.0,
-              vertical: 0.0,
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
+        extendBody: !wide,
+        body: wide
+            ? Row(
+                children: [
+                  NavigationRail(
+                    selectedIndex: currentIndex,
+                    onDestinationSelected: _onNavTap,
+                    backgroundColor: Colors.transparent,
+                    labelType: NavigationRailLabelType.none,
+                    indicatorColor: AppColors.accent.withValues(alpha: 0.15),
+                    destinations: _navItems(l10n)
+                        .map(
+                          (item) => NavigationRailDestination(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            icon: Icon(item.icon),
+                            selectedIcon: Icon(
+                              item.selectedIcon,
+                              color: AppColors.accent,
+                            ),
+                            label: Text(item.label),
+                          ),
+                        )
+                        .toList(),
                   ),
+                  const VerticalDivider(
+                    thickness: 1,
+                    width: 1,
+                    color: AppColors.subtleDivider,
+                  ),
+                  Expanded(child: contentStack),
                 ],
-                borderRadius: BorderRadius.circular(32),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(32),
-                child: NavigationBar(
-                  height: 60,
-                  selectedIndex: widget.navigationShell.currentIndex,
-                  onDestinationSelected: (index) {
-                    if (widget.navigationShell.currentIndex == 0 &&
-                        index != 0 &&
-                        _isSearchActive) {
-                      _resetSearchState();
-                    }
-                    widget.navigationShell.goBranch(
-                      index,
-                      initialLocation:
-                          index == widget.navigationShell.currentIndex,
-                    );
-                  },
-                  labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-                  indicatorColor: Colors.transparent, // Removed overlay
-                  destinations: [
-                    NavigationDestination(
-                      icon: const Icon(Icons.bookmarks_outlined),
-                      selectedIcon: const Icon(
-                        Icons.bookmarks,
-                        color: AppColors.accent,
-                      ),
-                      label: l10n.myLibraryTitle,
+              )
+            : contentStack,
+        bottomNavigationBar: wide
+            ? null
+            : SafeArea(
+                minimum: const EdgeInsets.only(bottom: 8.0),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 56.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(32),
                     ),
-                    NavigationDestination(
-                      icon: const Icon(Icons.auto_awesome_outlined),
-                      selectedIcon: const Icon(
-                        Icons.auto_awesome,
-                        color: AppColors.accent,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(32),
+                      child: NavigationBar(
+                        height: 60,
+                        selectedIndex: currentIndex,
+                        onDestinationSelected: _onNavTap,
+                        labelBehavior:
+                            NavigationDestinationLabelBehavior.alwaysHide,
+                        indicatorColor: Colors.transparent,
+                        destinations: _navItems(l10n)
+                            .map(
+                              (item) => NavigationDestination(
+                                icon: Icon(item.icon),
+                                selectedIcon: Icon(
+                                  item.selectedIcon,
+                                  color: AppColors.accent,
+                                ),
+                                label: item.label,
+                              ),
+                            )
+                            .toList(),
                       ),
-                      label: l10n.discoverTitle,
                     ),
-                    NavigationDestination(
-                      icon: const Icon(Icons.settings_outlined),
-                      selectedIcon: const Icon(
-                        Icons.settings,
-                        color: AppColors.accent,
-                      ),
-                      label: l10n.controlCenterTitle,
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-        ),
       ),
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// Shared nav item definition — single source of truth for both NavigationRail
+// and NavigationBar destinations.
+// ---------------------------------------------------------------------------
+
+class _NavItem {
+  const _NavItem({
+    required this.icon,
+    required this.selectedIcon,
+    required this.label,
+  });
+  final IconData icon;
+  final IconData selectedIcon;
+  final String label;
+}
+
+List<_NavItem> _navItems(AppLocalizations l10n) => [
+  _NavItem(
+    icon: Icons.bookmarks_outlined,
+    selectedIcon: Icons.bookmarks,
+    label: l10n.myLibraryTitle,
+  ),
+  _NavItem(
+    icon: Icons.auto_awesome_outlined,
+    selectedIcon: Icons.auto_awesome,
+    label: l10n.discoverTitle,
+  ),
+  _NavItem(
+    icon: Icons.settings_outlined,
+    selectedIcon: Icons.settings,
+    label: l10n.controlCenterTitle,
+  ),
+];

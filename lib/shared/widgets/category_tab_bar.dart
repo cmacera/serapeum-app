@@ -84,48 +84,57 @@ class CategoryTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final availableWidth = MediaQuery.of(context).size.width - 32;
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minWidth: availableWidth),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CategoryTabItem(
-              label: filterAllLabel,
-              isSelected: selectedCategory == null,
-              onTap: () => onCategorySelected(null),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Use actual widget width so split-panel layouts center correctly
+        // instead of using the full screen width via MediaQuery.
+        final availableWidth = (constraints.maxWidth - 32).clamp(
+          0.0,
+          double.infinity,
+        );
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minWidth: availableWidth),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CategoryTabItem(
+                  label: filterAllLabel,
+                  isSelected: selectedCategory == null,
+                  onTap: () => onCategorySelected(null),
+                ),
+                if (hasMedia) ...[
+                  const SizedBox(width: 8),
+                  CategoryTabItem(
+                    label: filterMediaLabel,
+                    isSelected: selectedCategory == DiscoverCategory.media,
+                    onTap: () => onCategorySelected(DiscoverCategory.media),
+                  ),
+                ],
+                if (hasBooks) ...[
+                  const SizedBox(width: 8),
+                  CategoryTabItem(
+                    label: filterBooksLabel,
+                    isSelected: selectedCategory == DiscoverCategory.books,
+                    onTap: () => onCategorySelected(DiscoverCategory.books),
+                  ),
+                ],
+                if (hasGames) ...[
+                  const SizedBox(width: 8),
+                  CategoryTabItem(
+                    label: filterGamesLabel,
+                    isSelected: selectedCategory == DiscoverCategory.games,
+                    onTap: () => onCategorySelected(DiscoverCategory.games),
+                  ),
+                ],
+              ],
             ),
-            if (hasMedia) ...[
-              const SizedBox(width: 8),
-              CategoryTabItem(
-                label: filterMediaLabel,
-                isSelected: selectedCategory == DiscoverCategory.media,
-                onTap: () => onCategorySelected(DiscoverCategory.media),
-              ),
-            ],
-            if (hasBooks) ...[
-              const SizedBox(width: 8),
-              CategoryTabItem(
-                label: filterBooksLabel,
-                isSelected: selectedCategory == DiscoverCategory.books,
-                onTap: () => onCategorySelected(DiscoverCategory.books),
-              ),
-            ],
-            if (hasGames) ...[
-              const SizedBox(width: 8),
-              CategoryTabItem(
-                label: filterGamesLabel,
-                isSelected: selectedCategory == DiscoverCategory.games,
-                onTap: () => onCategorySelected(DiscoverCategory.games),
-              ),
-            ],
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
