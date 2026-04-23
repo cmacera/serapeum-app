@@ -41,7 +41,8 @@ The AI Assistant is a tool, not the architect. It is **forbidden** from doing th
 
 ### 🛑 Linear & Project Management
 
-- **NO Status Changes:** You are forbidden from moving tickets to "In Progress", "Done", or "Canceled" automatically. Only the user moves tickets.
+- **In Progress (automatic):** Move the active ticket to `In Progress` when work begins — no need to ask.
+- **All other transitions require explicit instruction:** Do not move tickets to `In Review`, `Done`, or `Canceled` automatically.
 - **NO Project Confusion:** Never touch tickets belonging to "Serapeum API".
 - **NO Auto-Assignment:** Do not assign tickets to users unless asked.
 

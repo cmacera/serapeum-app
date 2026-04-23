@@ -27,7 +27,7 @@ class ApiConstants {
   static const String tmdbImageTierOriginal = '/original';
 
   // Hosts for AuthInterceptor
-  static const String productionHost = 'serapeum-api.vercel.app';
+  static const String productionHost = 'api.serapeum.app';
   static const String localhostHost = 'localhost';
   static const String localhostIp = '127.0.0.1';
   static const String localhostIpV6 = '::1';
