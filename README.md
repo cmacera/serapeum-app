@@ -50,8 +50,8 @@ This application consumes the **[Serapeum API](https://github.com/cmacera/serape
 
 | Platform | Link | Notes |
 |---|---|---|
-| Android | [Serapeum-1.0.0.apk](https://github.com/cmacera/serapeum-app/releases/latest) | Enable "Install from unknown sources" |
-| macOS | [Serapeum-1.0.0.dmg](https://github.com/cmacera/serapeum-app/releases/latest) | Right-click → Open to bypass Gatekeeper |
+| Android | [Serapeum-1.0.0.apk](https://github.com/cmacera/serapeum-app/releases/download/v1.0.0/Serapeum-1.0.0.apk) | Enable "Install from unknown sources" |
+| macOS | [Serapeum-1.0.0.dmg](https://github.com/cmacera/serapeum-app/releases/download/v1.0.0/Serapeum-1.0.0.dmg) | Right-click → Open to bypass Gatekeeper |
 | iOS | — | Coming soon |
 
 ---
