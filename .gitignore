@@ -99,3 +99,8 @@ tools/**/*.jar
 
 # Android backup artifacts
 android/android_bak/
+
+# Release binaries (distributed via GitHub Releases, not committed to repo)
+*.apk
+*.dmg
+*.ipa
