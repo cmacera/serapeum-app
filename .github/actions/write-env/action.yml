@@ -1,0 +1,28 @@
+name: 'Write .env files'
+description: 'Writes .env and .env.remote from secrets for release builds'
+inputs:
+  serapeum-api-url:
+    description: 'SERAPEUM_API_URL value'
+    required: true
+  supabase-url:
+    description: 'SUPABASE_URL value'
+    required: true
+  supabase-anon-key:
+    description: 'SUPABASE_ANON_KEY value'
+    required: true
+  sentry-dsn:
+    description: 'SENTRY_DSN value'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Write .env and .env.remote
+      shell: bash
+      run: |
+        printf "SERAPEUM_API_URL=%s\nSUPABASE_URL=%s\nSUPABASE_ANON_KEY=%s\nSENTRY_DSN=%s\n" \
+          "${{ inputs.serapeum-api-url }}" \
+          "${{ inputs.supabase-url }}" \
+          "${{ inputs.supabase-anon-key }}" \
+          "${{ inputs.sentry-dsn }}" > .env
+        cp .env .env.remote

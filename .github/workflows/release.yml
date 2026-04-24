@@ -3,7 +3,11 @@ name: Release
 on:
   push:
     tags:
-      - "v*"
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build-android:
@@ -13,16 +17,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Write .env from secrets
-        env:
-          SERAPEUM_API_URL: ${{ secrets.SERAPEUM_API_URL }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-        run: |
-          printf "SERAPEUM_API_URL=%s\nSUPABASE_URL=%s\nSUPABASE_ANON_KEY=%s\nSENTRY_DSN=%s\n" \
-            "$SERAPEUM_API_URL" "$SUPABASE_URL" "$SUPABASE_ANON_KEY" "$SENTRY_DSN" > .env
-          cp .env .env.remote
+      - name: Write .env files
+        uses: ./.github/actions/write-env
+        with:
+          serapeum-api-url: ${{ secrets.SERAPEUM_API_URL }}
+          supabase-url: ${{ secrets.SUPABASE_URL }}
+          supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
+          sentry-dsn: ${{ secrets.SENTRY_DSN }}
 
       - name: Setup Flutter
         uses: ./.github/actions/setup-flutter
@@ -33,7 +34,7 @@ jobs:
         run: flutter build apk --release --dart-define-from-file=.env.remote
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: android-apk
           path: build/app/outputs/flutter-apk/app-release.apk
@@ -46,16 +47,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Write .env from secrets
-        env:
-          SERAPEUM_API_URL: ${{ secrets.SERAPEUM_API_URL }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-        run: |
-          printf "SERAPEUM_API_URL=%s\nSUPABASE_URL=%s\nSUPABASE_ANON_KEY=%s\nSENTRY_DSN=%s\n" \
-            "$SERAPEUM_API_URL" "$SUPABASE_URL" "$SUPABASE_ANON_KEY" "$SENTRY_DSN" > .env
-          cp .env .env.remote
+      - name: Write .env files
+        uses: ./.github/actions/write-env
+        with:
+          serapeum-api-url: ${{ secrets.SERAPEUM_API_URL }}
+          supabase-url: ${{ secrets.SUPABASE_URL }}
+          supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}
+          sentry-dsn: ${{ secrets.SENTRY_DSN }}
 
       - name: Setup Flutter
         uses: ./.github/actions/setup-flutter
@@ -80,7 +78,7 @@ jobs:
             "build/macos/Build/Products/Release/Serapeum.app"
 
       - name: Upload DMG artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: macos-dmg
           path: "Serapeum-*.dmg"
@@ -97,17 +95,26 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           path: dist/
 
-      - name: Create release
+      - name: Create or update release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          gh release create "$GITHUB_REF_NAME" \
-            --generate-notes \
-            --title "Serapeum App v${VERSION}" \
-            "dist/android-apk/app-release.apk#Serapeum-${VERSION}.apk" \
-            "dist/macos-dmg/Serapeum-${VERSION}.dmg"
+          APK="dist/android-apk/app-release.apk"
+          DMG="dist/macos-dmg/Serapeum-${VERSION}.dmg"
+
+          if gh release view "$GITHUB_REF_NAME" &>/dev/null; then
+            gh release upload "$GITHUB_REF_NAME" --clobber \
+              "${APK}#Serapeum-${VERSION}.apk" \
+              "${DMG}"
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              --generate-notes \
+              --title "Serapeum App v${VERSION}" \
+              "${APK}#Serapeum-${VERSION}.apk" \
+              "${DMG}"
+          fi
