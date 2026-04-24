@@ -97,9 +97,9 @@ lib/
 
 ### Step 1: Linear & Branching
 
-1.  **Select Ticket:** Pick or create a ticket from Linear (Project: Serapeum APP).
-2.  **Create Branch:** Must follow format: `DEV-<ID>/<short-description>`
-    *   Example: `DEV-42/implement-realm-schema`
+1.  **Select Ticket:** Pick or create a ticket from Linear (Project: Serapeum APP). Move to `In Progress` immediately.
+2.  **Create Branch:** Must follow format: `feat/<short-description>` (no ticket prefix in branch name)
+    *   Example: `feat/implement-realm-schema`
 
 ### Step 2: Coding & Commits
 

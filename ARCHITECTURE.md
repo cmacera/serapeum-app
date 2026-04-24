@@ -61,4 +61,4 @@ graph LR
 - **Desktop Polish:** Flutter macOS requires specific tuning for keyboard shortcuts and window management.
 - **Orchestrator Cost:** Heavy usage of the "Discovery" feature depends on API costs (mitigated by Gemini Flash).
 - **Realm Generator:** `realm_generator 3.5.0` crashes on new files with nullable fields. New Realm models must be written manually (see `lib/features/library/data/local/library_item.dart` pattern).
-- **Observability:** Sentry integrated for crash reporting (SER-35). Langfuse collects AI response quality feedback via `traceId` (SER-97/SER-100).
+- **Observability:** Sentry integrated for crash reporting (DEV-35). Langfuse collects AI response quality feedback via `traceId` (DEV-97/DEV-100).
