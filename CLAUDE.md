@@ -116,48 +116,8 @@ Each feature follows: `data/` (repos, DTOs, local models, providers) → `domain
 
 ---
 
-## Commit conventions
+## Linear
 
-- Format: `type(scope): description` (Conventional Commits)
-- **Never** add `Co-Authored-By: Claude` to commit messages
-- **Never** add Claude attribution of any kind to PR bodies
-- `[DEV-XX]` prefix belongs only in the PR/squash-merge title, **not** in local commits
+**Project:** Serapeum APP
 
----
-
-## Linear + GitHub workflow
-
-**Linear team:** DEVELOPMENT · **Project:** Serapeum APP · **Identifier prefix:** `DEV`
-
-### Ticket state automation
-
-- **Move to `In Progress` automatically** when starting work on a ticket — no need to ask.
-- All other state transitions (`In Review`, `Done`, `Canceled`, etc.) require an explicit request.
-
-### Starting a new feature
-
-1. Create a ticket in Linear (MCP or UI): assign to self, project = Serapeum APP.
-2. **Move ticket to `In Progress`** (automatic — no need to ask).
-3. Create a branch: `git checkout -b feat/<short-description>` (branch name does NOT need the DEV-XX prefix).
-4. Implement, commit with conventional commits (no `[DEV-XX]` prefix — commitlint rejects it).
-5. Create the PR: title must start with `[DEV-XX]` or `DEV-XX`. Body should include `Closes DEV-XX`.
-6. Move ticket to `In Review` when the PR is open (explicit request required).
-
-### PR title format (enforced by CI)
-
-Both formats accepted:
-```text
-[DEV-XX] type(scope): description
-DEV-XX type(scope): description
-```
-
-### Available Linear states
-
-| State | Type | Use when |
-|---|---|---|
-| Backlog | backlog | Not yet started |
-| Todo | unstarted | Ready to pick up |
-| In Progress | started | Actively working |
-| In Review | started | PR open, awaiting review |
-| Done | completed | PR merged |
-| Canceled / Duplicate | canceled | — |
+> Note: local commits must not include `[DEV-XX]` prefix — commitlint rejects it.
