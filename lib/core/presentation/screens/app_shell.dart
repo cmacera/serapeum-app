@@ -192,7 +192,7 @@ class _AppShellState extends ConsumerState<AppShell> {
               children: [
                 Text(
                   l10n.appName,
-                  style: GoogleFonts.cinzel(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 20,

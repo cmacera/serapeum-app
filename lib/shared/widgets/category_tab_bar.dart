@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/enums/discover_category.dart';
 
@@ -44,7 +45,7 @@ class CategoryTabItem extends StatelessWidget {
             ),
             child: Text(
               label,
-              style: TextStyle(
+              style: GoogleFonts.inter(
                 color: isSelected ? Colors.white : Colors.grey,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
