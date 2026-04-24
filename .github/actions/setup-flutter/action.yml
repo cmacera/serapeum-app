@@ -9,6 +9,10 @@ inputs:
     description: 'Flutter channel'
     required: false
     default: 'stable'
+  skip-dummy-env:
+    description: 'Skip creating dummy .env from .env.example (use when caller provides real .env)'
+    required: false
+    default: 'false'
 
 runs:
   using: "composite"
@@ -25,6 +29,7 @@ runs:
       run: flutter pub get
 
     - name: Create dummy .env
+      if: ${{ inputs.skip-dummy-env != 'true' }}
       shell: bash
       run: cp .env.example .env
 
