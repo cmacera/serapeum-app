@@ -71,12 +71,9 @@ flutter analyze || { echo "Error: flutter analyze failed — fix issues first"; 
 
 echo "Bumping: ${CURRENT_VERSION}+${CURRENT_BUILD} → ${NEW_VERSION}+${NEW_BUILD}"
 
-ORIGINAL_VERSION_LINE=$(grep '^version:' "$PUBSPEC")
 rollback() {
   echo "Rolling back pubspec.yaml..."
-  TMPFILE=$(mktemp)
-  sed "s/^version: .*/$(echo "$ORIGINAL_VERSION_LINE" | sed 's/version: //')/" "$PUBSPEC" > "$TMPFILE"
-  mv "$TMPFILE" "$PUBSPEC"
+  git restore "$PUBSPEC"
 }
 trap rollback ERR
 
