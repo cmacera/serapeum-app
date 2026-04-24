@@ -214,7 +214,6 @@ class _RatingDialogState extends State<_RatingDialog> {
     return (clamped * 10).round() / 10.0;
   }
 
-  /// Fill fraction for star at [index]: 0.0 = empty, 1.0 = full, 0.3 = 30%.
   double _starFill(int index) => (_rating - index).clamp(0.0, 1.0);
 
   String _displayRating() {
@@ -222,9 +221,101 @@ class _RatingDialogState extends State<_RatingDialog> {
     return _rating.toStringAsFixed(1);
   }
 
+  Widget _buildStarSlider() {
+    return LayoutBuilder(
+      builder: (ctx, constraints) {
+        final totalWidth = constraints.maxWidth;
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: (d) => setState(
+            () => _rating = _ratingFromOffset(d.localPosition.dx, totalWidth),
+          ),
+          onHorizontalDragUpdate: (d) => setState(
+            () => _rating = _ratingFromOffset(d.localPosition.dx, totalWidth),
+          ),
+          child: Row(
+            children: List.generate(10, (i) {
+              final fill = _starFill(i);
+              return Expanded(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(
+                      Icons.star_outline_rounded,
+                      color: Colors.white.withValues(alpha: 0.35),
+                      size: 38,
+                    ),
+                    if (fill > 0)
+                      ClipRect(
+                        clipper: _FractionClipper(fill),
+                        child: const Icon(
+                          Icons.star_rounded,
+                          color: Colors.amber,
+                          size: 38,
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            }),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildActions(double bottomPadding) {
+    final l10n = widget.l10n;
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 480),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 0, 24, bottomPadding),
+          child: Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.accent,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    widget.onSave(_rating);
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    l10n.save,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  widget.onSave(null);
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  l10n.libraryRatingClear,
+                  style: const TextStyle(color: Colors.white70),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final l10n = widget.l10n;
     final imageUrl = widget.libraryItem.imageUrl;
     final hasImage = imageUrl != null && imageUrl.isNotEmpty;
     final viewPadding = MediaQuery.viewPaddingOf(context);
@@ -252,174 +343,101 @@ class _RatingDialogState extends State<_RatingDialog> {
           ),
 
           // ── Foreground content ───────────────────────────────────────────
-          Column(
-            children: [
-              SizedBox(height: viewPadding.top + 4),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    Expanded(
-                      child: Text(
-                        widget.libraryItem.title,
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+          SafeArea(
+            bottom: false,
+            minimum: const EdgeInsets.only(top: 4),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      Expanded(
+                        child: Text(
+                          widget.libraryItem.title,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 48),
-                  ],
+                      const SizedBox(width: 48),
+                    ],
+                  ),
                 ),
-              ),
 
-              const Spacer(),
+                const Spacer(),
 
-              // Cover image
-              if (hasImage)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 80),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: AspectRatio(
-                      aspectRatio: 2 / 3,
-                      child: CachedNetworkImage(
-                        imageUrl: imageUrl,
-                        fit: BoxFit.cover,
-                        placeholder: (ctx, url) =>
-                            Container(color: Colors.black26),
-                        errorWidget: (ctx, url, err) => Container(
-                          color: Colors.black26,
-                          child: const Icon(
-                            Icons.broken_image,
-                            color: Colors.white54,
-                            size: 40,
+                // Cover image — height capped to prevent overflow in landscape/wide windows
+                if (hasImage)
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.sizeOf(context).height * 0.45,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 80),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: AspectRatio(
+                          aspectRatio: 2 / 3,
+                          child: CachedNetworkImage(
+                            imageUrl: imageUrl,
+                            fit: BoxFit.cover,
+                            placeholder: (ctx, url) =>
+                                Container(color: Colors.black26),
+                            errorWidget: (ctx, url, err) => Container(
+                              color: Colors.black26,
+                              child: const Icon(
+                                Icons.broken_image,
+                                color: Colors.white54,
+                                size: 40,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
+
+                const SizedBox(height: 32),
+
+                // Current rating number
+                Text(
+                  _displayRating(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 72,
+                    fontWeight: FontWeight.bold,
+                    height: 1.0,
+                  ),
                 ),
 
-              const SizedBox(height: 32),
+                const SizedBox(height: 28),
 
-              // Current rating number
-              Text(
-                _displayRating(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 72,
-                  fontWeight: FontWeight.bold,
-                  height: 1.0,
-                ),
-              ),
-
-              const SizedBox(height: 28),
-
-              // Drag-enabled star slider — 0.1 precision via fractional clip
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: LayoutBuilder(
-                  builder: (ctx, constraints) {
-                    final totalWidth = constraints.maxWidth;
-                    return GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTapDown: (d) => setState(
-                        () => _rating = _ratingFromOffset(
-                          d.localPosition.dx,
-                          totalWidth,
-                        ),
-                      ),
-                      onHorizontalDragUpdate: (d) => setState(
-                        () => _rating = _ratingFromOffset(
-                          d.localPosition.dx,
-                          totalWidth,
-                        ),
-                      ),
-                      child: Row(
-                        children: List.generate(10, (i) {
-                          final fill = _starFill(i);
-                          return Expanded(
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Icon(
-                                  Icons.star_outline_rounded,
-                                  color: Colors.white.withValues(alpha: 0.35),
-                                  size: 38,
-                                ),
-                                if (fill > 0)
-                                  ClipRect(
-                                    clipper: _FractionClipper(fill),
-                                    child: const Icon(
-                                      Icons.star_rounded,
-                                      color: Colors.amber,
-                                      size: 38,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ),
-                    );
-                  },
-                ),
-              ),
-
-              const Spacer(),
-
-              // Action buttons
-              Padding(
-                padding: EdgeInsets.fromLTRB(24, 0, 24, viewPadding.bottom + 8),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accent,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () {
-                          widget.onSave(_rating);
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          l10n.save,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                // Drag-enabled star slider — 0.1 precision via fractional clip
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 480),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: _buildStarSlider(),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        widget.onSave(null);
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        l10n.libraryRatingClear,
-                        style: const TextStyle(color: Colors.white70),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+
+                const Spacer(),
+
+                _buildActions(viewPadding.bottom + 8),
+              ],
+            ),
           ),
         ],
       ),

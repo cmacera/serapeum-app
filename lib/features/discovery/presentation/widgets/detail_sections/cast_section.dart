@@ -34,24 +34,33 @@ class CastSection extends StatelessWidget {
           // reaching screen edges. Alignment.center overflows equally on both sides.
           SizedBox(
             height: 88,
-            child: OverflowBox(
-              maxWidth: MediaQuery.of(context).size.width,
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 88,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: _parentHorizontalPadding,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final targetWidth =
+                    constraints.maxWidth + _parentHorizontalPadding * 2;
+                return OverflowBox(
+                  maxWidth: targetWidth,
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    width: targetWidth,
+                    height: 88,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: _parentHorizontalPadding,
+                      ),
+                      itemCount: cast.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 10),
+                      itemBuilder: (context, index) {
+                        return _CastMemberCard(
+                          member: cast[index],
+                          theme: theme,
+                        );
+                      },
+                    ),
                   ),
-                  itemCount: cast.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 10),
-                  itemBuilder: (context, index) {
-                    return _CastMemberCard(member: cast[index], theme: theme);
-                  },
-                ),
-              ),
+                );
+              },
             ),
           ),
         ],

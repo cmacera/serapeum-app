@@ -163,23 +163,33 @@ class MediaDetailModal extends ConsumerWidget {
     return SliverToBoxAdapter(
       child: Stack(
         children: [
-          // Background Image
+          // Background Image — fixed height prevents portrait covers from
+          // rendering thousands of pixels tall on wide macOS windows.
           if (backdropUrl != null)
-            Image.network(
-              backdropUrl,
+            SizedBox(
+              height: 220,
               width: double.infinity,
-              fit: BoxFit.fitWidth,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 200,
-                color: theme.colorScheme.surfaceContainerHighest,
-                child: const Center(
-                  child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+              child: Image.network(
+                backdropUrl,
+                width: double.infinity,
+                height: 220,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  height: 220,
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  child: const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      size: 50,
+                      color: Colors.grey,
+                    ),
+                  ),
                 ),
               ),
             )
           else
             Container(
-              height: 200,
+              height: 220,
               color: theme.colorScheme.surfaceContainerHighest,
             ),
 
