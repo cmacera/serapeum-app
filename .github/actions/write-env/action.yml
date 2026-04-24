@@ -19,10 +19,12 @@ runs:
   steps:
     - name: Write .env and .env.remote
       shell: bash
+      env:
+        SERAPEUM_API_URL: ${{ inputs.serapeum-api-url }}
+        SUPABASE_URL: ${{ inputs.supabase-url }}
+        SUPABASE_ANON_KEY: ${{ inputs.supabase-anon-key }}
+        SENTRY_DSN: ${{ inputs.sentry-dsn }}
       run: |
         printf "SERAPEUM_API_URL=%s\nSUPABASE_URL=%s\nSUPABASE_ANON_KEY=%s\nSENTRY_DSN=%s\n" \
-          "${{ inputs.serapeum-api-url }}" \
-          "${{ inputs.supabase-url }}" \
-          "${{ inputs.supabase-anon-key }}" \
-          "${{ inputs.sentry-dsn }}" > .env
+          "$SERAPEUM_API_URL" "$SUPABASE_URL" "$SUPABASE_ANON_KEY" "$SENTRY_DSN" > .env
         cp .env .env.remote

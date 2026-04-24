@@ -56,26 +56,41 @@ if git rev-parse --verify "refs/tags/${TAG}" &>/dev/null; then
   exit 1
 fi
 
-if git ls-remote --tags origin "refs/tags/${TAG}" | grep -q "${TAG}"; then
+if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" &>/dev/null; then
   echo "Error: tag ${TAG} already exists on origin"
   exit 1
 fi
 
-# ── Apply version bump ────────────────────────────────────────────────────────
+# ── Pre-flight quality checks (same as Husky pre-commit) ─────────────────────
+
+echo "Running pre-commit checks before mutating pubspec.yaml..."
+dart format --set-exit-if-changed . || { echo "Error: dart format failed — fix formatting first"; exit 1; }
+flutter analyze || { echo "Error: flutter analyze failed — fix issues first"; exit 1; }
+
+# ── Apply version bump (with rollback on failure) ─────────────────────────────
 
 echo "Bumping: ${CURRENT_VERSION}+${CURRENT_BUILD} → ${NEW_VERSION}+${NEW_BUILD}"
 
-# Portable sed: write to temp file, then replace (avoids BSD vs GNU -i difference)
+ORIGINAL_VERSION_LINE=$(grep '^version:' "$PUBSPEC")
+rollback() {
+  echo "Rolling back pubspec.yaml..."
+  TMPFILE=$(mktemp)
+  sed "s/^version: .*/$(echo "$ORIGINAL_VERSION_LINE" | sed 's/version: //')/" "$PUBSPEC" > "$TMPFILE"
+  mv "$TMPFILE" "$PUBSPEC"
+}
+trap rollback ERR
+
 TMPFILE=$(mktemp)
 sed "s/^version: .*/version: ${NEW_VERSION}+${NEW_BUILD}/" "$PUBSPEC" > "$TMPFILE"
 mv "$TMPFILE" "$PUBSPEC"
 
 # ── Commit, tag, push ─────────────────────────────────────────────────────────
 
-git add "$PUBSPEC"
 git commit --only "$PUBSPEC" -m "chore(release): bump version to ${NEW_VERSION}"
-git tag "$TAG"
-git push origin HEAD --follow-tags
+git tag -a "$TAG" -m "Release ${TAG}"
+git push origin HEAD --tags
+
+trap - ERR
 
 echo ""
 echo "✓ Tag ${TAG} pushed — GitHub Actions release workflow starting."
