@@ -6,10 +6,6 @@ import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import 'detail_section_widgets.dart';
 
-// Horizontal padding applied by the parent modal (EdgeInsets.all(24)).
-// Used to restore content alignment inside the full-bleed list.
-const double _parentHorizontalPadding = 24.0;
-
 class CastSection extends StatelessWidget {
   final List<CastMember> cast;
 
@@ -37,7 +33,7 @@ class CastSection extends StatelessWidget {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final targetWidth =
-                    constraints.maxWidth + _parentHorizontalPadding * 2;
+                    constraints.maxWidth + kDetailModalHorizontalPadding * 2;
                 return OverflowBox(
                   maxWidth: targetWidth,
                   alignment: Alignment.center,
@@ -47,7 +43,7 @@ class CastSection extends StatelessWidget {
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: _parentHorizontalPadding,
+                        horizontal: kDetailModalHorizontalPadding,
                       ),
                       itemCount: cast.length,
                       separatorBuilder: (_, _) => const SizedBox(width: 10),

@@ -346,97 +346,114 @@ class _RatingDialogState extends State<_RatingDialog> {
           SafeArea(
             bottom: false,
             minimum: const EdgeInsets.only(top: 4),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Row(
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      Expanded(
-                        child: Text(
-                          widget.libraryItem.title,
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.white,
+                              ),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                            Expanded(
+                              child: Text(
+                                widget.libraryItem.title,
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 48),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 48),
-                    ],
-                  ),
-                ),
 
-                const Spacer(),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Cover image — height capped to prevent overflow in landscape/wide windows
+                          if (hasImage) ...[
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxHeight:
+                                    MediaQuery.sizeOf(context).height * 0.45,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 80,
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: AspectRatio(
+                                    aspectRatio: 2 / 3,
+                                    child: CachedNetworkImage(
+                                      imageUrl: imageUrl,
+                                      fit: BoxFit.cover,
+                                      placeholder: (ctx, url) =>
+                                          Container(color: Colors.black26),
+                                      errorWidget: (ctx, url, err) => Container(
+                                        color: Colors.black26,
+                                        child: const Icon(
+                                          Icons.broken_image,
+                                          color: Colors.white54,
+                                          size: 40,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                          ],
 
-                // Cover image — height capped to prevent overflow in landscape/wide windows
-                if (hasImage)
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: MediaQuery.sizeOf(context).height * 0.45,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 80),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: AspectRatio(
-                          aspectRatio: 2 / 3,
-                          child: CachedNetworkImage(
-                            imageUrl: imageUrl,
-                            fit: BoxFit.cover,
-                            placeholder: (ctx, url) =>
-                                Container(color: Colors.black26),
-                            errorWidget: (ctx, url, err) => Container(
-                              color: Colors.black26,
-                              child: const Icon(
-                                Icons.broken_image,
-                                color: Colors.white54,
-                                size: 40,
+                          // Current rating number
+                          Text(
+                            _displayRating(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 72,
+                              fontWeight: FontWeight.bold,
+                              height: 1.0,
+                            ),
+                          ),
+
+                          const SizedBox(height: 28),
+
+                          // Drag-enabled star slider — 0.1 precision via fractional clip
+                          Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 480),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: _buildStarSlider(),
                               ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ),
-                  ),
 
-                const SizedBox(height: 32),
-
-                // Current rating number
-                Text(
-                  _displayRating(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 72,
-                    fontWeight: FontWeight.bold,
-                    height: 1.0,
+                      _buildActions(viewPadding.bottom + 8),
+                    ],
                   ),
                 ),
-
-                const SizedBox(height: 28),
-
-                // Drag-enabled star slider — 0.1 precision via fractional clip
-                Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 480),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: _buildStarSlider(),
-                    ),
-                  ),
-                ),
-
-                const Spacer(),
-
-                _buildActions(viewPadding.bottom + 8),
-              ],
+              ),
             ),
           ),
         ],

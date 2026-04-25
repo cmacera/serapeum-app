@@ -171,8 +171,6 @@ class MediaDetailModal extends ConsumerWidget {
               width: double.infinity,
               child: Image.network(
                 backdropUrl,
-                width: double.infinity,
-                height: 220,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(
                   height: 220,
