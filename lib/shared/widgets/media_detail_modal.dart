@@ -19,6 +19,8 @@ import '../../features/library/data/local/library_item.dart';
 import '../../features/library/data/providers/library_provider.dart';
 import '../../features/library/presentation/widgets/library_user_sections.dart';
 
+const double _kHeaderHeight = 220.0;
+
 class MediaDetailModal extends ConsumerWidget {
   final Object entity;
   final ScrollController? scrollController;
@@ -163,23 +165,30 @@ class MediaDetailModal extends ConsumerWidget {
     return SliverToBoxAdapter(
       child: Stack(
         children: [
-          // Background Image
+          // Background Image — fixed height prevents portrait covers from
+          // rendering thousands of pixels tall on wide macOS windows.
           if (backdropUrl != null)
-            Image.network(
-              backdropUrl,
+            SizedBox(
+              height: _kHeaderHeight,
               width: double.infinity,
-              fit: BoxFit.fitWidth,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 200,
-                color: theme.colorScheme.surfaceContainerHighest,
-                child: const Center(
-                  child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+              child: Image.network(
+                backdropUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  child: const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      size: 50,
+                      color: Colors.grey,
+                    ),
+                  ),
                 ),
               ),
             )
           else
             Container(
-              height: 200,
+              height: _kHeaderHeight,
               color: theme.colorScheme.surfaceContainerHighest,
             ),
 

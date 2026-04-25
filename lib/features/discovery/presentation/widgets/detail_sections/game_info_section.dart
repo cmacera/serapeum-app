@@ -100,69 +100,79 @@ class GameInfoSection extends StatelessWidget {
   }
 
   Widget _buildScreenshotStrip(BuildContext context, List<String> urls) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
       height: _kStripHeight,
-      child: OverflowBox(
-        maxWidth: screenWidth,
-        alignment: Alignment.center,
-        child: SizedBox(
-          width: screenWidth,
-          height: _kStripHeight,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(
-              horizontal: kDetailModalHorizontalPadding,
-            ),
-            itemCount: urls.length,
-            separatorBuilder: (_, _) => const SizedBox(width: 8),
-            itemBuilder: (context, index) {
-              final url = urls[index];
-              final l10n = AppLocalizations.of(context)!;
-              return Semantics(
-                button: true,
-                label: l10n.viewScreenshot,
-                child: GestureDetector(
-                  onTap: () => FullscreenImageViewer.show(
-                    context,
-                    urls: urls,
-                    initialIndex: index,
-                  ),
-                  child: Hero(
-                    tag: FullscreenImageViewer.heroTag(url),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        imageUrl: url,
-                        height: _kStripHeight,
-                        width: _kThumbnailWidth,
-                        fit: BoxFit.cover,
-                        placeholder: (context, _) => Container(
-                          width: _kThumbnailWidth,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.surfaceContainerHighest,
-                          child: const Center(
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ),
-                        errorWidget: (context, _, _) => Container(
-                          width: _kThumbnailWidth,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.surfaceContainerHighest,
-                          child: const Center(
-                            child: Icon(Icons.broken_image, color: Colors.grey),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final targetWidth =
+              constraints.maxWidth + kDetailModalHorizontalPadding * 2;
+          return OverflowBox(
+            maxWidth: targetWidth,
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: targetWidth,
+              height: _kStripHeight,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: kDetailModalHorizontalPadding,
+                ),
+                itemCount: urls.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final url = urls[index];
+                  final l10n = AppLocalizations.of(context)!;
+                  return Semantics(
+                    button: true,
+                    label: l10n.viewScreenshot,
+                    child: GestureDetector(
+                      onTap: () => FullscreenImageViewer.show(
+                        context,
+                        urls: urls,
+                        initialIndex: index,
+                      ),
+                      child: Hero(
+                        tag: FullscreenImageViewer.heroTag(url),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: CachedNetworkImage(
+                            imageUrl: url,
+                            height: _kStripHeight,
+                            width: _kThumbnailWidth,
+                            fit: BoxFit.cover,
+                            placeholder: (context, _) => Container(
+                              width: _kThumbnailWidth,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ),
+                            errorWidget: (context, _, _) => Container(
+                              width: _kThumbnailWidth,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
+                              child: const Center(
+                                child: Icon(
+                                  Icons.broken_image,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }

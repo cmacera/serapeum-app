@@ -6,10 +6,6 @@ import 'package:serapeum_app/l10n/app_localizations.dart';
 
 import 'detail_section_widgets.dart';
 
-// Horizontal padding applied by the parent modal (EdgeInsets.all(24)).
-// Used to restore content alignment inside the full-bleed list.
-const double _parentHorizontalPadding = 24.0;
-
 class CastSection extends StatelessWidget {
   final List<CastMember> cast;
 
@@ -34,24 +30,33 @@ class CastSection extends StatelessWidget {
           // reaching screen edges. Alignment.center overflows equally on both sides.
           SizedBox(
             height: 88,
-            child: OverflowBox(
-              maxWidth: MediaQuery.of(context).size.width,
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 88,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: _parentHorizontalPadding,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final targetWidth =
+                    constraints.maxWidth + kDetailModalHorizontalPadding * 2;
+                return OverflowBox(
+                  maxWidth: targetWidth,
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    width: targetWidth,
+                    height: 88,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: kDetailModalHorizontalPadding,
+                      ),
+                      itemCount: cast.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 10),
+                      itemBuilder: (context, index) {
+                        return _CastMemberCard(
+                          member: cast[index],
+                          theme: theme,
+                        );
+                      },
+                    ),
                   ),
-                  itemCount: cast.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 10),
-                  itemBuilder: (context, index) {
-                    return _CastMemberCard(member: cast[index], theme: theme);
-                  },
-                ),
-              ),
+                );
+              },
             ),
           ),
         ],

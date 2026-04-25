@@ -95,7 +95,6 @@ class TrailersSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (youtubeIds.isEmpty) return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context)!;
-    final screenWidth = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
@@ -105,25 +104,31 @@ class TrailersSection extends StatelessWidget {
           const SizedBox(height: 8.0),
           SizedBox(
             height: _kTrailerHeight,
-            child: OverflowBox(
-              maxWidth: screenWidth,
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: screenWidth,
-                height: _kTrailerHeight,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kDetailModalHorizontalPadding,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final targetWidth =
+                    constraints.maxWidth + kDetailModalHorizontalPadding * 2;
+                return OverflowBox(
+                  maxWidth: targetWidth,
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    width: targetWidth,
+                    height: _kTrailerHeight,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: kDetailModalHorizontalPadding,
+                      ),
+                      itemCount: youtubeIds.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 8),
+                      itemBuilder: (context, index) => _TrailerThumbnail(
+                        videoId: youtubeIds[index],
+                        onTap: _launch,
+                      ),
+                    ),
                   ),
-                  itemCount: youtubeIds.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 8),
-                  itemBuilder: (context, index) => _TrailerThumbnail(
-                    videoId: youtubeIds[index],
-                    onTap: _launch,
-                  ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         ],
