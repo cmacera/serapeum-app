@@ -173,7 +173,6 @@ class MediaDetailModal extends ConsumerWidget {
                 backdropUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(
-                  height: 220,
                   color: theme.colorScheme.surfaceContainerHighest,
                   child: const Center(
                     child: Icon(
