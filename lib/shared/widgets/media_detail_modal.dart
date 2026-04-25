@@ -19,6 +19,8 @@ import '../../features/library/data/local/library_item.dart';
 import '../../features/library/data/providers/library_provider.dart';
 import '../../features/library/presentation/widgets/library_user_sections.dart';
 
+const double _kHeaderHeight = 220.0;
+
 class MediaDetailModal extends ConsumerWidget {
   final Object entity;
   final ScrollController? scrollController;
@@ -167,7 +169,7 @@ class MediaDetailModal extends ConsumerWidget {
           // rendering thousands of pixels tall on wide macOS windows.
           if (backdropUrl != null)
             SizedBox(
-              height: 220,
+              height: _kHeaderHeight,
               width: double.infinity,
               child: Image.network(
                 backdropUrl,
@@ -186,7 +188,7 @@ class MediaDetailModal extends ConsumerWidget {
             )
           else
             Container(
-              height: 220,
+              height: _kHeaderHeight,
               color: theme.colorScheme.surfaceContainerHighest,
             ),
 
