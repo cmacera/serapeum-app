@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/failure.dart';
 import '../../../../core/realm/realm_provider.dart';
 import '../../../library/data/providers/library_provider.dart';
@@ -49,6 +50,7 @@ enum BackupErrorKind {
   network,
   notAuthenticated,
   incompatibleSchema,
+  rateLimit,
   auth,
   generic,
 }
@@ -70,7 +72,9 @@ BackupErrorKind _classifyError(Object error) {
     return BackupErrorKind.incompatibleSchema;
   }
   if (error is AuthException) {
-    return BackupErrorKind.auth;
+    return error.statusCode == '429'
+        ? BackupErrorKind.rateLimit
+        : BackupErrorKind.auth;
   }
   return BackupErrorKind.generic;
 }
@@ -136,7 +140,7 @@ class BackupNotifier extends _$BackupNotifier {
     try {
       await Supabase.instance.client.auth.signInWithOtp(
         email: email,
-        emailRedirectTo: 'io.supabase.serapeum://login-callback/',
+        emailRedirectTo: ApiConstants.supabaseDeepLinkUrl,
       );
       state = BackupAwaitingConfirmation(email);
     } catch (e) {

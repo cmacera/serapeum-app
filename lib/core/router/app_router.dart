@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../constants/api_constants.dart';
 import '../presentation/screens/app_shell.dart';
 import '../../features/discovery/presentation/screens/discover_screen.dart';
 import '../../features/library/presentation/screens/library_screen.dart';
@@ -26,7 +27,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Supabase auth callbacks arrive as io.supabase.serapeum://login-callback/[?...]
       // login-callback is the URI host, not a path, so GoRouter can't match it.
       // Supabase's own app_links listener handles the token; redirect to Settings.
-      if (state.uri.scheme == 'io.supabase.serapeum') {
+      if (state.uri.scheme == ApiConstants.supabaseDeepLinkScheme) {
         router.go('/settings');
       } else {
         router.go('/discover');

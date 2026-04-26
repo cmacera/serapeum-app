@@ -636,6 +636,7 @@ class _ErrorCard extends ConsumerWidget {
       BackupErrorKind.network => l10n.backupErrorNetwork,
       BackupErrorKind.notAuthenticated => l10n.backupErrorNotAuthenticated,
       BackupErrorKind.incompatibleSchema => l10n.backupErrorIncompatibleSchema,
+      BackupErrorKind.rateLimit => l10n.backupErrorRateLimit,
       BackupErrorKind.auth => l10n.backupErrorAuth,
       BackupErrorKind.generic => l10n.backupErrorGeneric,
     };

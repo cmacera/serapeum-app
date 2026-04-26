@@ -33,6 +33,11 @@ class ApiConstants {
   static const String localhostIpV6 = '::1';
   static const String androidEmulatorHost = '10.0.2.2';
 
+  // Supabase deep-link auth callback
+  static const String supabaseDeepLinkScheme = 'io.supabase.serapeum';
+  static const String supabaseDeepLinkUrl =
+      'io.supabase.serapeum://login-callback/';
+
   // Endpoints
   static const String searchBooks = '/searchBooks';
   static const String searchMedia = '/searchMedia';
