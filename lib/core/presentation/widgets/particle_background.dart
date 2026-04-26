@@ -25,10 +25,12 @@ class _ParticleBackgroundState extends State<ParticleBackground>
   // Total number of particles to spawn and simulate
   final int _particleCount = 100;
 
-  // Stream that listens to bare metal hardware accelerometer data
-  StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
+  // Stream that listens to linear (gravity-removed) accelerometer data.
+  // Uses UserAccelerometerEvent so any static orientation reads ≈0 on X/Y.
+  StreamSubscription<UserAccelerometerEvent>? _accelerometerSubscription;
 
-  // The raw hardware reading of device tilt
+  // The raw linear-acceleration reading (gravity already removed by platform).
+  // At rest in any orientation these are ≈0; they spike only on physical movement.
   double _accelX = 0.0;
   double _accelY = 0.0;
 
@@ -52,8 +54,8 @@ class _ParticleBackgroundState extends State<ParticleBackground>
     });
 
     if (Platform.isAndroid || Platform.isIOS) {
-      _accelerometerSubscription = accelerometerEventStream().listen((
-        AccelerometerEvent event,
+      _accelerometerSubscription = userAccelerometerEventStream().listen((
+        UserAccelerometerEvent event,
       ) {
         if (mounted) {
           _accelX = event.x;
@@ -97,10 +99,13 @@ class _ParticleBackgroundState extends State<ParticleBackground>
       animation: _controller,
       builder: (context, child) {
         // LERP (Linear Interpolation):
-        // Move the smoothed accelerometer value 10% of the way towards the raw hardware reading.
-        // This isolates the particles from jittery hands.
+        // Move the smoothed linear-acceleration value 10% towards the latest reading.
+        // Because gravity is removed, the resting value is ≈0 in any orientation.
+        // Clamped to ±2.5 m/s² so a sudden jerk never causes dizzying motion.
         _smoothAccelX += (_accelX - _smoothAccelX) * 0.1;
         _smoothAccelY += (_accelY - _smoothAccelY) * 0.1;
+        _smoothAccelX = _smoothAccelX.clamp(-2.5, 2.5);
+        _smoothAccelY = _smoothAccelY.clamp(-2.5, 2.5);
 
         // Step 1: Calculate the new physical positions of all particles
         _updateParticles(
@@ -210,12 +215,13 @@ class Particle {
     x += vx;
     y += vy;
 
-    // 2. PARALLAX OFFSET (ACCELEROMETER):
-    // We shift the particle in the opposite direction of the device tilt.
+    // 2. PARALLAX OFFSET (LINEAR ACCELEROMETER):
+    // We shift the particle in the direction of device movement.
     // CRITICAL: We multiply the shift by the particle's `size`.
     // Because larger particles shift further, it creates a 3D parallax illusion
     // where large particles look like they are floating "above" the screen,
     // and small particles look like they are deep "inside" the screen.
+    // Scale 0.2: visible parallax without dizziness.
     x -= accelX * size * 0.2;
     y += accelY * size * 0.2;
 
