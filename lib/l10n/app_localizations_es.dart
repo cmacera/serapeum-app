@@ -570,6 +570,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Algo ha salido mal. Por favor, inténtalo de nuevo.';
 
   @override
+  String get backupErrorAuth =>
+      'Error de autenticación. Espera un momento e inténtalo de nuevo.';
+
+  @override
   String get dataSectionTitle => 'Datos';
 
   @override

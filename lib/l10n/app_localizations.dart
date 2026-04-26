@@ -1086,6 +1086,12 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Please try again.'**
   String get backupErrorGeneric;
 
+  /// Shown when Supabase rejects the sign-in OTP request (e.g. rate limit)
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication failed. Please wait a moment and try again.'**
+  String get backupErrorAuth;
+
   /// Title for the data management section in Settings
   ///
   /// In en, this message translates to:

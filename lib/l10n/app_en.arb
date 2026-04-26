@@ -411,6 +411,10 @@
   "@backupErrorGeneric": {
     "description": "Fallback error message for backup/restore failures"
   },
+  "backupErrorAuth": "Authentication failed. Please wait a moment and try again.",
+  "@backupErrorAuth": {
+    "description": "Shown when Supabase rejects the sign-in OTP request (e.g. rate limit)"
+  },
 
   "dataSectionTitle": "Data",
   "@dataSectionTitle": {

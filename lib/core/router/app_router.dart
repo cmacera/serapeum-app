@@ -22,6 +22,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: '/discover',
+    onException: (context, state, router) {
+      // Supabase auth callbacks arrive as io.supabase.serapeum://login-callback/[?...]
+      // login-callback is the URI host, not a path, so GoRouter can't match it.
+      // Supabase's own app_links listener handles the token; redirect to Settings.
+      if (state.uri.scheme == 'io.supabase.serapeum') {
+        router.go('/settings');
+      } else {
+        router.go('/discover');
+      }
+    },
     routes: [
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

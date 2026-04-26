@@ -45,7 +45,13 @@ class BackupOperationInProgress extends BackupState {
   final BackupOperation operation;
 }
 
-enum BackupErrorKind { network, notAuthenticated, incompatibleSchema, generic }
+enum BackupErrorKind {
+  network,
+  notAuthenticated,
+  incompatibleSchema,
+  auth,
+  generic,
+}
 
 class BackupError extends BackupState {
   BackupError({required this.kind, required this.previous});
@@ -62,6 +68,9 @@ BackupErrorKind _classifyError(Object error) {
   }
   if (error is BackupIncompatibleSchemaException) {
     return BackupErrorKind.incompatibleSchema;
+  }
+  if (error is AuthException) {
+    return BackupErrorKind.auth;
   }
   return BackupErrorKind.generic;
 }
@@ -131,6 +140,7 @@ class BackupNotifier extends _$BackupNotifier {
       );
       state = BackupAwaitingConfirmation(email);
     } catch (e) {
+      debugPrint('[BackupNotifier] signIn error: $e');
       state = BackupError(kind: _classifyError(e), previous: BackupAnonymous());
     }
   }

@@ -239,6 +239,7 @@
   "backupErrorNotAuthenticated": "No has iniciado sesión. Inicia sesión para usar la copia de seguridad.",
   "backupErrorIncompatibleSchema": "Esta copia fue creada con una versión más reciente de la app y no se puede restaurar.",
   "backupErrorGeneric": "Algo ha salido mal. Por favor, inténtalo de nuevo.",
+  "backupErrorAuth": "Error de autenticación. Espera un momento e inténtalo de nuevo.",
 
   "dataSectionTitle": "Datos",
   "clearLibrary": "Borrar biblioteca",
