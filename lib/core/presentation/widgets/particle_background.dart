@@ -39,6 +39,8 @@ class _ParticleBackgroundState extends State<ParticleBackground>
   double _smoothAccelX = 0.0;
   double _smoothAccelY = 0.0;
 
+  static const double _maxLinearAccel = 2.5;
+
   @override
   void initState() {
     super.initState();
@@ -101,11 +103,11 @@ class _ParticleBackgroundState extends State<ParticleBackground>
         // LERP (Linear Interpolation):
         // Move the smoothed linear-acceleration value 10% towards the latest reading.
         // Because gravity is removed, the resting value is ≈0 in any orientation.
-        // Clamped to ±2.5 m/s² so a sudden jerk never causes dizzying motion.
+        // Clamped to ±_maxLinearAccel m/s² so a sudden jerk never causes dizzying motion.
         _smoothAccelX += (_accelX - _smoothAccelX) * 0.1;
         _smoothAccelY += (_accelY - _smoothAccelY) * 0.1;
-        _smoothAccelX = _smoothAccelX.clamp(-2.5, 2.5);
-        _smoothAccelY = _smoothAccelY.clamp(-2.5, 2.5);
+        _smoothAccelX = _smoothAccelX.clamp(-_maxLinearAccel, _maxLinearAccel);
+        _smoothAccelY = _smoothAccelY.clamp(-_maxLinearAccel, _maxLinearAccel);
 
         // Step 1: Calculate the new physical positions of all particles
         _updateParticles(
