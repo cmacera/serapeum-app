@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/failure.dart';
 import '../../../../core/realm/realm_provider.dart';
 import '../../../library/data/providers/library_provider.dart';
@@ -45,7 +46,14 @@ class BackupOperationInProgress extends BackupState {
   final BackupOperation operation;
 }
 
-enum BackupErrorKind { network, notAuthenticated, incompatibleSchema, generic }
+enum BackupErrorKind {
+  network,
+  notAuthenticated,
+  incompatibleSchema,
+  rateLimit,
+  auth,
+  generic,
+}
 
 class BackupError extends BackupState {
   BackupError({required this.kind, required this.previous});
@@ -62,6 +70,11 @@ BackupErrorKind _classifyError(Object error) {
   }
   if (error is BackupIncompatibleSchemaException) {
     return BackupErrorKind.incompatibleSchema;
+  }
+  if (error is AuthException) {
+    return error.statusCode == '429'
+        ? BackupErrorKind.rateLimit
+        : BackupErrorKind.auth;
   }
   return BackupErrorKind.generic;
 }
@@ -127,10 +140,11 @@ class BackupNotifier extends _$BackupNotifier {
     try {
       await Supabase.instance.client.auth.signInWithOtp(
         email: email,
-        emailRedirectTo: 'io.supabase.serapeum://login-callback/',
+        emailRedirectTo: ApiConstants.supabaseDeepLinkUrl,
       );
       state = BackupAwaitingConfirmation(email);
     } catch (e) {
+      debugPrint('[BackupNotifier] signIn error: $e');
       state = BackupError(kind: _classifyError(e), previous: BackupAnonymous());
     }
   }

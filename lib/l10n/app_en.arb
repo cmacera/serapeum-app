@@ -411,6 +411,14 @@
   "@backupErrorGeneric": {
     "description": "Fallback error message for backup/restore failures"
   },
+  "backupErrorRateLimit": "Too many attempts. Please wait a minute and try again.",
+  "@backupErrorRateLimit": {
+    "description": "Shown when Supabase rate-limits the sign-in OTP request (HTTP 429)"
+  },
+  "backupErrorAuth": "Authentication failed. Please try again.",
+  "@backupErrorAuth": {
+    "description": "Shown when Supabase rejects the sign-in OTP request for a non-rate-limit reason"
+  },
 
   "dataSectionTitle": "Data",
   "@dataSectionTitle": {

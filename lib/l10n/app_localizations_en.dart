@@ -566,6 +566,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupErrorGeneric => 'Something went wrong. Please try again.';
 
   @override
+  String get backupErrorRateLimit =>
+      'Too many attempts. Please wait a minute and try again.';
+
+  @override
+  String get backupErrorAuth => 'Authentication failed. Please try again.';
+
+  @override
   String get dataSectionTitle => 'Data';
 
   @override
