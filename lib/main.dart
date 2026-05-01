@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:serapeum_app/l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:serapeum_app/core/auth/splash_service.dart';
+import 'package:serapeum_app/core/auth/presentation/screens/splash_screen.dart';
 import 'core/auth/presentation/screens/auth_error_screen.dart';
 import 'core/auth/providers/auth_init_provider.dart';
 import 'core/env/env.dart';
@@ -18,7 +20,8 @@ import 'core/localization/locale_provider.dart';
 void main() async {
   runZonedGuarded(
     () async {
-      SentryWidgetsFlutterBinding.ensureInitialized();
+      final binding = SentryWidgetsFlutterBinding.ensureInitialized();
+      FlutterNativeSplash.preserve(widgetsBinding: binding);
       Env.validate();
 
       const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
@@ -31,21 +34,13 @@ void main() async {
         );
       }
 
-      // Initialize Supabase
       await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
 
-      // Initialize authentication
-      final authSuccess = await SplashService.initialize();
-
-      final appProviderScope = ProviderScope(
-        overrides: [authInitSuccessProvider.overrideWith((ref) => authSuccess)],
-        child: const MyApp(),
-      );
+      const appProviderScope = ProviderScope(child: MyApp());
 
       if (sentryDsn.isNotEmpty) {
         await SentryFlutter.init((options) {
           options.dsn = sentryDsn;
-          // Capture 100% of transactions in debug; use a lower rate in release
           options.tracesSampleRate = kDebugMode ? 1.0 : 0.2;
         }, appRunner: () => runApp(appProviderScope));
       } else {
@@ -53,9 +48,7 @@ void main() async {
       }
     },
     (error, stackTrace) {
-      // Fire-and-forget: don't await so the handler stays synchronous
       Sentry.captureException(error, stackTrace: stackTrace);
-      // Rethrow preserving original stack trace so runZonedGuarded sees it
       Error.throwWithStackTrace(error, stackTrace);
     },
   );
@@ -77,17 +70,13 @@ class MyApp extends ConsumerWidget {
 
     final theme = ThemeData(
       brightness: Brightness.dark,
-      // Match Stitch customColor
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.accent,
         brightness: Brightness.dark,
       ),
-      fontFamily: UiConstants.fontFamily, // The font from the Stitch project
+      fontFamily: UiConstants.fontFamily,
     );
 
-    // On macOS with a transparent title bar and fullSizeContentView, Flutter
-    // content extends under the traffic light buttons. Inject 28px top padding
-    // so the system SafeArea / AppBar accounts for the button clearance.
     Widget Function(BuildContext, Widget?)? macOsBuilder;
     if (defaultTargetPlatform == TargetPlatform.macOS) {
       macOsBuilder = (context, child) {
@@ -103,6 +92,16 @@ class MyApp extends ConsumerWidget {
       };
     }
 
+    // null = auth in progress, show splash
+    if (authSuccess == null) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: theme,
+        home: const SplashScreen(),
+      );
+    }
+
+    // false = auth failed, show retry screen
     if (!authSuccess) {
       return MaterialApp(
         title: UiConstants.appTitle,

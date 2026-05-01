@@ -19,7 +19,9 @@ class AuthService {
 
     if (session == null) {
       try {
-        await Supabase.instance.client.auth.signInAnonymously();
+        await Supabase.instance.client.auth.signInAnonymously().timeout(
+          const Duration(seconds: 15),
+        );
         debugPrint('Anonymous sign in successful');
       } catch (e) {
         debugPrint('Failed to sign in anonymously: $e');

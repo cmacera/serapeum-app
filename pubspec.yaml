@@ -57,6 +57,7 @@ dependencies:
   url_launcher: ^6.3.1
   sentry_flutter: ^9.15.0
   package_info_plus: ^8.3.0
+  flutter_native_splash: ^2.4.4
 
 
 dev_dependencies:
@@ -145,4 +146,13 @@ flutter_launcher_icons:
   macos:
     generate: true
     image_path: "assets/images/serapeum_icon.png"
+
+flutter_native_splash:
+  color: "#0c0a14"
+  image: assets/images/splash1.png
+  ios_content_mode: scaleAspectFill
+  fullscreen: true
+  android: true
+  ios: true
+  web: false
 
