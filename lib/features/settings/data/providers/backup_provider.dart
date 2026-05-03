@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/auth/auth_service.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/failure.dart';
 import '../../../../core/realm/realm_provider.dart';
@@ -206,7 +207,7 @@ class BackupNotifier extends _$BackupNotifier {
   Future<void> signOut() async {
     try {
       await Supabase.instance.client.auth.signOut();
-      await Supabase.instance.client.auth.signInAnonymously();
+      await AuthService().signInAnonymously();
       state = BackupAnonymous();
     } catch (e) {
       state = BackupError(kind: _classifyError(e), previous: state);
