@@ -30,6 +30,7 @@ class AuthService {
     }
 
     _signInCompleter = Completer<void>();
+    _signInCompleter!.future.ignore();
     try {
       await Supabase.instance.client.auth.signInAnonymously().timeout(
         const Duration(seconds: 15),

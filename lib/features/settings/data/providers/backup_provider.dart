@@ -207,8 +207,8 @@ class BackupNotifier extends _$BackupNotifier {
   Future<void> signOut() async {
     try {
       await Supabase.instance.client.auth.signOut();
-      await AuthService().signInAnonymously();
       state = BackupAnonymous();
+      await AuthService().signInAnonymously();
     } catch (e) {
       state = BackupError(kind: _classifyError(e), previous: state);
     }
