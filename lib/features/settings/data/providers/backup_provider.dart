@@ -208,13 +208,23 @@ class BackupNotifier extends _$BackupNotifier {
   /// so the app continues to work normally.
   Future<void> signOut() async {
     final previousState = state;
-    state = BackupReauthing();
+
+    // Block 1: sign out. On failure, restore the pre-signout state.
     try {
       await Supabase.instance.client.auth.signOut();
+    } catch (e) {
+      state = BackupError(kind: _classifyError(e), previous: previousState);
+      return;
+    }
+
+    // Block 2: re-establish anonymous session. On failure, fall back to
+    // BackupAnonymous so dismissError never restores an authenticated state.
+    state = BackupReauthing();
+    try {
       await AuthService().signInAnonymously();
       state = BackupAnonymous();
     } catch (e) {
-      state = BackupError(kind: _classifyError(e), previous: previousState);
+      state = BackupError(kind: _classifyError(e), previous: BackupAnonymous());
     }
   }
 
