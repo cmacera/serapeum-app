@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/auth/auth_service.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/failure.dart';
 import '../../../../core/realm/realm_provider.dart';
@@ -19,6 +20,8 @@ part 'backup_provider.g.dart';
 sealed class BackupState {}
 
 class BackupLoading extends BackupState {}
+
+class BackupReauthing extends BackupState {}
 
 class BackupAnonymous extends BackupState {}
 
@@ -204,12 +207,24 @@ class BackupNotifier extends _$BackupNotifier {
   /// Signs out of the backup account and restores an anonymous session
   /// so the app continues to work normally.
   Future<void> signOut() async {
+    final previousState = state;
+
+    // Block 1: sign out. On failure, restore the pre-signout state.
     try {
       await Supabase.instance.client.auth.signOut();
-      await Supabase.instance.client.auth.signInAnonymously();
+    } catch (e) {
+      state = BackupError(kind: _classifyError(e), previous: previousState);
+      return;
+    }
+
+    // Block 2: re-establish anonymous session. On failure, fall back to
+    // BackupAnonymous so dismissError never restores an authenticated state.
+    state = BackupReauthing();
+    try {
+      await AuthService().signInAnonymously();
       state = BackupAnonymous();
     } catch (e) {
-      state = BackupError(kind: _classifyError(e), previous: state);
+      state = BackupError(kind: _classifyError(e), previous: BackupAnonymous());
     }
   }
 

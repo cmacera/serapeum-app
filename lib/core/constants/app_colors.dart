@@ -21,6 +21,9 @@ class AppColors {
   static const Color haloViolet = Color(0xFFB060FF);
   static const Color haloCyan = Color(0xFF60C8FF);
 
+  // Background
+  static const Color backgroundPrimary = Color(0xFF0C0A14);
+
   // Layout
   static const Color subtleDivider = Color(0x14FFFFFF);
 }

@@ -9,24 +9,40 @@ class AuthService {
   factory AuthService() => _instance;
   AuthService._internal();
 
+  /// Guards against concurrent sign-in calls.
+  /// If a sign-in is already in flight all callers await the same result.
+  Completer<void>? _signInCompleter;
+
   /// Guards against concurrent refresh calls.
   /// If a refresh is already in flight all callers await the same result.
   Completer<bool>? _refreshCompleter;
 
   /// Checks if there's an existing session, and if not, signs in anonymously.
+  /// Concurrent callers share the same in-flight request.
   Future<void> signInAnonymously() async {
-    final session = Supabase.instance.client.auth.currentSession;
-
-    if (session == null) {
-      try {
-        await Supabase.instance.client.auth.signInAnonymously();
-        debugPrint('Anonymous sign in successful');
-      } catch (e) {
-        debugPrint('Failed to sign in anonymously: $e');
-        rethrow;
-      }
-    } else {
+    if (Supabase.instance.client.auth.currentSession != null) {
       debugPrint('Already signed in anonymously');
+      return;
+    }
+
+    if (_signInCompleter != null) {
+      return _signInCompleter!.future;
+    }
+
+    _signInCompleter = Completer<void>();
+    _signInCompleter!.future.ignore();
+    try {
+      await Supabase.instance.client.auth.signInAnonymously().timeout(
+        const Duration(seconds: 15),
+      );
+      debugPrint('Anonymous sign in successful');
+      _signInCompleter!.complete();
+    } catch (e) {
+      debugPrint('Failed to sign in anonymously: $e');
+      _signInCompleter!.completeError(e);
+      rethrow;
+    } finally {
+      _signInCompleter = null;
     }
   }
 
