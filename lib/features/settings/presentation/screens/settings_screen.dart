@@ -98,7 +98,7 @@ class _BackupSection extends ConsumerWidget {
     final title = l10n.backupSectionTitle;
 
     return switch (backup) {
-      BackupLoading() => const Center(
+      BackupLoading() || BackupReauthing() => const Center(
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 24),
           child: CircularProgressIndicator(),

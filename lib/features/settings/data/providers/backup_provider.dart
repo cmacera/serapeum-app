@@ -21,6 +21,8 @@ sealed class BackupState {}
 
 class BackupLoading extends BackupState {}
 
+class BackupReauthing extends BackupState {}
+
 class BackupAnonymous extends BackupState {}
 
 class BackupAwaitingConfirmation extends BackupState {
@@ -205,12 +207,14 @@ class BackupNotifier extends _$BackupNotifier {
   /// Signs out of the backup account and restores an anonymous session
   /// so the app continues to work normally.
   Future<void> signOut() async {
+    final previousState = state;
+    state = BackupReauthing();
     try {
       await Supabase.instance.client.auth.signOut();
-      state = BackupAnonymous();
       await AuthService().signInAnonymously();
+      state = BackupAnonymous();
     } catch (e) {
-      state = BackupError(kind: _classifyError(e), previous: state);
+      state = BackupError(kind: _classifyError(e), previous: previousState);
     }
   }
 
